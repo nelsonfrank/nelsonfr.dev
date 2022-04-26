@@ -1,4 +1,10 @@
-/* Box sizing rules */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  /* Box sizing rules */
 *,
 *::before,
 *::after {
@@ -32,6 +38,7 @@ html:focus-within {
 
 /* Set core body defaults */
 body {
+font-family: 'Inter', sans-serif;
   min-height: 100vh;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
@@ -71,4 +78,14 @@ select {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+}
+
+@layer components {
+
+}
+
+@layer utilities {
+
 }
