@@ -1,10 +1,12 @@
 import type { NextPage } from 'next'
+import Hero from '@/ui/hero'
+
 
 const Home: NextPage = () => {
   return (
-    <div>
-      <h1 className="nf-text-primary nf-text-4xl nf-font-bold">Hello, world</h1>
-    </div>
+    <section>
+      <Hero />
+    </section>
   )
 }
 
