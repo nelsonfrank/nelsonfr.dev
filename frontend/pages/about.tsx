@@ -2,6 +2,8 @@ import Image from "next/image";
 import { Satelite } from '@/components/icons';
 import Experience from '@/ui/experience'
 import Skills from '@/ui/skills'
+import Education from "@/ui/education";
+import Divider from "@/components/divider";
 
 const About = () => {
     return (
@@ -33,6 +35,7 @@ const About = () => {
                         neque? Quasi maxime eum a illo.</p>
                 </div>
             </div>
+            <Divider />
             <div className="nf-mt-12">
                 <h1 className="nf-text-3xl nf-font-semibold nf-text-primary">Work experince</h1>
                 <div>
@@ -40,6 +43,7 @@ const About = () => {
                     <Experience />
                     <Experience />
                 </div>
+                <Divider />
                 <div>
                     <Skills />
                 </div>
