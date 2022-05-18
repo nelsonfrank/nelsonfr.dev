@@ -19,18 +19,18 @@ const Skills = () => {
                 Tech skills
             </h1>
 
-            <div className="nf-flex nf-justify-evenly nf-items-center nf-flex-wrap nf-gap-4 nf-mt-8">
+            <div className="nf-flex nf-justify-evenly nf-items-center nf-flex-wrap nf-gap-4 nf-mt-8 md:nf-w-4/5 md:nf-mx-auto">
                 <Typescript />
                 <Reactjs />
+                <MongoDB />
                 <Html />
+                <Graphql />
                 <Css />
                 <Tailwindcss />
                 <Sass />
-                <Javascript />
-                <MongoDB />
                 <Expressjs />
+                <Javascript />
                 <Nodejs />
-                <Graphql />
             </div>
         </div>
     );

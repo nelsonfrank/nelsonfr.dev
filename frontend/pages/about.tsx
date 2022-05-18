@@ -5,9 +5,9 @@ import Skills from '@/ui/skills'
 
 const About = () => {
     return (
-        <div className="nf-mx-8">
-            <div className="nf-flex nf-justify-between nf-items-center">
-                <div className="nf-mr-8">
+        <div className="nf-mx-1 md:nf-mx-8">
+            <div className="nf-flex nf-flex-col md:nf-flex-row md:nf-justify-between md:nf-items-center">
+                <div className="nf-flex nf-justify-center nf-mb-8 md:nf-mb-0 md:nf-mr-8">
                     <Image
                         src="/me.jpg"
                         width={150}
