@@ -4,7 +4,7 @@ const Footer = () => {
     const date = new Date()
     return (
         <footer>
-            <section className="nf-w-full nf-h-16 nf-mt-12 nf-border-t nf-p-4">
+            <section className="nf-w-full nf-min-h-16 nf-mt-12 nf-bg-gray-light nf-p-4">
                 <div className="nf-flex nf-items-center nf-justify-center nf-mb-4">
                     <div className="nf-mr-4">
                         <a href="https://github.com/nelsonfrank" target="_blank">
