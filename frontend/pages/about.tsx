@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { Satelite } from '@/components/icons';
 import Experience from '@/ui/experience'
+import Skills from '@/ui/skills'
+
 const About = () => {
     return (
         <div className="nf-mx-8">
@@ -37,6 +39,9 @@ const About = () => {
                     <Experience />
                     <Experience />
                     <Experience />
+                </div>
+                <div>
+                    <Skills />
                 </div>
             </div>
         </div>
