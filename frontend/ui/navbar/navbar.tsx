@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/public/logo.webp";
-import { Humberger, Close } from "@/components/icons";
+import { Humberger } from "@/components/icons";
 import Sidebar from "./sidebar";
 
 const Navbar = () => {
@@ -35,9 +35,11 @@ const Navbar = () => {
                                 <button className="nf-text-xl focus:nf-text-primary">Uses</button>
                             </li>
                             <li>
-                                <button className="nf-text-xl focus:nf-text-primary">
-                                    About
-                                </button>
+                                <Link href="/about">
+                                    <button className="nf-text-xl focus:nf-text-primary">
+                                        About
+                                    </button>
+                                </Link>
                             </li>
                         </ul>
                     </div>
