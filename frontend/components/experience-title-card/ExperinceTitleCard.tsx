@@ -9,7 +9,7 @@ export interface ExperinceTitleCardProps {
         from: Date
         to: Date | string
     }
-    Flag?: React.Component
+    Flag?: string
 }
 
 const getMonthYear = (date: Date) => {
@@ -17,7 +17,7 @@ const getMonthYear = (date: Date) => {
         } ${date.getFullYear()}`
 }
 
-const ExperinceTitleCard = ({ title, organizationName, location, duration }: ExperinceTitleCardProps) => {
+const ExperinceTitleCard = ({ title, organizationName, location, duration, Flag }: ExperinceTitleCardProps) => {
 
     const isPresent = typeof duration.to === 'string'
     const from = getMonthYear(duration.from)
@@ -26,9 +26,9 @@ const ExperinceTitleCard = ({ title, organizationName, location, duration }: Exp
 
     return (
         <div className="nf-flex nf-items-center nf-mt-4">
-            <div className={`nf-w-3 nf-h-3 nf-border-2 nf-border-primary nf-rounded-full nf-mr-4 md:nf-mr-8 ${isPresent ? 'nf-animate-bounce' : ''}`}></div>
+            <div className={`nf-w-3 nf-h-3 nf-border-2 nf-border-primary nf-rounded-full nf-mr-4 md:nf-mr-8 ${isPresent ? 'nf-animate-ping' : ''}`}></div>
             <div>
-                <span className="nf-text-xs nf-text-gray"> {from} - {to} <span className="nf-mx-1">&#183;</span>{location}</span>
+                <span className="nf-text-xs nf-text-gray"> {from} - {to} <span className="nf-mx-1">&#183;</span>{location} {Flag && Flag}</span>
                 <h2 className="nf-text-lg nf-font-semibold">{title}</h2>
                 <h3 className="nf-text-sm nf-text-gray nf-font-medium">{organizationName}</h3>
             </div>
