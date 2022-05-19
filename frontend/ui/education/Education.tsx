@@ -23,13 +23,14 @@ const Education = () => {
             </h1>
 
             <div>
-                {EducationBackground.map((item) => {
+                {EducationBackground.map((item, index) => {
                     return (
                         <ExperienceTitleCard
                             title={item.title}
                             organizationName={item.organizationName}
                             duration={item.duration}
                             location={item.location}
+                            key={item.title + index}
                         />
                     );
                 })}

@@ -9,6 +9,7 @@ const WorkExperince: ExperinceTitleCardProps[] = [
             from: new Date("Tuesday, December 19, 2021 12:11:01 AM"),
             to: "Present",
         },
+        Flag: '🇹🇿'
     },
     {
         title: "React Developer",
@@ -18,6 +19,7 @@ const WorkExperince: ExperinceTitleCardProps[] = [
             from: new Date("Tuesday, October 19, 2021 12:11:01 AM"),
             to: new Date("Monday, January 19, 2022 12:11:01 AM"),
         },
+        Flag: '🇳🇱'
     },
     {
         title: "Javascript full-stack engineer",
@@ -27,6 +29,7 @@ const WorkExperince: ExperinceTitleCardProps[] = [
             from: new Date("Tuesday, January 19, 2021 12:11:01 AM"),
             to: new Date("Monday, August 19, 2021 12:11:01 AM"),
         },
+        Flag: '🇹🇿'
     },
     {
         title: "Front-end engineer",
@@ -36,6 +39,7 @@ const WorkExperince: ExperinceTitleCardProps[] = [
             from: new Date("Tuesday, May 19, 2020 12:11:01 AM"),
             to: new Date("Monday, January 19, 2021 12:11:01 AM"),
         },
+        Flag: '🇹🇿'
     },
 ]; const Experience = () => {
     return (
@@ -48,6 +52,7 @@ const WorkExperince: ExperinceTitleCardProps[] = [
                         organizationName={item.organizationName}
                         duration={item.duration}
                         location={item.location}
+                        Flag={item.Flag}
                         key={item.title + index}
                     />)
                 }
