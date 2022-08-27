@@ -1,4 +1,5 @@
 import { Close } from '@/components/icons'
+import Link from "next/link";
 
 interface sidebarProps {
     handleToggleSidebar: () => void
@@ -24,9 +25,11 @@ const Sidebar = ({ handleToggleSidebar }: sidebarProps) => {
                     <button className="nf-text-xl focus:nf-text-primary">Uses</button>
                 </li>
                 <li>
+                  <Link href="/about">
                     <button className="nf-text-xl focus:nf-text-primary">
                         About
                     </button>
+                  </Link>
                 </li>
             </ul>
         </aside>
