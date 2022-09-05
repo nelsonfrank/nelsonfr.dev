@@ -33,9 +33,11 @@ const Navbar = () => {
                   </button>
                 </li>
                 <li>
-                  <button className="nf-text-xl focus:nf-text-primary">
-                    Projects
-                  </button>
+                  <Link href="/projects">
+                    <button className="nf-text-xl focus:nf-text-primary">
+                      Projects
+                    </button>
+                  </Link>
                 </li>
                 <li>
                   <button className="nf-text-xl focus:nf-text-primary">
