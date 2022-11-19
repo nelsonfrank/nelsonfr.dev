@@ -26,25 +26,29 @@ const Navbar = () => {
               </Link>
             </div>
             <div className="nf-hidden md:nf-inline-block md:nf-w-3/5 lg:nf-w-2/5">
-              <ul className="nf-flex nf-items-center nf-justify-evenly">
-                <li>
-                  <button className="nf-text-xl focus:nf-text-primary">
-                    Blog
-                  </button>
+              <ul className="nf-flex nf-items-center nf-justify-end">
+                <li className="nf-mx-4">
+                  <Link href="/blog">
+                    <button className="nf-text-xl focus:nf-text-primary">
+                      Blog
+                    </button>
+                  </Link>
                 </li>
-                <li>
+                <li className="nf-mx-4">
                   <Link href="/projects">
                     <button className="nf-text-xl focus:nf-text-primary">
                       Projects
                     </button>
                   </Link>
                 </li>
-                <li>
-                  <button className="nf-text-xl focus:nf-text-primary">
-                    Uses
-                  </button>
+                <li className="nf-mx-4">
+                  <Link href="/uses">
+                    <button className="nf-text-xl focus:nf-text-primary">
+                      Uses
+                    </button>
+                  </Link>
                 </li>
-                <li>
+                <li className="nf-mx-4">
                   <Link href="/about">
                     <button className="nf-text-xl focus:nf-text-primary">
                       About

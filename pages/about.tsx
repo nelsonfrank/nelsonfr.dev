@@ -12,7 +12,7 @@ const About = () => {
           <div className="nf-flex nf-flex-col md:nf-flex-row md:nf-justify-between md:nf-items-center">
             <div className="nf-flex nf-justify-center nf-mb-8 md:nf-mb-0 md:nf-mr-8">
               <Image
-                src="/me.jpg"
+                src="/profile.png"
                 width={150}
                 height={150}
                 layout="fixed"
