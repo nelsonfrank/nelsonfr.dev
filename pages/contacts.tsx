@@ -1,12 +1,38 @@
+import Github from "@/components/icons/github";
+import Twitter from "@/components/icons/twitter";
 import React from "react";
 
 const Contacts = () => {
   return (
-    <div>
-      <div>
+    <div className="nf-mx-4">
+      <div className="nf-mb-4">
         <h1 className="nf-font-medium nf-text-3xl">Contacts</h1>
       </div>
-      <div></div>
+      <div className="nf-flex nf-gap-2 nf-items-center nf-my-4">
+        <Github height={40} width={40} />
+        <a href="https://github.com/nelsonfrank" target="_blank">
+          <span className="nf-text-primary nf-text-xl nf-font-medium">
+            Nelsonfrank
+          </span>
+        </a>
+      </div>
+      <div className="nf-flex nf-gap-2 nf-items-center nf-my-4">
+        <Twitter height={40} width={40} />
+        <a href="https://twitter.com/nelsonfr_" target="_blank">
+          <span className="nf-text-primary nf-text-xl nf-font-medium">
+            Nelsonfr_
+          </span>
+        </a>
+      </div>
+      {/* <div className="nf-flex nf-gap-2 nf-items-center nf-my-4">
+         Replace email with Gmail Icon 
+        <h1>Email:</h1>
+        <a href="https://twitter.com/nelsonfr_" target="_blank">
+          <span className="nf-text-primary nf-text-xl nf-font-medium">
+            nelsonfrank741@gmail.com
+          </span>
+        </a>
+      </div> */}
     </div>
   );
 };
