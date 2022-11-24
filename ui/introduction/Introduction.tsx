@@ -30,7 +30,10 @@ const Introduction = () => {
           </div>
         </div>
         <div className="nf-my-2 nf-ml-14 nf-flex">
-          <button className="nf-px-4 nf-py-2 nf-border nf-border-primary nf-text-primary nf-rounded-lg">
+          <button
+            className="nf-px-4 nf-py-2 nf-border nf-border-primary nf-text-primary nf-rounded-lg"
+            onClick={() => router.push("/contacts")}
+          >
             Set up meeting
           </button>
         </div>
@@ -56,7 +59,7 @@ const Introduction = () => {
         <div className="nf-my-2 nf-ml-14 nf-flex">
           <button
             className="nf-px-4 nf-py-2 nf-border nf-border-primary nf-text-primary nf-rounded-lg"
-            onClick={() => router.push("/projects")}
+            onClick={() => router.push("/about/#experiences")}
           >
             Check them out
           </button>

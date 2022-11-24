@@ -65,7 +65,7 @@ const WorkExperince: ExperinceTitleCardProps[] = [
 
 const Experience = () => {
   return (
-    <div>
+    <div id="experiences">
       <h1 className="nf-text-3xl nf-font-semibold nf-text-primary">
         Work experince
       </h1>
