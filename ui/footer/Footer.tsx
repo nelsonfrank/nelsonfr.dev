@@ -3,7 +3,7 @@ import Link from "next/link"
 const Footer = () => {
     const date = new Date()
     return (
-      <footer className="nf-bg-gray">
+      <footer className="nf-bg-gray-light">
         <section className="nf-w-full nf-flex nf-flex-col nf-mt-12 nf-p-4">
           <div className="nf-flex nf-items-end nf-justify-center nf-mb-4">
             <div className="nf-mr-4">
