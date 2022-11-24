@@ -27,7 +27,7 @@ const ExperinceTitleCard = ({ title, organizationName, location, duration, Flag 
     return (
       <div className="nf-flex nf-items-center nf-mt-4">
         <div
-          className={`nf-w-3 nf-h-3 nf-border-2 nf-border-primary nf-rounded-full nf-mr-4 md:nf-mr-8 ${
+          className={`nf-w-4 nf-h-4 nf-border-4 nf-border-primary nf-rounded-full nf-mr-4 md:nf-mr-8 ${
             isPresent ? "nf-animate-ping" : ""
           }`}
         ></div>

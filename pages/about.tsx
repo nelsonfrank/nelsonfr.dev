@@ -31,8 +31,8 @@ const About = () => {
               <p>
                 I'm Nelson Frank, 25 years old, full-stack web developer with
                 over 3 years of experience working on developing beautiful
-                modern UI and backend services and APIs. I have experience
-                working with teams and working solo.
+                modern UI and backend services and APIs for businesses and
+                startups. I'm a good team player and able to work solo.
               </p>
             </div>
           </div>
