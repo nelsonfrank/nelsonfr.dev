@@ -21,7 +21,7 @@ const Footer = () => {
               </a>
             </div>
             <div className="nf-mr-4">
-              <a href="https://twitter.com/nelsonfrank78" target="_blank">
+              <a href="https://twitter.com/nelsonfr_" target="_blank">
                 <svg
                   version="1.1"
                   xmlns="http://www.w3.org/2000/svg"

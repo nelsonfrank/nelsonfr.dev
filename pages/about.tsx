@@ -29,12 +29,10 @@ const About = () => {
                 </div>
               </div>
               <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quo
-                eos perspiciatis repellat doloremque autem reiciendis tempora
-                cumque non libero aut est quae adipisci, natus laudantium
-                exercitationem fuga, obcaecati animi saepe consequatur eaque
-                illum! Amet at laudantium voluptates nostrum deserunt ea in
-                temporibus molestias recusandae neque? Quasi maxime eum a illo.
+                I'm Nelson Frank, 25 years old, full-stack web developer with
+                over 3 years of experience working on developing beautiful
+                modern UI and backend services and APIs. I have experience
+                working with teams and working solo.
               </p>
             </div>
           </div>

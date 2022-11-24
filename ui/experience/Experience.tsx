@@ -3,7 +3,7 @@ import ExperienceTitleCard, { ExperinceTitleCardProps } from '@/components/exper
 const WorkExperince: ExperinceTitleCardProps[] = [
   {
     title: " Fulltime Freelancing",
-    organizationName: "Nelson frank company",
+    organizationName: "Nelsonfrank consultation",
     location: "Dar es salaam",
     duration: {
       from: new Date("Tuesday, August 19, 2022 12:11:01 AM"),
