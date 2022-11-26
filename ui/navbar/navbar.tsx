@@ -9,6 +9,8 @@ import { useRouter } from "next/router";
 const Navbar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
+  const router = useRouter();
+
   const handleToggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };
@@ -25,7 +27,7 @@ const Navbar = () => {
               <Image src={Logo} alt="Logo svg" width="60" height="60" />
             </Link>
           </div>
-          <div className="nf-hidden md:nf-inline-block md:nf-w-3/5 lg:nf-w-2/5">
+          <div className="nf-hidden md:nf-inline-block">
             <ul className="nf-flex nf-items-center nf-justify-end">
               <li className="nf-mx-4">
                 <Link href="/blog">
@@ -54,6 +56,14 @@ const Navbar = () => {
                     About
                   </button>
                 </Link>
+              </li>
+              <li className="nf-mx-4">
+                <button
+                  className="nf-text-white nf-bg-primary nf-py-2 nf-px-4 nf-rounded-xl"
+                  onClick={() => router.push("/contacts")}
+                >
+                  Get in touch
+                </button>
               </li>
             </ul>
           </div>

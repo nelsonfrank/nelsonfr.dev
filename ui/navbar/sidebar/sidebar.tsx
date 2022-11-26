@@ -54,6 +54,14 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
             About
           </button>
         </li>
+        <li>
+          <button
+            className="nf-text-white nf-text-xl nf-bg-primary nf-py-4 nf-px-10 nf-rounded-xl"
+            onClick={() => handleNavigation("/contacts")}
+          >
+            Get in touch
+          </button>
+        </li>
       </ul>
     </aside>
   );
