@@ -22,7 +22,7 @@ interface MDXPost {
 
 const BlogPost = ({ post }: { post: MDXPost }) => {
   return (
-    <div>
+    <div className="nf-py-8">
       <Head>
         <title>{post.meta.title}</title>
       </Head>

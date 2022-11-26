@@ -1,6 +1,6 @@
 export default function YouTube({ id }: { id: string }) {
   return (
-    <div className="nf-relative nf-pb-1/2 nf-h-0 nf-overflow-hidden nf-max-w-full">
+    <div className="nf-relative nf-pb-56.25% nf-h-0 nf-overflow-hidden nf-max-w-full">
       <iframe
         src={`https://www.youtube.com/embed/${id}`}
         allow="autoplay; encrypted-media"

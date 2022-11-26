@@ -20,6 +20,9 @@ module.exports = {
       gridTemplateColumns: {
         "card-lists": "repeat(auto-fit, minmax(300px, 1fr))",
       },
+      spacing: {
+        "56.25%": "56.25%",
+      },
     },
   },
   plugins: [],
