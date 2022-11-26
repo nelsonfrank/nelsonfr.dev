@@ -1,7 +1,7 @@
 import { PostMeta } from "@/utils/blog";
 import Link from "next/link";
 
-const Articles = ({ posts }: { posts: PostMeta[] }) => (
+const Posts = ({ posts }: { posts: PostMeta[] }) => (
   <ul>
     {posts.map((post) => (
       <li key={post.slug} className="nf-list-none nf-my-6">
@@ -21,4 +21,4 @@ const Articles = ({ posts }: { posts: PostMeta[] }) => (
   </ul>
 );
 
-export default Articles;
+export default Posts;

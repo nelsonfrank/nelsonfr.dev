@@ -1,13 +1,13 @@
 import { getAllPosts, PostMeta } from "@/utils/blog";
-import Articles from "@/components/articles";
+import Posts from "@/components/posts";
 
 const Blog = ({ posts }: { posts: PostMeta[] }) => {
   return (
     <div>
       <div>
-        <h1 className="nf-text-4xl nf-font-semibold">Articles</h1>
+        <h1 className="nf-text-4xl nf-font-semibold">Posts</h1>
         <div className="nf-my-4">
-          <Articles posts={posts} />
+          <Posts posts={posts} />
         </div>
       </div>
     </div>
