@@ -16,4 +16,5 @@ export {
   Tailwindcss,
   Typescript,
   Graphql,
+  tRPC,
 } from "./tech-skills";
