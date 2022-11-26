@@ -84,6 +84,16 @@ select {
 
 @layer components {
 
+.tags a:after {
+  content: " \2022  ";
+}
+.tags a:last-child:after {
+  content: "";
+}
+.tags a {
+  /* this is primary color: check tailwind.config.js */
+  color:rgb(58, 120, 18) ;
+}
 }
 
 @layer utilities {
