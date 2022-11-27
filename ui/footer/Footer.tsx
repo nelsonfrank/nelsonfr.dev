@@ -1,3 +1,4 @@
+// components
 import Github from "@/components/icons/github";
 import Twitter from "@/components/icons/twitter";
 

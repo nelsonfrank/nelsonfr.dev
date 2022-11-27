@@ -1,7 +1,7 @@
+// components
 import Github from "@/components/icons/github";
 import Gmail from "@/components/icons/gmail";
 import Twitter from "@/components/icons/twitter";
-import React from "react";
 
 const Contacts = () => {
   return (

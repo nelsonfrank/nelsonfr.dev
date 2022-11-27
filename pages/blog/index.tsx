@@ -1,5 +1,8 @@
-import { getAllPosts, PostMeta } from "@/utils/blog";
+// components
 import Posts from "@/components/posts";
+
+// utils
+import { getAllPosts, PostMeta } from "@/utils/blog";
 
 const Blog = ({ posts }: { posts: PostMeta[] }) => {
   return (

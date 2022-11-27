@@ -1,10 +1,15 @@
-import React, { useState } from "react";
-import Image from "next/image";
+// dependencies
+import { useState } from "react";
 import Link from "next/link";
-import Logo from "@/public/logo.webp";
+import Image from "next/image";
+import { useRouter } from "next/router";
+
+// components
 import { Humberger } from "@/components/icons";
 import Sidebar from "./sidebar";
-import { useRouter } from "next/router";
+
+// Images
+import Logo from "@/public/logo.webp";
 
 const Navbar = () => {
   const [showSidebar, setShowSidebar] = useState(false);

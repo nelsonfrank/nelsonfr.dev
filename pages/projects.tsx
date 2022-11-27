@@ -1,3 +1,4 @@
+// components
 import Card from "@/components/card";
 
 const Projects = () => {

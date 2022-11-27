@@ -1,5 +1,8 @@
-import { PostMeta } from "@/utils/blog";
+// dependencies
 import Link from "next/link";
+
+// utils
+import { PostMeta } from "@/utils/blog";
 
 const Posts = ({ posts }: { posts: PostMeta[] }) => (
   <ul>

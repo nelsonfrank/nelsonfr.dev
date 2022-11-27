@@ -1,3 +1,4 @@
+// dependencies
 import Head from "next/head";
 
 interface SEOPropsType {

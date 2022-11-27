@@ -1,6 +1,9 @@
-import type { NextPage } from 'next'
-import Hero from '@/ui/hero'
-import Introduction from '@/ui/introduction'
+// dependencies
+import type { NextPage } from "next";
+
+// components
+import Hero from "@/ui/hero";
+import Introduction from "@/ui/introduction";
 
 const Home: NextPage = () => {
   return (
@@ -11,6 +14,6 @@ const Home: NextPage = () => {
       </div>
     </section>
   );
-}
+};
 
-export default Home
+export default Home;

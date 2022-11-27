@@ -1,6 +1,11 @@
+// dependencies
 import { GetStaticPaths, GetStaticProps } from "next";
-import { getAllPosts, PostMeta } from "@/utils/blog";
+
+//components
 import Posts from "@/components/posts";
+
+// utils
+import { getAllPosts, PostMeta } from "@/utils/blog";
 
 const Tags = ({ tag, posts }: { tag: string; posts: PostMeta[] }) => {
   return (

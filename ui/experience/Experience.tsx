@@ -1,4 +1,7 @@
-import ExperienceTitleCard, { ExperinceTitleCardProps } from '@/components/experience-title-card/ExperinceTitleCard';
+// components
+import ExperienceTitleCard, {
+  ExperinceTitleCardProps,
+} from "@/components/experience-title-card/ExperinceTitleCard";
 
 const WorkExperince: ExperinceTitleCardProps[] = [
   {
@@ -85,4 +88,4 @@ const Experience = () => {
   );
 };
 
-export default Experience
+export default Experience;

@@ -1,5 +1,3 @@
-import React from "react";
-
 const Github = ({
   height = 32,
   width = 32,

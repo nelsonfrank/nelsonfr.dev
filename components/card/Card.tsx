@@ -1,5 +1,3 @@
-import React from "react";
-
 const Card = () => {
   return (
     <div className="nf-max-w-sm nf-mx-4 nf-my-4 nf-bg-white nf-rounded-lg nf-border nf-border-gray nf-shadow-md">

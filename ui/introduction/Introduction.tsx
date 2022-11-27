@@ -1,3 +1,4 @@
+// dependencies
 import { useRouter } from "next/router";
 
 const Introduction = () => {
