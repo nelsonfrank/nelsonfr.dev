@@ -17,7 +17,7 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
   return (
     <aside className="nf-h-screen ">
       <header className="nf-flex nf-justify-end nf-my-10 nf-p-4">
-        <button onClick={handleToggleSidebar}>
+        <button onClick={handleToggleSidebar} name="close-icon">
           <Close />
         </button>
       </header>
@@ -26,6 +26,7 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
           <button
             className="nf-text-xl focus:nf-text-primary"
             onClick={() => handleNavigation("/blog")}
+            name="Blog"
           >
             Blog
           </button>
@@ -34,6 +35,7 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
           <button
             className="nf-text-xl focus:nf-text-primary"
             onClick={() => handleNavigation("/projects")}
+            name="Projects"
           >
             Projects
           </button>
@@ -42,6 +44,7 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
           <button
             className="nf-text-xl focus:nf-text-primary"
             onClick={() => handleNavigation("/uses")}
+            name="Uses"
           >
             Uses
           </button>
@@ -50,6 +53,7 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
           <button
             className="nf-text-xl focus:nf-text-primary"
             onClick={() => handleNavigation("/about")}
+            name="About"
           >
             About
           </button>
@@ -58,6 +62,7 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
           <button
             className="nf-text-white nf-text-xl nf-bg-primary nf-py-4 nf-px-10 nf-rounded-xl"
             onClick={() => handleNavigation("/contacts")}
+            name="Get in touch"
           >
             Get in touch
           </button>

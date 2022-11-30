@@ -7,7 +7,12 @@ const Hero = () => {
   return (
     <header>
       <section className="nf-flex nf-flex-col-reverse md:nf-flex-row">
-        <Image src="/hero_coding_illustration.svg" height={500} width={500} />
+        <Image
+          src="/hero_coding_illustration.svg"
+          height={500}
+          width={500}
+          alt="hero illustrations"
+        />
         <div className="md:nf-px-8 nf-flex nf-flex-col md:nf-items-center nf-flex-1">
           <div className="nf-text-center md:nf-mt-20">
             <h1 className="nf-text-2xl nf-font-light nf-my-4">

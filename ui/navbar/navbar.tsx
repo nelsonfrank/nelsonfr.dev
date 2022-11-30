@@ -29,7 +29,9 @@ const Navbar = () => {
         <div className="nf-flex nf-justify-between nf-items-center">
           <div>
             <Link href="/">
-              <Image src={Logo} alt="Logo svg" width="60" height="60" />
+              <a>
+                <Image src={Logo} alt="Logo svg" width="60" height="60" />
+              </a>
             </Link>
           </div>
           <div className="nf-hidden md:nf-inline-block">
@@ -66,6 +68,7 @@ const Navbar = () => {
                 <button
                   className="nf-text-white nf-bg-primary nf-py-2 nf-px-4 nf-rounded-xl"
                   onClick={() => router.push("/contacts")}
+                  name="get in touch"
                 >
                   Get in touch
                 </button>
@@ -73,7 +76,11 @@ const Navbar = () => {
             </ul>
           </div>
           <div className="nf-block md:nf-hidden">
-            <button onClick={handleToggleSidebar}>
+            <button
+              onClick={handleToggleSidebar}
+              id="hamberger-menu-icon"
+              aria-label="hamberger-menu-icon"
+            >
               <Humberger />
             </button>
           </div>

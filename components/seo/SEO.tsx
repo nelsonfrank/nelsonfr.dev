@@ -22,6 +22,9 @@ const SEO = ({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="image" content={image} />
+      <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+
       {url && <meta property="og:url" content={url} />}
       {(article ? true : null) && <meta property="og:type" content="article" />}
       {title && <meta property="og:title" content={title} />}
