@@ -21,7 +21,7 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
           <Close />
         </button>
       </header>
-      <ul className="nf-flex nf-flex-col nf-font-medium nf-text-4xl nf-items-center nf-justify-evenly nf-h-1/2">
+      <ul className="nf-flex nf-flex-col nf-font-medium nf-text-4xl nf-items-center nf-justify-evenly nf-h-1/2 nf-list-none">
         <li>
           <button
             className="nf-text-xl focus:nf-text-primary"

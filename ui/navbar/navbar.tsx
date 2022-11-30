@@ -33,7 +33,7 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="nf-hidden md:nf-inline-block">
-            <ul className="nf-flex nf-items-center nf-justify-end">
+            <ul className="nf-flex nf-items-center nf-justify-end nf-list-none">
               <li className="nf-mx-4">
                 <Link href="/blog">
                   <button className="nf-text-xl focus:nf-text-primary">
