@@ -22,11 +22,11 @@ interface MDXPost {
 
 const BlogPost = ({ post }: { post: MDXPost }) => {
   return (
-    <div className="nf-py-8">
+    <div className="nf-py-8 nf-mx-4">
       <Head>
         <title>{post.meta.title}</title>
       </Head>
-      <h1 className="nf-text-2xl nf-font-medium">{post.meta.title}</h1>
+      <h1>{post.meta.title}</h1>
       <MDXRemote {...post.source} components={{ YouTube, Image }} />
     </div>
   );
