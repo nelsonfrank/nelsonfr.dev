@@ -12,6 +12,7 @@ const Hero = () => {
           height={500}
           width={500}
           alt="hero illustrations"
+          priority
         />
         <div className="md:nf-px-8 nf-flex nf-flex-col md:nf-items-center nf-flex-1">
           <div className="nf-text-center md:nf-mt-20">
