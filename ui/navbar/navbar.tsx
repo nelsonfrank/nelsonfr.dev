@@ -30,7 +30,13 @@ const Navbar = () => {
           <div>
             <Link href="/">
               <a>
-                <Image src={Logo} alt="Logo svg" width="60" height="60" />
+                <Image
+                  src={Logo}
+                  alt="Logo svg"
+                  width="60"
+                  height="60"
+                  priority
+                />
               </a>
             </Link>
           </div>
