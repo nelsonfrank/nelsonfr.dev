@@ -10,7 +10,7 @@ const Card = () => {
       </a>
       <div className="nf-py-5 nf-px-4">
         <a href="#">
-          <h5 className="nf-mb-2 nf-text-xl nf-font-bold nf-tracking-normal nf-text-gray-900">
+          <h5 className="nf-my-2 nf-text-xl nf-font-bold nf-tracking-normal nf-text-gray-900">
             Noteworthy technology acquisitions 2021
           </h5>
         </a>

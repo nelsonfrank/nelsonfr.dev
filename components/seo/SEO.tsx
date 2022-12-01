@@ -15,7 +15,7 @@ const SEO = ({
   article,
   url,
   // Twitter profile img as default meta image
-  image = "https://pbs.twimg.com/profile_images/1556752114101227524/eoACpCG-_400x400.jpg",
+  image = "https://pbs.twimg.com/profile_images/1598257935708295170/D1chKfw1_400x400.jpg",
   twitterHandle,
 }: SEOPropsType) => {
   return (
