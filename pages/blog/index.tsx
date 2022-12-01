@@ -12,9 +12,9 @@ const Blog = ({ posts }: { posts: PostMeta[] }) => {
         title="Blog"
         description="I writes and posts articles based on web development regularly, check them out"
       />
-      <div>
+      <div className="nf-my-4">
         <h1 className="nf-text-4xl nf-font-semibold">Posts</h1>
-        <div className="nf-my-4">
+        <div>
           <Posts posts={posts} />
         </div>
       </div>
