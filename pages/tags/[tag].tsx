@@ -3,6 +3,7 @@ import { GetStaticPaths, GetStaticProps } from "next";
 
 //components
 import Posts from "@/components/posts";
+import SEO from "@/components/seo";
 
 // utils
 import { getAllPosts, PostMeta } from "@/utils/blog";
@@ -10,6 +11,7 @@ import { getAllPosts, PostMeta } from "@/utils/blog";
 const Tags = ({ tag, posts }: { tag: string; posts: PostMeta[] }) => {
   return (
     <div>
+      <SEO title={`Tag: ${tag}`} />
       <h1 className="nf-text-4xl nf-font-semibold nf-capitalize">Tag:{tag}</h1>
       <div className="nf-my-4">
         <Posts posts={posts} />

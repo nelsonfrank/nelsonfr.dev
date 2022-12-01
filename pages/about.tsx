@@ -4,7 +4,7 @@ import Image from "next/image";
 // components
 import { Satelite } from "@/components/icons";
 import Divider from "@/components/divider";
-
+import SEO from "@/components/seo";
 // UI
 import Experience from "@/ui/experience";
 import Skills from "@/ui/skills";
@@ -13,6 +13,10 @@ import Education from "@/ui/education";
 const About = () => {
   return (
     <section className="nf-max-w-screen-lg nf-mx-auto nf-px-4 nf-mt-4 nf-mb-8 nf-flex nf-flex-col nf-flex-1">
+      <SEO
+        title="About"
+        description="I'm fullstack Typescript/Javascript Developer"
+      />
       <div className="nf-mx-1 md:nf-mx-8">
         <div className="nf-flex nf-flex-col md:nf-flex-row md:nf-justify-between md:nf-items-center">
           <div className="nf-flex nf-justify-center nf-mb-8 md:nf-mb-0 md:nf-mr-8">

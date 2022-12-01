@@ -1,5 +1,11 @@
+import SEO from "@/components/seo";
+
 const Uses = () => (
   <div className="nf-w-full nf-mx-4">
+    <SEO
+      title="Uses"
+      description="My current tools i use for developments and work"
+    />
     <div>
       <h1 className="nf-text-3xl nf-font-semibold nf-mt-4 nf-mb-8">Uses</h1>
     </div>

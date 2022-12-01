@@ -11,6 +11,7 @@ import "highlight.js/styles/atom-one-dark.css";
 
 // components
 import YouTube from "@/components/youtube";
+import SEO from "@/components/seo";
 
 // utils
 import { getPostFromSlug, getSlugs, PostMeta } from "@/utils/blog";
@@ -23,9 +24,7 @@ interface MDXPost {
 const BlogPost = ({ post }: { post: MDXPost }) => {
   return (
     <div className="nf-py-8 nf-mx-4">
-      <Head>
-        <title>{post.meta.title}</title>
-      </Head>
+      <SEO title={post.meta.title} description={post.meta.excerpt} />
       <h1>{post.meta.title}</h1>
       <MDXRemote {...post.source} components={{ YouTube, Image }} />
     </div>

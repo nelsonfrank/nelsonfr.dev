@@ -2,10 +2,12 @@
 import Github from "@/components/icons/github";
 import Gmail from "@/components/icons/gmail";
 import Twitter from "@/components/icons/twitter";
+import SEO from "@/components/seo";
 
 const Contacts = () => {
   return (
     <div className="nf-mx-4">
+      <SEO title="Contact" description="Get in touch with me here" />
       <div className="nf-mb-4">
         <h1 className="nf-font-medium nf-text-3xl">Contacts</h1>
       </div>
