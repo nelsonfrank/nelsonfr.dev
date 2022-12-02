@@ -1,0 +1,16 @@
+[
+    {
+        "name": "mhelepu shillingi arts",
+        "description": "Contemporary artist portifolio and gallery",
+        "url": "https://mhelepushillingiarts.com",
+        "img": " https://images.unsplash.com/photo-1662368357622-d840d7f5ab60?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+        "repo": "private"
+    },
+    {
+        "name": "Wasaa wa sifa online radio",
+        "description": "24/7 non-stop worship and praise radio",
+        "img": " https://images.unsplash.com/photo-1662368357622-d840d7f5ab60?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+        "url": "https://wasaawasifa.online",
+        "repo": "private"
+    }
+]
