@@ -14,7 +14,8 @@ const Projects = () => {
           title={project.name}
           description={project.description}
           img={project.img}
-          fallbackImg={project.fallbackImg}
+          repoUrl={project.repoUrl}
+          url={project.url}
         />
       ))}
     </div>

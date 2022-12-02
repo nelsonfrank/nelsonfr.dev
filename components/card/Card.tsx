@@ -7,6 +7,8 @@ interface CardProps {
   description?: string;
   img?: string;
   fallbackImg?: string;
+  repoUrl?: string;
+  url?: string;
 }
 
 const Card = ({
@@ -14,6 +16,8 @@ const Card = ({
   description,
   img,
   fallbackImg = "/fallback.jpg",
+  repoUrl,
+  url,
 }: CardProps) => {
   const [error, setError] = useState<React.SyntheticEvent<
     HTMLImageElement,
@@ -36,6 +40,24 @@ const Card = ({
         <p className="nf-mb-3 nf-font-normal nf-text-left nf-text-gray-700">
           {description}
         </p>
+        <div className="nf-flex nf-py-2">
+          <ul className="nf-flex nf-list-none nf-p-0 nf-my-0">
+            {repoUrl && (
+              <li className="nf-mr-4 nf-text-primary">
+                <a href={repoUrl} target="_blank">
+                  Code
+                </a>
+              </li>
+            )}
+            {url && (
+              <li className="nf-mr-4 nf-text-primary">
+                <a href={url} target="_blank">
+                  Preview
+                </a>
+              </li>
+            )}
+          </ul>
+        </div>
       </div>
     </div>
   );
