@@ -37,8 +37,8 @@ const ExperinceTitleCard = ({ title, organizationName, location, duration, Flag 
             {from} - {to} <span className="nf-mx-1">&#183;</span>
             {location} {Flag && Flag}
           </span>
-          <h2 className="nf-text-xl nf-font-semibold">{title}</h2>
-          <h3 className="nf-text-base nf-text-gray nf-font-medium">
+          <h2 className="nf-text-xl nf-font-semibold nf-my-2">{title}</h2>
+          <h3 className="nf-text-base nf-text-gray nf-font-medium nf-my-2">
             {organizationName}
           </h3>
         </div>
