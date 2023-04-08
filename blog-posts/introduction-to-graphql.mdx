@@ -1,0 +1,503 @@
+---
+title: Get started on GraphQL-Query and Mutation
+tags:
+  - Graphql
+  - fundamentals
+  - query
+  - mutation
+  - API
+date: 2023-04-08
+excerpt: Learn the basics of GraphQL operations and start modifying your data with confidence. 
+---
+
+> GraphQL is modern way of query your API better than REST API. In this post you will learn all key elements that will help you understand GraphQL once and for all. Let get started.
+
+## Table of Context
+
+ - [What is GraphQL?](#what-is-graphql)
+ - [What is not GraphQL?](#what-is-not-graphql)
+ - [Why GraphQL over REST API?](#why-graphql)
+ - [Type of Operation in GraphQL](#type-of-operation)
+ - [Queries and mutations](#query-mutation)
+	 - [Fields](#fields)
+	 - [Operation name](#operation-name)
+	 - [Argument](#argument)
+	 - [Variable](#variable)
+		 - [Default Variable](#default-variable)
+	 - [Aliases](#aliases)
+	 - [Fragments](#fragments)
+		 - [Inline Fragments](#inline-fragments)
+		 - [Using variable inside fragments](#variable-inside-fragment)
+	 - [Directives](#directives)
+	 - [Meta fields](#meta-fields)
+	 - [Mutation](#mutation)
+  
+
+<a id="what-is-graphql"></a>
+## What is GraphQL?
+GraphQL is a query language for APIs and a server-side runtime for executing queries using a type system you define for your data. 
+It was designed to provide a more efficient, powerful, and flexible alternative to traditional REST APIs. 
+<a id="what-is-not-graphql"></a>
+## What is not GraphQL?
+-  Database or Database Query language
+-  Client-side state management alternative
+-  A solution for binary stream
+-  Limited to a specific database
+- Limited to Javascript/NodeJs on the backend
+- Limited to use React/Angular
+
+<a id="why-graphql"></a>
+## Why GraphQL over  REST API?
+
+1.  **Efficiency:** With REST APIs, clients typically receive a fixed set of data for each endpoint, which can be either too much or too little. This can result in multiple API calls or clients processing unnecessary data. GraphQL, on the other hand, allows clients to request only the data they need in a single request, reducing network overhead and improving performance.
+    
+2.  **Flexibility:** With REST APIs, changes to the data model can require changes to the API endpoints, which can break client applications that depend on those endpoints. GraphQL provides a flexible and strongly-typed schema that allows clients to query the data they need, regardless of how it's structured on the server. This makes it easier to evolve the API over time without breaking existing client applications.
+    
+3.  **Type system:** GraphQL has a rich type system that allows developers to define and enforce the structure and relationships between different data types. This makes it easier to reason about the data model and catch errors early in the development process.
+    
+4.  **Tooling:** GraphQL comes with a rich ecosystem of tools and libraries that make it easy to build and test GraphQL APIs. This includes tools for schema validation, documentation generation, and client-side code generation.
+    
+5.  **Integration:** GraphQL can be integrated with existing systems and databases, making it easy to leverage existing data sources in a modern API.
+
+<a id="type-of-operation"></a>
+## Types of Operation in GraphQL
+
+In GraphQL, there are three types of operations that can be performed:
+
+1.  `query`: Used to retrieve data from the server. A query operation defines a set of fields to be retrieved from the server and their corresponding types. Query operations cannot modify data on the server and are typically used to fetch data for rendering user interfaces.
+    
+2.  `mutation`: Used to modify data on the server. A mutation operation defines a set of fields to be modified and their corresponding types. Mutations are typically used to perform create, update, or delete operations on data stored on the server.
+    
+3.  `subscription`: Used to receive real-time updates from the server. A subscription operation defines a set of fields to be subscribed to and their corresponding types. Subscriptions are typically used to receive notifications about data changes that occur on the server in real-time.
+    
+
+Each operation type is preceded by a keyword (`query`, `mutation`, or `subscription`) and is followed by a set of curly braces that contain the fields to be retrieved, modified, or subscribed to.
+<a id="query-mutation"></a>
+## Queries and Mutations
+Here you will learn in detail about how to query a GraphQL server.
+<a id="fields"></a>
+### Fields
+A field is a unit of data that represents a piece of information that can be requested from a GraphQL server.
+
+Here is an example of a GraphQL query with fields:
+
+```graphql
+query {
+	user{
+		name
+		email
+		address {
+			city
+			street
+			postCode
+		}
+	}
+}
+```
+
+In query above, the fields are `user` , `email`, `address` , `city`, `street`, `postCode`. The user field has two subfield `name`,  and `email`,  and nested field `address` , which has three subfield, `city`, `street`  and `postCode`.
+
+<a id="operation-name"></a>
+### Operation name
+In a GraphQL query, the operation name is used to give a name to a specific operation, such as a query, mutation, or subscription. This name is optional, but it can be helpful in distinguishing between multiple operations in a single GraphQL document. The operation name should be a valid GraphQL name and is specified after the operation type keyword (i.e. "query", "mutation", or "subscription"). Here's an example of a GraphQL query with an operation name:
+
+```graphql
+query MyQuery {
+  user(id: "123") {
+    name
+    email
+  }
+}
+```
+
+In this example, the operation name is "MyQuery". If you were to include another operation in the same GraphQL document, you could give it a different name to distinguish it from this one.
+
+<a id="argument"></a>
+### Argument
+GraphQL arguments allow you to pass input values to fields or queries, allowing you to customize the data you receive from the GraphQL API. For example, if you want to retrieve information about a specific book from a GraphQL API, you can pass an argument with the book's ISBN to the `book` query:
+```graphql
+query GetUser { 
+	user(id: "123") { 
+		name 
+		posts(status: PUBLISHED) { 
+			title 
+			content 
+		} 
+	} 
+}
+```
+
+In this example, the `book` query takes an `isbn` argument, allowing us to specify which book we want to retrieve information about. The API then returns information about the book with the given ISBN, including its title, author, published date, and description. By using arguments, you can easily customize the data you receive from a GraphQL API to fit your specific needs.
+
+Output may look like:
+```json
+{
+  "data": {
+    "user": {
+      "name": "John Doe",
+      "posts": [
+        {
+          "title": "My first published post",
+          "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        },
+        {
+          "title": "My second published post",
+          "content": "Nulla facilisi. Curabitur at odio eu mauris blandit volutpat vel vel nisi."
+        }
+      ]
+    }
+  }
+}
+
+```
+<a id="variable"></a>
+### Variable
+Variables in GraphQL are used to parameterize a query or mutation, allowing you to pass in dynamic values at runtime. This can be useful when you need to retrieve or manipulate data based on user input or other runtime values. Variables are defined in the query or mutation operation and can be used in the query body using the `$` syntax. Here's an example of how to use variables in a GraphQL query:
+
+```graphql
+query MovieQuery($title: String!, $releaseYear: Int!) {
+  movie(title: $title, releaseYear: $releaseYear) {
+    title
+    releaseDate
+    actors {
+      name
+      age
+    }
+  }
+}
+```
+
+In this example, we're defining a `MovieQuery` operation that takes two variables: `$title` of type `String!` and `$releaseYear` of type `Int!`. We're using these variables in the `movie` field to retrieve information about a specific movie based on its title and release year.
+
+>NOTE:
+>the exclamation point (!) is used to indicate that a field is non-nullable. This means that the field must always return a value and cannot be null.
+
+
+At query time, we can pass in values for the `$title` and `$releaseYear` variables like this:
+
+```graphql
+{
+  "title": "The Matrix",
+  "releaseYear": 1999
+}
+```
+
+This will retrieve information about the movie "The Matrix" released in 1999, including its title, release date, and list of actors. By using variables in our queries, we can make them more dynamic and adaptable to changing runtime conditions.
+
+Output Example:
+```json
+{
+  "data": {
+    "movie": {
+      "title": "The Matrix",
+      "releaseDate": "March 31, 1999",
+      "actors": [
+        {
+          "name": "Keanu Reeves",
+          "age": 57
+        },
+        {
+          "name": "Carrie-Anne Moss",
+          "age": 54
+        },
+        {
+          "name": "Laurence Fishburne",
+          "age": 60
+        }
+      ]
+    }
+  }
+}
+```
+<a id="default-variable"></a>
+#### Default Variable
+GraphQL allows you to specify default values for variables in case they are not provided at runtime. This can be useful when you want to have a fallback value for a variable or when you want to make a variable optional. To define a default value for a variable, you can use the syntax `variableName: Type = defaultValue`. Here's an example:
+
+```graphql
+query MovieQuery($title: String = "The Matrix", $releaseYear: Int!) {
+  movie(title: $title, releaseYear: $releaseYear) {
+    title
+    releaseDate
+    actors {
+      name
+      age
+    }
+  }
+}
+```
+
+In this example, we're defining a `MovieQuery` operation that takes two variables: `$title` of type `String` with a default value of `"The Matrix"`, and `$releaseYear` of type `Int!`. If the `$title` variable is not provided at query time, it will default to `"The Matrix"`. If `$title` is provided at query time, the provided value will be used instead of the default value. By using default values for variables, we can make our queries more robust and less prone to errors.
+
+<a id="aliases"></a>
+### Aliases
+In GraphQL, aliases allow you to assign a different name to a field in your query result. This can be useful when you have multiple fields with the same name, or when you want to give a more descriptive name to a field. To use an alias, you specify the desired name before the field name, separated by a colon.
+
+For example, let's say you have a GraphQL query that retrieves information about a user's friends and their favorite books. The `friends` field and the `books` field both have a `title` field, but you want to give them different names in your query result. Here's how you can use aliases to achieve that:
+
+```graphql
+query UserPosts{
+  user(id: "123") {
+    name
+    latestPost: posts(first: 1) {
+      title
+      content
+    }
+    popularPost: posts(orderBy: POPULARITY_DESC, first: 1) {
+      title
+      views
+    }
+  }
+}
+```
+
+
+`Output`
+```json
+{
+  "data": {
+    "user": {
+      "name": "John Doe",
+      "latestPost": [
+        {
+          "title": "My Latest Post",
+          "content": "This is the content of my latest post."
+        }
+      ],
+      "popularPost": [
+        {
+          "title": "My Popular Post",
+          "views": 10000
+        }
+      ]
+    }
+  }
+}
+```
+
+In this example, we've used aliases to give different names to the `posts` field based on their sorting criteria. We've used the alias `latestPost` for the post with the most recent publication date, and `popularPost` for the post with the most views. This way, we can easily distinguish between the two fields and get the specific data we need without confusion.
+
+<a id="fragments"></a>
+### Fragments
+GraphQL fragments are a powerful feature that enable you to reuse common fields in your queries, making them more concise and maintainable.
+
+For example, let's say you have a GraphQL API that allows you to retrieve information about movies, including their title, release date, and a list of actors. Instead of repeating the same fields every time you query for a movie, you can define a fragment for the movie fields:
+
+```graphql
+fragment MovieFields on Movie {
+  title
+  releaseDate
+  actors {
+    name
+    age
+  }
+}
+
+```
+
+Now, you can use this fragment in any query that needs movie information:
+
+```graphql
+query {
+  popularMovies {
+    ...MovieFields
+  }
+}
+
+query {
+  movie(id: "123") {
+    ...MovieFields
+  }
+}
+
+```
+
+In these examples, we've used the `...` syntax to include the `MovieFields` fragment in our queries. This makes our queries more concise and easier to read, and also ensures that we're always retrieving the same fields for movies. By using fragments, you can avoid duplication in your queries and make them more maintainable over time.
+
+<a id="inline-fragments"></a>
+### Inline Fragments
+Certainly! In the previous example, we defined a fragment for the `Movie` object that included fields like `title`, `releaseDate`, and `actors`. Now, let's say we have a subtype of `Movie` called `ActionMovie` that has additional fields like `director` and `explosions`. We can use an inline fragment to conditionally include these fields in our query when querying for `ActionMovie` objects.
+
+Here's an example of how we can use an inline fragment to include additional fields for `ActionMovie` objects:
+
+```graphql
+query {
+  movies {
+    ...MovieFields
+    
+	# Inline fragment
+    ... on ActionMovie {
+      director
+      explosions
+    }
+  }
+}
+
+```
+
+In this example, we're using the `... on ActionMovie` syntax to define an inline fragment that applies only to objects of type `ActionMovie`. We're including the `director` and `explosions` fields, which are specific to `ActionMovie` objects.
+
+By using inline fragments in this way, we can write more granular queries that retrieve only the fields we need for a given object type. This can help to reduce the amount of data returned by the API and improve query performance.
+
+<a id="variable-inside-fragment"></a>
+#### Using variables inside fragments
+This allows you to pass in dynamic values to a fragment at query time, making it easier to customize the fields returned by the API.
+
+```graphql
+fragment MovieFields($title: String!) on Movie {
+  title(filter: $title)
+  releaseDate
+  actors {
+    name
+    age
+  }
+}
+
+query ($title: String!) {
+  movie(filter: $title) {
+    ...MovieFields
+  }
+}
+```
+
+In this example, we've defined a `MovieFields` fragment that takes a `$title` variable of type `String!`. We've used the `$title` variable in the `filter` argument of the `title` field to filter the movie by its title.
+
+In the `query` section, we've defined a `movie` query that takes a `$title` variable and passes it to the `MovieFields` fragment. This allows us to retrieve information about a specific movie based on its title.
+
+At query time, we can pass in a value for the `$title` variable:
+
+```json
+{
+  "title": "The Matrix"
+}
+```
+
+This will filter the `movie` field by the title "The Matrix" and return the movie's title, release date, and list of actors. By using variables inside fragments, we can make our queries more flexible and reusable, allowing us to retrieve customized data from the GraphQL API.
+
+
+<a id="directive"></a>
+### Directive
+Directives in GraphQL are used to conditionally include or exclude fields or fragments based on certain runtime conditions. Directives are preceded by the `@` symbol and can be attached to fields, fragments, or entire query or mutation operations. They provide a way to add flexibility and control to queries, allowing you to specify when and how certain parts of a query should be executed. Here's an example of how to use directives in a GraphQL query:
+
+```graphql
+query MovieQuery($includeActors: Boolean!) {
+  movie(title: "The Matrix", releaseYear: 1999) {
+    title
+    releaseDate
+    actors @include(if: $includeActors) {
+      name
+      age
+    }
+  }
+}
+```
+
+In this example, we're using the `@include` directive to conditionally include the `actors` field based on the value of the `$includeActors` variable. If `$includeActors` is set to `true`, the `actors` field will be included in the response. If `$includeActors` is set to `false`, the `actors` field will be omitted from the response. This provides a way to make our queries more efficient by only retrieving the fields we need at runtime.
+
+<a id="type-of-operation"></a>
+#### Other Available directives
+Here are some of the most common directives available in GraphQL:
+
+  - `@include(if: Boolean!)`: Conditionally include a field or fragment if the specified Boolean condition is true.
+
+  - `@skip(if: Boolean!)`: Conditionally skip a field or fragment if the specified Boolean condition is true.
+
+  - `@deprecated(reason: String!)`: Mark a field or enum value as deprecated and provide a reason for its deprecation.
+
+  - `@specifiedBy(url: String!)`: Specify a URL that describes the expected shape of the data returned by a field.
+
+  - `@defer`: Indicate that a field's value should be fetched lazily and not included in the initial response.
+
+  - `@stream`: Indicate that a field's value should be streamed back to the client as a series of events instead of a single response.
+
+  - `@client`: Mark a field as being resolved on the client side, rather than on the server side.
+
+  - `@rest`: Define a REST endpoint to fetch data from for a specific field.
+
+Note that the availability of directives may vary depending on the specific implementation of GraphQL being used.
+
+
+<a id="meta-fields"></a>
+### Meta fields
+In GraphQL, meta fields are special fields that can be used to request metadata about a GraphQL query or schema. These fields are not part of the data model and are used to retrieve information about the query itself, such as the execution time, the schema version, or the query complexity. Meta fields are prefixed with double underscores (`__`) to distinguish them from regular fields.
+
+One example of a meta field is `__typename`, which returns the name of the object type for the current selection. This can be useful for debugging and introspection purposes, as it allows you to inspect the structure of the response data.
+
+Here's an example of a GraphQL query that uses the `__typename` meta field:
+
+```graphql
+{
+# Query
+  user(id: 1) {
+    id
+    name
+    __typename
+  }
+}
+```
+
+Output:
+```json
+{
+  "data": {
+    "user": {
+      "id": "1",
+      "name": "John",
+      "__typename": "User"
+    }
+  }
+}
+```
+
+In this example, the query retrieves the `id`, `name`, and `__typename` fields for a user with ID 1. The `__typename` field returns the name of the object type for the `user` field, which in this case is `User`. This can be useful for debugging and introspection purposes, as it allows you to inspect the structure of the response data. Other examples of meta fields in GraphQL include `__schema`, `__type`, `__typename`, and `__directive`.
+
+<a id="mutation"></a>
+### Mutation
+a mutation is a type of operation that is used to modify data on the server. Mutations are used to create, update, or delete data. To perform a mutation, you define a set of fields to be modified, along with their corresponding input types.
+
+Here's an example of a GraphQL mutation that adds a new user to the server:
+
+```graphql
+mutation AddUser($input: UserInput!) {
+  addUser(input: $input) {
+    id
+    name
+    email
+  }
+}
+```
+
+In this example, the `AddUser` mutation takes a `UserInput` object as its argument and adds a new user to the server. The response will include the `id`, `name`, and `email` fields of the newly created user. Mutations in GraphQL can be thought of as analogous to the `POST`, `PUT`, and `DELETE` HTTP methods in RESTful APIs, which are used to modify data on the server.
+
+Another example of a GraphQL mutation that updates an existing user's name.
+
+```graphql
+mutation UpdateUserName($id: ID!, $name: String!) {
+  updateUser(id: $id, name: $name) {
+    id
+    name
+    email
+  }
+}
+```
+
+In this example, the `UpdateUserName` mutation takes two variables: `id`, which is the ID of the user to be updated, and `name`, which is the new name to be assigned to the user. The mutation then calls the `updateUser` function on the server, passing in the `id` and `name` variables as arguments. Finally, the mutation specifies the `id`, `name`, and `email` fields to be returned in the response.
+
+When executed, this mutation will update the name of the user with the specified ID on the server, and return the updated user object in the response.
+
+All above query techniques can also be used by mutation operation as well on retriving updated value.
+
+
+## Conclusion
+In conclusion, mastering GraphQL operations is essential for building modern web applications that require efficient data retrieval and manipulation. By understanding the basics of queries and mutations, you can create powerful APIs that enable seamless communication between your client and server.
+
+## About me
+
+Allow me to introduce myself, my name is Nelson Frank, and I am a Fullstack Typescript/Javascript Software Developer with over 5 years of experience in the web development field. Currently based in Dar es Salaam.
+
+I am currently seeking a new and exciting opportunity to further develop my skills and expertise.
+
+I will appreciate any referrals, My contacts are below.
+
+Email: Nelsonfrank741@gmail.com
+
+Twitter: @nelsonfr_ 
