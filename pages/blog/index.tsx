@@ -24,8 +24,9 @@ const Blog = ({ posts }: { posts: PostMeta[] }) => {
 
 export async function getStaticProps() {
   const posts = getAllPosts()
-    .slice(0, 9)
-    .map((post) => post.meta);
+		.slice(0, 9)
+		.reverse()
+		.map((post) => post.meta);
 
   return { props: { posts } };
 }
