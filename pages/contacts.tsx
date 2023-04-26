@@ -37,7 +37,7 @@ const Contacts = () => {
 					</a>
 				</div>
 				<div className='nf-flex nf-gap-2 nf-items-center nf-my-4'>
-					<FaPhoneAlt />
+					<FaPhoneAlt className='nf-text-2xl' />
 					<a href='mailto:nelsonfrank741@gmail.com' target='_blank'>
 						<span className='nf-text-primary nf-text-xl nf-font-medium'>
 							+255 68 440 462
