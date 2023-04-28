@@ -16,7 +16,7 @@ const Contacts = () => {
 					<SiGithub className='nf-text-2xl' />
 					<a href='https://github.com/nelsonfrank' target='_blank'>
 						<span className='nf-text-primary nf-text-xl nf-font-medium'>
-							Nelsonfrank
+							nelsonfrank
 						</span>
 					</a>
 				</div>
@@ -24,7 +24,7 @@ const Contacts = () => {
 					<BsTwitter className='nf-text-2xl' />
 					<a href='https://twitter.com/nelsonfr_' target='_blank'>
 						<span className='nf-text-primary nf-text-xl nf-font-medium'>
-							Nelsonfr_
+							nelsonfr_
 						</span>
 					</a>
 				</div>
@@ -38,7 +38,7 @@ const Contacts = () => {
 				</div>
 				<div className='nf-flex nf-gap-2 nf-items-center nf-my-4'>
 					<FaPhoneAlt className='nf-text-2xl' />
-					<a href='mailto:nelsonfrank741@gmail.com' target='_blank'>
+					<a href='tel:+255684404462' target='_blank'>
 						<span className='nf-text-primary nf-text-xl nf-font-medium'>
 							+255 68 440 4462
 						</span>
