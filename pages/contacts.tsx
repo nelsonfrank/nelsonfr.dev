@@ -40,7 +40,7 @@ const Contacts = () => {
 					<FaPhoneAlt className='nf-text-2xl' />
 					<a href='mailto:nelsonfrank741@gmail.com' target='_blank'>
 						<span className='nf-text-primary nf-text-xl nf-font-medium'>
-							+255 68 440 462
+							+255 68 440 4462
 						</span>
 					</a>
 				</div>
