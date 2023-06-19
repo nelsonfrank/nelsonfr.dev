@@ -6,10 +6,31 @@
         "img": "https://images.unsplash.com/photo-1507643179773-3e975d7ac515?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
     },
     {
-        "name": "Wasaa wa sifa online radio",
-        "description": "24/7 non-stop worship and praise radio",
-        "img": " https://images.unsplash.com/photo-1662368357622-d840d7f5ab60?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        "url": "https://wasaawasifa.online",
-        "repoUrl": ""
+        "name": "Live Markdown Editor",
+        "description": "Live Preview markdown editor",
+        "img": "/images/projects/live-mardown-app.png",
+        "url": "https://tourmaline-sprinkles-3b0e04.netlify.app/",
+        "repoUrl": "https://github.com/nelsonfrank/live-markdown-editor"
+    },
+    {
+        "name": "Good Doctor web app",
+        "description": "Make doctor appointment online",
+        "img": "/images/projects/good-doctor.png",
+        "url": "https://good-doctor-app.vercel.app/",
+        "repoUrl": "https://github.com/nelsonfrank/good-doctor-web"
+    },
+    {
+        "name": "Ansible Template",
+        "description": "A simple ansible template with descriptive readme file",
+        "img": "/images/projects/ansible-template.jpg",
+        "url": "",
+        "repoUrl": "https://github.com/nelsonfrank/ansible-template"
+    },
+    {
+        "name": "Food Delivery REST API",
+        "description": "A complex food delivery nodejs rest api application",
+        "img": "/images/projects/food-delivery-rest-api.jpg",
+        "url": "",
+        "repoUrl": "https://github.com/food-forward/food-delivery-backend"
     }
 ]
