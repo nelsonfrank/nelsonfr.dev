@@ -1,9 +1,22 @@
 [
     {
-        "name": "mhelepu shillingi arts",
+        "name": "Mhelepu Shillingi Arts",
         "description": "Contemporary artist portifolio and gallery",
         "url": "https://mhelepushillingiarts.com",
         "img": "https://images.unsplash.com/photo-1507643179773-3e975d7ac515?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+    },
+    {
+        "name": "Wasaa wa Sifa Online",
+        "description": "24/7 Worship/Praise Gospel Online Radio",
+        "img": "/images/projects/wasaa-wa-sifa-online.png",
+        "url": "https://wasaawasifaa.online"
+    },
+    {
+        "name": "AI Powered Text Generatoe",
+        "description": "Text generator powered by OpenAI API, based on GPT-3.5",
+        "img": "https://images.unsplash.com/photo-1655890954739-c5782b4a8211?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80",
+        "url": "https://ai-powered-text-generator.vercel.app/",
+        "repoUrl": "https://github.com/nelsonfrank/AI-powered-text-generator"
     },
     {
         "name": "Live Markdown Editor",
