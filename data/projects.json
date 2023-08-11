@@ -9,7 +9,7 @@
         "name": "Wasaa wa Sifa Online",
         "description": "24/7 Worship/Praise Gospel Online Radio",
         "img": "/images/projects/wasaa-wa-sifa-online.png",
-        "url": "https://wasaawasifaa.online"
+        "url": "https://wasaawasifa.online/"
     },
     {
         "name": "AI Powered Text Generatoe",
@@ -24,6 +24,12 @@
         "img": "/images/projects/live-mardown-app.png",
         "url": "https://tourmaline-sprinkles-3b0e04.netlify.app/",
         "repoUrl": "https://github.com/nelsonfrank/live-markdown-editor"
+    },
+    {
+        "name": "Booking app",
+        "description": "A booking app made using Flutter",
+        "img": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+        "repoUrl": "https://github.com/nelsonfrank/booking-app-mobile"
     },
     {
         "name": "Good Doctor web app",
