@@ -1,8 +1,9 @@
+"use client";
 // dependencies
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // components
 import { Humberger } from "@/components/icons";
@@ -12,14 +13,14 @@ import Sidebar from "./sidebar";
 import Logo from "@/public/logo.webp";
 
 const Navbar = () => {
-  const [showSidebar, setShowSidebar] = useState(false);
+	const [showSidebar, setShowSidebar] = useState(false);
 
-  const router = useRouter();
+	const router = useRouter();
 
-  const handleToggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-  };
-  return (
+	const handleToggleSidebar = () => {
+		setShowSidebar(!showSidebar);
+	};
+	return (
 		<header>
 			<section
 				className={`${
