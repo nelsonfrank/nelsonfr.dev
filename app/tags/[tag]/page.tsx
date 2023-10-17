@@ -1,17 +1,21 @@
 // dependencies
 import { GetStaticPaths, GetStaticProps } from "next";
+import { Metadata } from "next";
 
 //components
 import Posts from "@/components/posts";
-import SEO from "@/components/seo";
 
 // utils
 import { getAllPosts, PostMeta } from "@/utils/blog";
 
+export const metadata: Metadata = {
+	title: "Tags",
+};
+
 const Tags = ({ tag, posts }: { tag: string; posts: PostMeta[] }) => {
 	return (
 		<div>
-			<SEO title={`Tag: ${tag}`} />
+			{/* <SEO title={`Tag: ${tag}`} /> */}
 			<h1 className='text-4xl font-semibold capitalize'>Tag:{tag}</h1>
 			<div className='my-4'>
 				<Posts posts={posts} />

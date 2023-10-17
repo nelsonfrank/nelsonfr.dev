@@ -1,11 +1,11 @@
-import SEO from "@/components/seo";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+	title: "Uses",
+	description: "My current tools i use for developments and work",
+};
 const Uses = () => (
 	<div className='w-full mx-4'>
-		<SEO
-			title='Uses'
-			description='My current tools i use for developments and work'
-		/>
 		<div>
 			<h1 className='text-3xl font-semibold mt-4 mb-8'>Uses</h1>
 		</div>

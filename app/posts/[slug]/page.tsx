@@ -1,7 +1,7 @@
 // dependencies
+import { Metadata } from "next";
 import type { GetStaticProps, GetStaticPaths } from "next";
 import Image from "next/image";
-import Head from "next/head";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import rehypeSlug from "rehype-slug";
@@ -11,7 +11,6 @@ import "highlight.js/styles/atom-one-dark.css";
 
 // components
 import YouTube from "@/components/youtube";
-import SEO from "@/components/seo";
 
 // utils
 import { getPostFromSlug, getSlugs, PostMeta } from "@/utils/blog";
@@ -21,10 +20,14 @@ interface MDXPost {
 	meta: PostMeta;
 }
 
+export const metadata: Metadata = {
+	title: "My Page Title",
+};
+
 const BlogPost = ({ post }: { post: MDXPost }) => {
 	return (
 		<div className='py-8 mx-4'>
-			<SEO title={post.meta.title} description={post.meta.excerpt} />
+			{/* <SEO title={post.meta.title} description={post.meta.excerpt} /> */}
 			<h1>{post.meta.title}</h1>
 			<MDXRemote {...post.source} components={{ YouTube, Image }} />
 		</div>

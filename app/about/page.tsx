@@ -1,22 +1,24 @@
 // dependencies
 import Image from "next/image";
+import { Metadata } from "next";
 
 // components
 import { Satelite } from "@/components/icons";
 import Divider from "@/components/divider";
-import SEO from "@/components/seo";
-// UI
+
+// Containers
 import Experience from "@/ui/experience";
 import Skills from "@/ui/skills";
 import Education from "@/ui/education";
 
+export const metadata: Metadata = {
+	title: "About",
+	description: "I'm fullstack Typescript/Javascript Developer",
+};
+
 const About = () => {
 	return (
 		<section className='max-w-screen-lg mx-auto px-4 mt-4 mb-8 flex flex-col flex-1'>
-			<SEO
-				title='About'
-				description="I'm fullstack Typescript/Javascript Developer"
-			/>
 			<div className='mx-1 md:mx-8'>
 				<div className='flex flex-col md:flex-row md:justify-between md:items-center'>
 					<div className='flex justify-center mb-8 md:mb-0 md:mr-8'>
