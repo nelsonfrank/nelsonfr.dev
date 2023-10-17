@@ -17,26 +17,24 @@ const EducationBackground: ExperinceTitleCardProps[] = [
 
 const Education = () => {
   return (
-    <div className="nf-my-12">
-      <h1 className="nf-text-3xl nf-font-semibold nf-text-primary">
-        Education
-      </h1>
+		<div className='my-12'>
+			<h1 className='text-3xl font-semibold text-primary'>Education</h1>
 
-      <div>
-        {EducationBackground.map((item, index) => {
-          return (
-            <ExperienceTitleCard
-              title={item.title}
-              organizationName={item.organizationName}
-              duration={item.duration}
-              location={item.location}
-              key={item.title + index}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
+			<div>
+				{EducationBackground.map((item, index) => {
+					return (
+						<ExperienceTitleCard
+							title={item.title}
+							organizationName={item.organizationName}
+							duration={item.duration}
+							location={item.location}
+							key={item.title + index}
+						/>
+					);
+				})}
+			</div>
+		</div>
+	);
 };
 
 export default Education;

@@ -23,12 +23,12 @@ interface MDXPost {
 
 const BlogPost = ({ post }: { post: MDXPost }) => {
   return (
-    <div className="nf-py-8 nf-mx-4">
-      <SEO title={post.meta.title} description={post.meta.excerpt} />
-      <h1>{post.meta.title}</h1>
-      <MDXRemote {...post.source} components={{ YouTube, Image }} />
-    </div>
-  );
+		<div className='py-8 mx-4'>
+			<SEO title={post.meta.title} description={post.meta.excerpt} />
+			<h1>{post.meta.title}</h1>
+			<MDXRemote {...post.source} components={{ YouTube, Image }} />
+		</div>
+	);
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {

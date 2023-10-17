@@ -68,24 +68,22 @@ const WorkExperince: ExperinceTitleCardProps[] = [
 
 const Experience = () => {
   return (
-    <div id="experiences">
-      <h1 className="nf-text-3xl nf-font-semibold nf-text-primary">
-        Work experince
-      </h1>
-      <div>
-        {WorkExperince.map((item, index) => (
-          <ExperienceTitleCard
-            title={item.title}
-            organizationName={item.organizationName}
-            duration={item.duration}
-            location={item.location}
-            Flag={item.Flag}
-            key={item.title + index}
-          />
-        ))}
-      </div>
-    </div>
-  );
+		<div id='experiences'>
+			<h1 className='text-3xl font-semibold text-primary'>Work experince</h1>
+			<div>
+				{WorkExperince.map((item, index) => (
+					<ExperienceTitleCard
+						title={item.title}
+						organizationName={item.organizationName}
+						duration={item.duration}
+						location={item.location}
+						Flag={item.Flag}
+						key={item.title + index}
+					/>
+				))}
+			</div>
+		</div>
+	);
 };
 
 export default Experience;
