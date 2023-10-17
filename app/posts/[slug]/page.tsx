@@ -17,12 +17,12 @@ import SEO from "@/components/seo";
 import { getPostFromSlug, getSlugs, PostMeta } from "@/utils/blog";
 
 interface MDXPost {
-  source: MDXRemoteSerializeResult<Record<string, unknown>>;
-  meta: PostMeta;
+	source: MDXRemoteSerializeResult<Record<string, unknown>>;
+	meta: PostMeta;
 }
 
 const BlogPost = ({ post }: { post: MDXPost }) => {
-  return (
+	return (
 		<div className='py-8 mx-4'>
 			<SEO title={post.meta.title} description={post.meta.excerpt} />
 			<h1>{post.meta.title}</h1>
@@ -32,28 +32,28 @@ const BlogPost = ({ post }: { post: MDXPost }) => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { slug } = params as { slug: string };
-  const { content, meta } = getPostFromSlug(slug);
-  const mdxSource = await serialize(content, {
-    mdxOptions: {
-      rehypePlugins: [
-        rehypeSlug,
-        [rehypeAutolinkHeadings, { behavior: "wrap" }],
-        rehypeHighlight,
-      ],
-    },
-  });
+	const { slug } = params as { slug: string };
+	const { content, meta } = getPostFromSlug(slug);
+	const mdxSource = await serialize(content, {
+		mdxOptions: {
+			rehypePlugins: [
+				rehypeSlug,
+				[rehypeAutolinkHeadings, { behavior: "wrap" }],
+				rehypeHighlight,
+			],
+		},
+	});
 
-  return { props: { post: { source: mdxSource, meta } } };
+	return { props: { post: { source: mdxSource, meta } } };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = getSlugs().map((slug) => ({ params: { slug } }));
+	const paths = getSlugs().map((slug) => ({ params: { slug } }));
 
-  return {
-    paths,
-    fallback: false,
-  };
+	return {
+		paths,
+		fallback: false,
+	};
 };
 
 export default BlogPost;
