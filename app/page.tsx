@@ -7,7 +7,7 @@ import Introduction from "@/ui/introduction";
 import SEO from "@/components/seo";
 
 const Home: NextPage = () => {
-  return (
+	return (
 		<section className='px-4 mt-4 mb-8 flex flex-col flex-1'>
 			<SEO
 				title='Nelson Frank - Fullstack Javascript Developer'
