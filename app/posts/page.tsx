@@ -6,7 +6,7 @@ import SEO from "@/components/seo";
 import { getAllPosts, PostMeta } from "@/utils/blog";
 
 const Blog = ({ posts }: { posts: PostMeta[] }) => {
-  return (
+	return (
 		<div>
 			<SEO
 				title='Blog'
@@ -23,11 +23,11 @@ const Blog = ({ posts }: { posts: PostMeta[] }) => {
 };
 
 export async function getStaticProps() {
-  const posts = getAllPosts()
+	const posts = getAllPosts()
 		.slice(0, 9)
 		.reverse()
 		.map((post) => post.meta);
 
-  return { props: { posts } };
+	return { props: { posts } };
 }
 export default Blog;
