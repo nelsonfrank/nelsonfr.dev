@@ -1,47 +1,45 @@
 import SEO from "@/components/seo";
 
 const Uses = () => (
-	<div className='nf-w-full nf-mx-4'>
+	<div className='w-full mx-4'>
 		<SEO
 			title='Uses'
 			description='My current tools i use for developments and work'
 		/>
 		<div>
-			<h1 className='nf-text-3xl nf-font-semibold nf-mt-4 nf-mb-8'>Uses</h1>
+			<h1 className='text-3xl font-semibold mt-4 mb-8'>Uses</h1>
 		</div>
-		<div className='nf-flex nf-justify-center'>
+		<div className='flex justify-center'>
 			<div>
 				<img src='/desktop-setup.jpg' alt='Desktop setup' />
 			</div>
 		</div>
-		<div className='nf-my-8'>
-			<div className='nf-my-4'>
-				<h2 className='nf-font-medium nf-text-xl'>Editor</h2>
+		<div className='my-8'>
+			<div className='my-4'>
+				<h2 className='font-medium text-xl'>Editor</h2>
 				<ul>
-					<li className='nf-list-disc nf-ml-8'>Vs Code</li>
-					<li className='nf-list-disc nf-ml-8'>Vim</li>
-					<li className='nf-list-disc nf-ml-8'>Obsidian (Markdown editor)</li>
+					<li className='list-disc ml-8'>Vs Code</li>
+					<li className='list-disc ml-8'>Vim</li>
+					<li className='list-disc ml-8'>Obsidian (Markdown editor)</li>
 				</ul>
 			</div>
-			<div className='nf-my-4'>
-				<h2 className='nf-font-medium nf-text-xl'>Laptop and Peripherals</h2>
+			<div className='my-4'>
+				<h2 className='font-medium text-xl'>Laptop and Peripherals</h2>
 				<ul>
-					<li className='nf-list-disc nf-ml-8'>Lenovo T490s Laptop- 14inch</li>
-					<li className='nf-list-disc nf-ml-8'>
-						Dell U2712D Monitor - 27 inch
-					</li>
-					<li className='nf-list-disc nf-ml-8'>Logitech K235 Keyboard</li>
-					<li className='nf-list-disc nf-ml-8'>Logitech M170 Mouse</li>
+					<li className='list-disc ml-8'>Lenovo T490s Laptop- 14inch</li>
+					<li className='list-disc ml-8'>Dell U2712D Monitor - 27 inch</li>
+					<li className='list-disc ml-8'>Logitech K235 Keyboard</li>
+					<li className='list-disc ml-8'>Logitech M170 Mouse</li>
 				</ul>
 			</div>
-			<div className='nf-my-4'>
-				<h2 className='nf-font-medium nf-text-xl'>OS and Configuration</h2>
+			<div className='my-4'>
+				<h2 className='font-medium text-xl'>OS and Configuration</h2>
 				<ul>
-					<li className='nf-list-disc nf-ml-8'>Ubuntu 20.04</li>
-					<li className='nf-list-disc nf-ml-8'>i3 window manager</li>
-					<li className='nf-list-disc nf-ml-8'>Polybar</li>
-					<li className='nf-list-disc nf-ml-8'>Rofi</li>
-					<li className='nf-list-disc nf-ml-8'>Picom</li>
+					<li className='list-disc ml-8'>Ubuntu 20.04</li>
+					<li className='list-disc ml-8'>i3 window manager</li>
+					<li className='list-disc ml-8'>Polybar</li>
+					<li className='list-disc ml-8'>Rofi</li>
+					<li className='list-disc ml-8'>Picom</li>
 				</ul>
 			</div>
 		</div>

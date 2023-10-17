@@ -15,61 +15,61 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
     }, 250);
   };
   return (
-    <aside className="nf-h-screen ">
-      <header className="nf-flex nf-justify-end nf-my-10 nf-p-4">
-        <button onClick={handleToggleSidebar} name="close-icon">
-          <Close />
-        </button>
-      </header>
-      <ul className="nf-flex nf-flex-col nf-font-medium nf-text-4xl nf-items-center nf-justify-evenly nf-h-1/2 nf-list-none">
-        <li>
-          <button
-            className="nf-text-xl focus:nf-text-primary"
-            onClick={() => handleNavigation("/blog")}
-            name="Blog"
-          >
-            Blog
-          </button>
-        </li>
-        <li>
-          <button
-            className="nf-text-xl focus:nf-text-primary"
-            onClick={() => handleNavigation("/projects")}
-            name="Projects"
-          >
-            Projects
-          </button>
-        </li>
-        <li>
-          <button
-            className="nf-text-xl focus:nf-text-primary"
-            onClick={() => handleNavigation("/uses")}
-            name="Uses"
-          >
-            Uses
-          </button>
-        </li>
-        <li>
-          <button
-            className="nf-text-xl focus:nf-text-primary"
-            onClick={() => handleNavigation("/about")}
-            name="About"
-          >
-            About
-          </button>
-        </li>
-        <li>
-          <button
-            className="nf-text-white nf-text-xl nf-bg-primary nf-py-4 nf-px-10 nf-rounded-xl"
-            onClick={() => handleNavigation("/contacts")}
-            name="Get in touch"
-          >
-            Get in touch
-          </button>
-        </li>
-      </ul>
-    </aside>
-  );
+		<aside className='h-screen '>
+			<header className='flex justify-end my-10 p-4'>
+				<button onClick={handleToggleSidebar} name='close-icon'>
+					<Close />
+				</button>
+			</header>
+			<ul className='flex flex-col font-medium text-4xl items-center justify-evenly h-1/2 list-none'>
+				<li>
+					<button
+						className='text-xl focus:text-primary'
+						onClick={() => handleNavigation("/blog")}
+						name='Blog'
+					>
+						Blog
+					</button>
+				</li>
+				<li>
+					<button
+						className='text-xl focus:text-primary'
+						onClick={() => handleNavigation("/projects")}
+						name='Projects'
+					>
+						Projects
+					</button>
+				</li>
+				<li>
+					<button
+						className='text-xl focus:text-primary'
+						onClick={() => handleNavigation("/uses")}
+						name='Uses'
+					>
+						Uses
+					</button>
+				</li>
+				<li>
+					<button
+						className='text-xl focus:text-primary'
+						onClick={() => handleNavigation("/about")}
+						name='About'
+					>
+						About
+					</button>
+				</li>
+				<li>
+					<button
+						className='text-white text-xl bg-primary py-4 px-10 rounded-xl'
+						onClick={() => handleNavigation("/contacts")}
+						name='Get in touch'
+					>
+						Get in touch
+					</button>
+				</li>
+			</ul>
+		</aside>
+	);
 };
 
 export default Sidebar

@@ -24,43 +24,43 @@ const Card = ({
     Event
   > | null>(null);
   return (
-    <div className="nf-max-w-sm nf-mx-4 nf-my-4 nf-bg-white nf-rounded-lg nf-border nf-border-gray nf-shadow-md">
-      <a href="#">
-        <img
-          className="nf-rounded-t-lg"
-          src={error ? fallbackImg : img}
-          alt={description}
-          onError={setError}
-        />
-      </a>
-      <div className="nf-py-5 nf-px-4">
-        <h5 className="nf-my-2 nf-text-xl nf-font-bold nf-tracking-normal nf-text-gray-900">
-          {title}
-        </h5>
-        <p className="nf-mb-3 nf-font-normal nf-text-left nf-text-gray-700">
-          {description}
-        </p>
-        <div className="nf-flex nf-py-2">
-          <ul className="nf-flex nf-list-none nf-p-0 nf-my-0">
-            {repoUrl && (
-              <li className="nf-mr-4 nf-text-primary">
-                <a href={repoUrl} target="_blank">
-                  Code
-                </a>
-              </li>
-            )}
-            {url && (
-              <li className="nf-mr-4 nf-text-primary">
-                <a href={url} target="_blank">
-                  Preview
-                </a>
-              </li>
-            )}
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
+		<div className='max-w-sm mx-4 my-4 bg-white rounded-lg border border-gray shadow-md'>
+			<a href='#'>
+				<img
+					className='rounded-t-lg'
+					src={error ? fallbackImg : img}
+					alt={description}
+					onError={setError}
+				/>
+			</a>
+			<div className='py-5 px-4'>
+				<h5 className='my-2 text-xl font-bold tracking-normal text-gray-900'>
+					{title}
+				</h5>
+				<p className='mb-3 font-normal text-left text-gray-700'>
+					{description}
+				</p>
+				<div className='flex py-2'>
+					<ul className='flex list-none p-0 my-0'>
+						{repoUrl && (
+							<li className='mr-4 text-primary'>
+								<a href={repoUrl} target='_blank'>
+									Code
+								</a>
+							</li>
+						)}
+						{url && (
+							<li className='mr-4 text-primary'>
+								<a href={url} target='_blank'>
+									Preview
+								</a>
+							</li>
+						)}
+					</ul>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default Card;

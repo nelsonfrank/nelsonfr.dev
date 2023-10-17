@@ -6,20 +6,20 @@ import ProjectsData from "@/data/projects.json";
 
 const Projects = () => {
   return (
-    <div className="nf-grid nf-grid-cols-card-lists nf-gap-2 nf-justify-items-center">
-      <SEO title="Projects" />
-      {ProjectsData.map((project) => (
-        <Card
-          key={project.name}
-          title={project.name}
-          description={project.description}
-          img={project.img}
-          repoUrl={project.repoUrl}
-          url={project.url}
-        />
-      ))}
-    </div>
-  );
+		<div className='grid grid-cols-card-lists gap-2 justify-items-center'>
+			<SEO title='Projects' />
+			{ProjectsData.map((project) => (
+				<Card
+					key={project.name}
+					title={project.name}
+					description={project.description}
+					img={project.img}
+					repoUrl={project.repoUrl}
+					url={project.url}
+				/>
+			))}
+		</div>
+	);
 };
 
 export default Projects;

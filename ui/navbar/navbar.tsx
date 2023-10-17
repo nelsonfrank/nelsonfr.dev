@@ -20,86 +20,78 @@ const Navbar = () => {
     setShowSidebar(!showSidebar);
   };
   return (
-    <header>
-      <section
-        className={`${
-          showSidebar && "nf-hidden"
-        } nf-max-w-7xl nf-mx-auto nf-my-4 md:nf-my-8 nf-p-4`}
-      >
-        <div className="nf-flex nf-justify-between nf-items-center">
-          <div>
-            <Link href="/">
-              <a>
-                <Image
-                  src={Logo}
-                  alt="Logo svg"
-                  width="60"
-                  height="60"
-                  priority
-                />
-              </a>
-            </Link>
-          </div>
-          <div className="nf-hidden md:nf-inline-block">
-            <ul className="nf-flex nf-items-center nf-justify-end nf-list-none">
-              <li className="nf-mx-4">
-                <Link href="/blog">
-                  <button className="nf-text-xl focus:nf-text-primary">
-                    Blog
-                  </button>
-                </Link>
-              </li>
-              <li className="nf-mx-4">
-                <Link href="/projects">
-                  <button className="nf-text-xl focus:nf-text-primary">
-                    Projects
-                  </button>
-                </Link>
-              </li>
-              <li className="nf-mx-4">
-                <Link href="/uses">
-                  <button className="nf-text-xl focus:nf-text-primary">
-                    Uses
-                  </button>
-                </Link>
-              </li>
-              <li className="nf-mx-4">
-                <Link href="/about">
-                  <button className="nf-text-xl focus:nf-text-primary">
-                    About
-                  </button>
-                </Link>
-              </li>
-              <li className="nf-mx-4">
-                <button
-                  className="nf-text-white nf-bg-primary nf-py-2 nf-px-4 nf-rounded-xl"
-                  onClick={() => router.push("/contacts")}
-                  name="get in touch"
-                >
-                  Get in touch
-                </button>
-              </li>
-            </ul>
-          </div>
-          <div className="nf-block md:nf-hidden">
-            <button
-              onClick={handleToggleSidebar}
-              id="hamberger-menu-icon"
-              aria-label="hamberger-menu-icon"
-            >
-              <Humberger />
-            </button>
-          </div>
-        </div>
-      </section>
-      {showSidebar && (
-        <Sidebar
-          handleToggleSidebar={handleToggleSidebar}
-          closeSideBar={() => setShowSidebar(!showSidebar)}
-        />
-      )}
-    </header>
-  );
+		<header>
+			<section
+				className={`${
+					showSidebar && "hidden"
+				} max-w-7xl mx-auto my-4 md:my-8 p-4`}
+			>
+				<div className='flex justify-between items-center'>
+					<div>
+						<Link href='/'>
+							<Image
+								src={Logo}
+								alt='Logo svg'
+								width='60'
+								height='60'
+								priority
+							/>
+						</Link>
+					</div>
+					<div className='hidden md:inline-block'>
+						<ul className='flex items-center justify-end list-none'>
+							<li className='mx-4'>
+								<Link href='/blog'>
+									<button className='text-xl focus:text-primary'>Blog</button>
+								</Link>
+							</li>
+							<li className='mx-4'>
+								<Link href='/projects'>
+									<button className='text-xl focus:text-primary'>
+										Projects
+									</button>
+								</Link>
+							</li>
+							<li className='mx-4'>
+								<Link href='/uses'>
+									<button className='text-xl focus:text-primary'>Uses</button>
+								</Link>
+							</li>
+							<li className='mx-4'>
+								<Link href='/about'>
+									<button className='text-xl focus:text-primary'>About</button>
+								</Link>
+							</li>
+							<li className='mx-4'>
+								<button
+									className='text-white bg-primary py-2 px-4 rounded-xl'
+									onClick={() => router.push("/contacts")}
+									name='get in touch'
+								>
+									Get in touch
+								</button>
+							</li>
+						</ul>
+					</div>
+					<div className='block md:hidden'>
+						<button
+							onClick={handleToggleSidebar}
+							id='hamberger-menu-icon'
+							aria-label='hamberger-menu-icon'
+						>
+							<Humberger />
+						</button>
+					</div>
+				</div>
+			</section>
+			{showSidebar && (
+				<Sidebar
+					handleToggleSidebar={handleToggleSidebar}
+					closeSideBar={() => setShowSidebar(!showSidebar)}
+				/>
+			)}
+		</header>
+	);
 };
 
 export default Navbar;

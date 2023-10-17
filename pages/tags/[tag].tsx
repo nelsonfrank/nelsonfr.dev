@@ -10,14 +10,14 @@ import { getAllPosts, PostMeta } from "@/utils/blog";
 
 const Tags = ({ tag, posts }: { tag: string; posts: PostMeta[] }) => {
   return (
-    <div>
-      <SEO title={`Tag: ${tag}`} />
-      <h1 className="nf-text-4xl nf-font-semibold nf-capitalize">Tag:{tag}</h1>
-      <div className="nf-my-4">
-        <Posts posts={posts} />
-      </div>
-    </div>
-  );
+		<div>
+			<SEO title={`Tag: ${tag}`} />
+			<h1 className='text-4xl font-semibold capitalize'>Tag:{tag}</h1>
+			<div className='my-4'>
+				<Posts posts={posts} />
+			</div>
+		</div>
+	);
 };
 
 export const getStaticProps: GetStaticProps = ({ params }) => {
