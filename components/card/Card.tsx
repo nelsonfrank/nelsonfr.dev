@@ -1,29 +1,30 @@
+"use client";
 import { useState } from "react";
 
 import fallbackImage from "@/public/fallback.jpg";
 
 interface CardProps {
-  title: string;
-  description?: string;
-  img?: string;
-  fallbackImg?: string;
-  repoUrl?: string;
-  url?: string;
+	title: string;
+	description?: string;
+	img?: string;
+	fallbackImg?: string;
+	repoUrl?: string;
+	url?: string;
 }
 
 const Card = ({
-  title,
-  description,
-  img,
-  fallbackImg = "/fallback.jpg",
-  repoUrl,
-  url,
+	title,
+	description,
+	img,
+	fallbackImg = "/fallback.jpg",
+	repoUrl,
+	url,
 }: CardProps) => {
-  const [error, setError] = useState<React.SyntheticEvent<
-    HTMLImageElement,
-    Event
-  > | null>(null);
-  return (
+	const [error, setError] = useState<React.SyntheticEvent<
+		HTMLImageElement,
+		Event
+	> | null>(null);
+	return (
 		<div className='max-w-sm mx-4 my-4 bg-white rounded-lg border border-gray shadow-md'>
 			<a href='#'>
 				<img

@@ -5,7 +5,7 @@ import SEO from "@/components/seo";
 import ProjectsData from "@/data/projects.json";
 
 const Projects = () => {
-  return (
+	return (
 		<div className='grid grid-cols-card-lists gap-2 justify-items-center'>
 			<SEO title='Projects' />
 			{ProjectsData.map((project) => (
