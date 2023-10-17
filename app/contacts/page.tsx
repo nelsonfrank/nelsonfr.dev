@@ -1,13 +1,17 @@
+import { Metadata } from "next";
 // components
 import { SiGmail, SiGithub } from "react-icons/si";
 import { BsTwitter } from "react-icons/bs";
 import { FaPhoneAlt } from "react-icons/fa";
-import SEO from "@/components/seo";
+
+export const metadata: Metadata = {
+	title: "Contact",
+	description: "Get in touch with me here",
+};
 
 const Contacts = () => {
 	return (
 		<div className='mx-4'>
-			<SEO title='Contact' description='Get in touch with me here' />
 			<div className='mb-4'>
 				<h1 className='font-medium text-3xl'>Contacts</h1>
 			</div>
