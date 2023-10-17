@@ -11,7 +11,7 @@ import Skills from "@/ui/skills";
 import Education from "@/ui/education";
 
 const About = () => {
-  return (
+	return (
 		<section className='max-w-screen-lg mx-auto px-4 mt-4 mb-8 flex flex-col flex-1'>
 			<SEO
 				title='About'
@@ -26,6 +26,7 @@ const About = () => {
 							height={150}
 							layout='fixed'
 							className='rounded-full'
+							alt='profile image'
 						/>
 					</div>
 					<div>
