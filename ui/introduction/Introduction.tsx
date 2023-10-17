@@ -1,9 +1,10 @@
+"use client";
 // dependencies
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const Introduction = () => {
-  const router = useRouter();
-  return (
+	const router = useRouter();
+	return (
 		<section className='md:w-4/5 md:mx-auto'>
 			<div>
 				<div className=' px-2 py-4 flex items-center'>

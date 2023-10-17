@@ -1,10 +1,11 @@
+"use client";
 // dependencies
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
-  const router = useRouter();
-  return (
+	const router = useRouter();
+	return (
 		<header>
 			<section className='flex flex-col-reverse md:flex-row'>
 				<Image
