@@ -1,3 +1,5 @@
+import Footer from "@/ui/footer";
+import Navbar from "@/ui/navbar";
 import "./globals.css";
 // import { poppins, inter } from "./fonts";
 // import Preloader from "@/components/preloader";
@@ -20,7 +22,15 @@ export default function RootLayout({
 				<Preloader />
 				<StoreProvider> */}
 			<html lang='en'>
-				<body className='max-w-full mx-auto relative h-screen'>{children}</body>
+				<body className='max-w-full mx-auto relative h-screen'>
+					<main className='flex flex-col'>
+						<Navbar />
+						<section className='flex-1'>
+							<div className='max-w-screen-lg mx-auto'>{children}</div>
+						</section>
+						<Footer />
+					</main>
+				</body>
 				{/* <Toaster /> */}
 			</html>
 			{/* </StoreProvider>
