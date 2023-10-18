@@ -7,9 +7,9 @@ import { Satelite } from "@/components/icons";
 import Divider from "@/components/divider";
 
 // Containers
-import Experience from "@/ui/experience";
-import Skills from "@/ui/skills";
-import Education from "@/ui/education";
+import Experience from "@/containers/experience";
+import Skills from "@/containers/skills";
+import Education from "@/containers/education";
 
 export const metadata: Metadata = {
 	title: "About",

@@ -3,8 +3,8 @@ import type { NextPage } from "next";
 import { Metadata } from "next";
 
 // components
-import Hero from "@/ui/hero";
-import Introduction from "@/ui/introduction";
+import Hero from "@/containers/hero";
+import Introduction from "@/containers/introduction";
 
 export const metadata: Metadata = {
 	title: "Nelson Frank - Fullstack Javascript Develop",
