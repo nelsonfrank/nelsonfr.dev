@@ -25,10 +25,10 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
 				<li>
 					<button
 						className='text-xl focus:text-primary'
-						onClick={() => handleNavigation("/blog")}
-						name='Blog'
+						onClick={() => handleNavigation("/posts")}
+						name='Posts'
 					>
-						Blog
+						Posts
 					</button>
 				</li>
 				<li>

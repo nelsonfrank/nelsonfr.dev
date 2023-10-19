@@ -11,7 +11,11 @@ export const metadata: Metadata = {
 		"I writes and posts articles based on web development regularly, check them out",
 };
 
-const Blog = ({ posts }: { posts: PostMeta[] }) => {
+const Blog = () => {
+	const posts: PostMeta[] = getAllPosts()
+		.slice(0, 9)
+		.reverse()
+		.map((post) => post.meta);
 	return (
 		<div>
 			<div className='my-4'>
@@ -24,12 +28,4 @@ const Blog = ({ posts }: { posts: PostMeta[] }) => {
 	);
 };
 
-export async function getStaticProps() {
-	const posts = getAllPosts()
-		.slice(0, 9)
-		.reverse()
-		.map((post) => post.meta);
-
-	return { props: { posts } };
-}
 export default Blog;

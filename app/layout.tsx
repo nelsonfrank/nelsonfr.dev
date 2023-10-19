@@ -14,8 +14,8 @@ export default function RootLayout({
 	return (
 		<>
 			<html lang='en'>
-				<body className='max-w-full mx-auto relative h-screen'>
-					<main className='flex flex-col'>
+				<body>
+					<main className='flex flex-col min-h-screen'>
 						<Navbar />
 						<section className='flex-1'>
 							<div className='max-w-screen-lg mx-auto'>{children}</div>

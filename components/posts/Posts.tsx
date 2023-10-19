@@ -9,7 +9,7 @@ const Posts = ({ posts }: { posts: PostMeta[] }) => (
 		{posts.map((post) => (
 			<li key={post.slug} className='list-none my-6'>
 				<h1 className='text-2xl my-2 text-primary'>
-					<Link href={`/blog/${post.slug}`}>{post.title}</Link>
+					<Link href={`/posts/${post.slug}`}>{post.title}</Link>
 				</h1>
 				<p>{post.excerpt}</p>
 				<p className='text-sm tags mt-2'>
