@@ -42,8 +42,8 @@ const Navbar = () => {
 					<div className='hidden md:inline-block'>
 						<ul className='flex items-center justify-end list-none'>
 							<li className='mx-4'>
-								<Link href='/blog'>
-									<button className='text-xl focus:text-primary'>Blog</button>
+								<Link href='/posts'>
+									<button className='text-xl focus:text-primary'>Posts</button>
 								</Link>
 							</li>
 							<li className='mx-4'>
