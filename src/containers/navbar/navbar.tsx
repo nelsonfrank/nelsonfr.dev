@@ -65,7 +65,7 @@ const Navbar = () => {
 							</li>
 							<li className='mx-4'>
 								<button
-									className='text-white bg-primary py-2 px-4 rounded-xl'
+									className='text-secondary bg-primary py-2 px-4 rounded-xl'
 									onClick={() => router.push("/contacts")}
 									name='get in touch'
 								>

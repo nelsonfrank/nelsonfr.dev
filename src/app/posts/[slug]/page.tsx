@@ -12,15 +12,15 @@ import YouTube from "@/components/youtube";
 // utils
 import { getPostFromSlug, getSlugs, PostMeta } from "@/utils/blog";
 import { Suspense } from "react";
-
+import "@/styles/mdx.css";
 interface MDXPost {
 	source: MDXRemoteSerializeResult<Record<string, unknown>>;
 	meta: PostMeta;
 }
 
-export const metadata: Metadata = {
-	title: "My Page Title",
-};
+// export const metadata: Metadata = {
+// 	title: "My Page Title",
+// };
 
 const getPost = async ({ params }: { params: { slug: string } }) => {
 	const { slug } = params;

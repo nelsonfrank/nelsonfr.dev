@@ -60,7 +60,7 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
 				</li>
 				<li>
 					<button
-						className='text-white text-xl bg-primary py-4 px-10 rounded-xl'
+						className='text-secondary text-xl bg-primary py-4 px-10 rounded-xl'
 						onClick={() => handleNavigation("/contacts")}
 						name='Get in touch'
 					>
