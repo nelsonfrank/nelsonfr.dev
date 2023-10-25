@@ -30,7 +30,7 @@ const Hero = () => {
 						</p>
 						<div className='flex justify-center my-6'>
 							<button
-								className='text-white bg-primary py-3 px-6 rounded-xl'
+								className='text-secondary bg-primary py-3 px-6 rounded-xl'
 								onClick={() => router.push("/contacts")}
 							>
 								Get in touch

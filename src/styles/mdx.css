@@ -1,0 +1,88 @@
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6
+ {
+display: block; 
+margin-left: 0; 
+margin-right: 0; 
+font-weight: bold;
+}
+
+h1{
+font-size: 2em;
+margin-top: 0.67em;
+margin-bottom: 0.67em;
+
+}
+
+h2{
+font-size: 1.5em;
+margin-top: 0.83em;
+margin-bottom: 0.83em;
+
+}
+
+h3{
+font-size: 1.17em;
+margin-top: 1em;
+margin-bottom: 1em;
+
+}
+
+h4 {
+  display: block;
+margin-top: 1.33em;
+margin-bottom: 1.33em;
+
+}
+
+h5{
+font-size: .83em;
+margin-top: 1.67em;
+margin-bottom: 1.67em;
+
+}
+
+h6{
+font-size: .67em;
+margin-top: 2.33em;
+margin-bottom: 2.33em;
+
+}
+
+ul{
+  display: block;
+list-style-type: disc;
+margin-top: 1em;
+margin-bottom: 1 em;
+margin-left: 0;
+margin-right: 0;
+padding-left: 40px;
+}
+
+li {
+  display: list-item;
+}
+p{
+  display: block;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-left: 0;
+  margin-right: 0;
+}
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role='list'],
+ol[role='list'] {
+  list-style: disc;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
