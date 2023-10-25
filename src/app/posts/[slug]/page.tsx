@@ -44,6 +44,4 @@ const BlogPost = async ({ params }: { params: { slug: string } }) => {
 	);
 };
 
-
-
 export default BlogPost;

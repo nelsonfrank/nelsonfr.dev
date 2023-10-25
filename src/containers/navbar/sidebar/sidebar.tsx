@@ -1,20 +1,20 @@
-import { Close } from '@/components/icons'
+import { Close } from "@/components/icons/index";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 interface sidebarProps {
-  handleToggleSidebar: () => void;
-  closeSideBar: () => void;
+	handleToggleSidebar: () => void;
+	closeSideBar: () => void;
 }
 const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
-  const router = useRouter();
-  const handleNavigation = (route: string) => {
-    router.push(route);
-    setTimeout(() => {
-      closeSideBar();
-    }, 250);
-  };
-  return (
+	const router = useRouter();
+	const handleNavigation = (route: string) => {
+		router.push(route);
+		setTimeout(() => {
+			closeSideBar();
+		}, 250);
+	};
+	return (
 		<aside className='h-screen '>
 			<header className='flex justify-end my-10 p-4'>
 				<button onClick={handleToggleSidebar} name='close-icon'>
@@ -72,4 +72,4 @@ const Sidebar = ({ handleToggleSidebar, closeSideBar }: sidebarProps) => {
 	);
 };
 
-export default Sidebar
+export default Sidebar;
