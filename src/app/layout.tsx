@@ -3,7 +3,7 @@ import Navbar from "@/containers/navbar";
 import "@/styles/globals.css";
 
 export const metadata = {
-	title: "OpenAI Text Generator App",
+	title: "Nelson Frank, Software Developer Based in Dar es salaam, Tanzania.",
 };
 
 export default function RootLayout({
