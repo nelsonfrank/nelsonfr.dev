@@ -1,22 +1,22 @@
 // components
 import ExperienceTitleCard, {
-  ExperinceTitleCardProps,
+	ExperinceTitleCardProps,
 } from "@/components/experience-title-card/ExperinceTitleCard";
 
 const EducationBackground: ExperinceTitleCardProps[] = [
-  {
-    title: "Bs. in Computer science",
-    organizationName: "University of Dar es salaam",
-    location: "Dar es salaam",
-    duration: {
-      from: new Date("Tuesday, December 19, 2017 12:11:01 AM"),
-      to: new Date("Monday, October 19, 2020 12:11:01 AM"),
-    },
-  },
+	{
+		title: "Bs. in Computer science",
+		organizationName: "University of Dar es salaam",
+		location: "Dar es salaam",
+		duration: {
+			from: new Date("Tuesday, December 19, 2017 12:11:01 AM"),
+			to: new Date("Monday, October 19, 2020 12:11:01 AM"),
+		},
+	},
 ];
 
 const Education = () => {
-  return (
+	return (
 		<div className='my-12'>
 			<h1 className='text-3xl font-semibold text-primary'>Education</h1>
 

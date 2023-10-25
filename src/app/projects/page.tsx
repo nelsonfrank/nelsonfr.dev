@@ -2,7 +2,7 @@ import { Metadata } from "next";
 // components
 import Card from "@/components/card";
 
-import ProjectsData from "@/data/projects.json";
+import ProjectsData from "@/content/data/projects.json";
 
 export const metadata: Metadata = {
 	title: "Projects",

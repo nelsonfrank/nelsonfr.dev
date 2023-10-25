@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Metadata } from "next";
 
 // components
-import { Satelite } from "@/components/icons";
+import { Satelite } from "@/components/icons/index";
 import Divider from "@/components/divider";
 
 // Containers

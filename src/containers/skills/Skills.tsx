@@ -1,21 +1,21 @@
 // components
 import {
-  Css,
-  Expressjs,
-  Html,
-  Typescript,
-  Javascript,
-  Nodejs,
-  Reactjs,
-  Tailwindcss,
-  MongoDB,
-  Sass,
-  Graphql,
-  tRPC as TRPC,
-} from "@/components/icons";
+	Css,
+	Expressjs,
+	Html,
+	Typescript,
+	Javascript,
+	Nodejs,
+	Reactjs,
+	Tailwindcss,
+	MongoDB,
+	Sass,
+	Graphql,
+	tRPC as TRPC,
+} from "@/components/icons/index";
 
 const Skills = () => {
-  return (
+	return (
 		<div className='mt-12'>
 			<h1 className='text-3xl font-semibold text-primary'>Tech skills</h1>
 

@@ -1,6 +1,6 @@
 import Footer from "@/containers/footer";
 import Navbar from "@/containers/navbar";
-import "./globals.css";
+import "@/styles/globals.css";
 
 export const metadata = {
 	title: "OpenAI Text Generator App",

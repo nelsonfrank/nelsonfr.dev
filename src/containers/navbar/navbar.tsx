@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 // components
-import { Humberger } from "@/components/icons";
+import { Humberger } from "@/components/icons/index";
 import Sidebar from "./sidebar";
 
 // Images
