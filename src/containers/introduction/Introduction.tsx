@@ -23,7 +23,7 @@ const Introduction = () => {
 					<div>
 						<p>
 							I am a{" "}
-							<span className='font-semibold text-base md:text-lg'>
+							<span className='font-bold text-base md:text-lg'>
 								full-stack developer / software consultant
 							</span>{" "}
 							based in Dar es salaam.{" "}
