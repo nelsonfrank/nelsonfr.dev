@@ -1,5 +1,9 @@
+import { fontHeading, fontMono, fontSans } from "@/libs/fonts";
+import { cn } from "@/libs/utils";
+
 import Footer from "@/containers/footer";
 import Navbar from "@/containers/navbar";
+
 import "@/styles/globals.css";
 
 export const metadata = {
@@ -13,8 +17,15 @@ export default function RootLayout({
 }) {
 	return (
 		<>
-			<html lang='en'>
-				<body>
+			<html lang='en' suppressHydrationWarning>
+				<body
+					className={cn(
+						"min-h-screen bg-background font-mono antialiased",
+						fontSans.variable,
+						fontMono.variable,
+						fontHeading.variable
+					)}
+				>
 					<main className='flex flex-col min-h-screen'>
 						<Navbar />
 						<section className='flex-1'>

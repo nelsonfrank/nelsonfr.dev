@@ -10,7 +10,7 @@ import { Humberger } from "@/components/icons/index";
 import Sidebar from "./sidebar";
 
 // Images
-import Logo from "@/public/logo.webp";
+// import Logo from "../../../public/logo.webp";
 
 const Navbar = () => {
 	const [showSidebar, setShowSidebar] = useState(false);
@@ -31,7 +31,7 @@ const Navbar = () => {
 					<div>
 						<Link href='/'>
 							<Image
-								src={Logo}
+								src='/logo.webp'
 								alt='Logo svg'
 								width='60'
 								height='60'

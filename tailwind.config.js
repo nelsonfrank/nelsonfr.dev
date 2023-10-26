@@ -1,3 +1,6 @@
+import { fontFamily } from "tailwindcss/defaultTheme";
+
+/** @type {import('tailwindcss').Config} */
 module.exports = {
 	content: ["./src/**/*.{js,ts,jsx,tsx}"],
 	theme: {
@@ -9,6 +12,11 @@ module.exports = {
 			desktop: "1248px",
 		},
 		extend: {
+			fontFamily: {
+				sans: ["var(--font-sans)", ...fontFamily.sans],
+				mono: ["var(--font-mono)", ...fontFamily.mono],
+				heading: ["var(--font-heading)", ...fontFamily.sans],
+			},
 			colors: {
 				background: "hsl(var(--background))",
 				foreground: "hsl(var(--foreground))",
