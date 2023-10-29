@@ -9,7 +9,7 @@ export const fontSans = FontSans({
 export const fontMono = FontMono({
     weight: ['300', '400', '500', '600', '700'],
     subsets: ["latin"],
-    variable: "--font-mono",
+    variable: "--font-ibmplex-mono",
 })
 
 // Font files can be colocated inside of `pages`
