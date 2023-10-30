@@ -1,10 +1,11 @@
-import { fontHeading, fontMono, fontSans } from "@/libs/fonts";
+import { fontHeading, fontLogo, fontMono, fontSans } from "@/libs/fonts";
 import { cn } from "@/libs/utils";
 
 import Footer from "@/containers/footer";
-import Navbar from "@/containers/navbar";
+import { ThemeProvider } from "@/components/providers";
 
 import "@/styles/globals.css";
+import SiteHeader from "@/components/layouts/site-header";
 
 export const metadata = {
 	title: "Nelson Frank, Software Developer Based in Dar es salaam, Tanzania.",
@@ -23,16 +24,24 @@ export default function RootLayout({
 						"min-h-screen bg-background font-mono antialiased",
 						fontSans.variable,
 						fontMono.variable,
-						fontHeading.variable
+						fontHeading.variable,
+						fontLogo.variable
 					)}
 				>
-					<main className='flex flex-col min-h-screen'>
-						<Navbar />
-						<section className='flex-1'>
-							<div className='max-w-screen-lg mx-auto'>{children}</div>
-						</section>
-						<Footer />
-					</main>
+					<ThemeProvider
+						attribute='class'
+						defaultTheme='dark'
+						enableSystem
+						disableTransitionOnChange
+					>
+						<main className='flex flex-col min-h-screen max-w-5xl mx-auto relative'>
+							<SiteHeader />
+							<section className='flex-1'>
+								<div className='max-w-screen-lg mx-auto'>{children}</div>
+							</section>
+							<Footer />
+						</main>
+					</ThemeProvider>
 				</body>
 			</html>
 		</>

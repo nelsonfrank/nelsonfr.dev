@@ -72,6 +72,10 @@ module.exports = {
 				mono: ["var(--font-ibmplex-mono)", ...fontFamily.mono],
 				sans: ["var(--font-sans)", ...fontFamily.sans],
 				heading: ["var(--font-heading)", ...fontFamily.sans],
+				logo: ["var(--font-sacramento-mono)", ...fontFamily.mono],
+			},
+			gridTemplateColumns: {
+				"auto-fit": "repeat(auto-fit, minmax(300px, 1fr))",
 			},
 		},
 	},

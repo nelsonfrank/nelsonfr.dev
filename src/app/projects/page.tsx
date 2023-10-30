@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const Projects = () => {
 	return (
-		<div className='grid grid-cols-card-lists gap-2 justify-items-center'>
+		<div className='grid grid-cols-auto-fit gap-2 justify-items-center'>
 			{ProjectsData.map((project) => (
 				<Card
 					key={project.name}

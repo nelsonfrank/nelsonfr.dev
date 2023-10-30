@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import { Metadata } from "next";
 
 // components
-import Hero from "@/containers/hero";
+import Hero from "./hero";
 import Introduction from "@/containers/introduction";
 
 export const metadata: Metadata = {
@@ -18,7 +18,6 @@ const Home: NextPage = () => {
 		<section className='px-4 mt-4 mb-8 flex flex-col flex-1'>
 			<div>
 				<Hero />
-				<Introduction />
 			</div>
 		</section>
 	);
