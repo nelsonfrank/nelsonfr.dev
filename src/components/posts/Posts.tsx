@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 // utils
-import { PostMeta } from "@/utils/blog";
+import { PostMeta } from "@/libs/mdx";
 
 const Posts = ({ posts }: { posts: PostMeta[] }) => (
 	<ul>

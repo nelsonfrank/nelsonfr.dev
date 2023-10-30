@@ -6,7 +6,7 @@ import { Metadata } from "next";
 import Posts from "@/components/posts";
 
 // utils
-import { getAllPosts, PostMeta } from "@/utils/blog";
+import { getAllPosts, PostMeta } from "@/libs/mdx";
 
 export const metadata: Metadata = {
 	title: "Tags",

@@ -10,7 +10,7 @@ import "highlight.js/styles/atom-one-dark.css";
 import YouTube from "@/components/youtube";
 
 // utils
-import { getPostFromSlug, getSlugs, PostMeta } from "@/utils/blog";
+import { getPostFromSlug, getSlugs, PostMeta } from "@/libs/mdx";
 import { Suspense } from "react";
 import "@/styles/mdx.css";
 interface MDXPost {
