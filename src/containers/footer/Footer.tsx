@@ -1,27 +1,20 @@
-// components
-import Github from "@/components/icons/github";
-import Twitter from "@/components/icons/twitter";
+import { Separator } from "@/components/ui/separator";
+import { Divider } from "@/components/ui/divider";
 
 const Footer = () => (
-	<footer className='bg-gray-light'>
-		<section className='w-full flex flex-col mt-12 p-4'>
-			<div className='flex items-end justify-center mb-4'>
-				<div className='mr-4'>
-					<a href='https://github.com/nelsonfrank' target='_blank'>
-						<Github />
-					</a>
-				</div>
-				<div className='mr-4'>
-					<a href='https://twitter.com/nelsonfr_' target='_blank'>
-						<Twitter />
-					</a>
-				</div>
-			</div>
-			<div className='flex items-end justify-center'>
-				<p> All right reserved &copy; {new Date().getFullYear()}</p>
-			</div>
-		</section>
-	</footer>
+  <footer className="bg-gray-light">
+    <Divider />
+    <section className="w-full px-4 py-8 md:px-0">
+      <div className="flex flex-col items-center justify-center">
+        <p> Copyright &copy; {new Date().getFullYear()}</p>
+        <Separator
+          orientation="vertical"
+          className="mx-4 hidden h-4 md:block"
+        />
+        <p>All rights reserved.</p>
+      </div>
+    </section>
+  </footer>
 );
 
 export default Footer;
