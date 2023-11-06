@@ -5,82 +5,81 @@ import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { useState } from "react";
+import { Divider } from "@/components/ui/divider";
 
 export function MainNav() {
-	const [isNavOpen, setIsNavOpen] = useState(false);
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
-	return (
-		<>
-			<div className='flex justify-between items-center py-8 px-4'>
-				<div>
-					<Link href='/'>
-						<span className='hidden md:block font-headiing text-xl'>
-							Nelson Frank
-						</span>
-						<span className='block md:hidden font-headiing text-xl'>
-							NelsonFr.
-						</span>
-					</Link>
-				</div>
-				<nav className='hidden md:flex'>
-					<ul className='flex items-center gap-5'>
-						<li>
-							<Link
-								href='/posts'
-								className='mx-2 my-1 text-base active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4 focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4'
-							>
-								{" "}
-								Posts
-							</Link>
-						</li>
-						<li>
-							<Link
-								href='/projects'
-								className='mx-2 my-1 text-base active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4 focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4'
-							>
-								{" "}
-								Projects
-							</Link>
-						</li>
-						<li>
-							<Link
-								href='/uses'
-								className='mx-2 my-1 text-base active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4 focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4'
-							>
-								{" "}
-								Uses
-							</Link>
-						</li>
-						<li>
-							<Link
-								href='/about'
-								className='mx-2 my-1 text-base active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4 focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4'
-							>
-								{" "}
-								About
-							</Link>
-						</li>
-						<Button variant='ghost' size='icon'>
-							<Link href='/search' className=''>
-								<MagnifyingGlassIcon className='h-5 w-5' />
-							</Link>
-						</Button>
+  return (
+    <>
+      <div className="flex items-center justify-between px-4 py-6">
+        <div>
+          <Link href="/">
+            <span className="font-headiing hidden text-2xl md:block">
+              Nelson Frank
+            </span>
+            <span className="font-headiing block text-2xl md:hidden">
+              NelsonFr.
+            </span>
+          </Link>
+        </div>
+        <nav className="hidden md:flex">
+          <ul className="flex items-center gap-5">
+            <li>
+              <Link
+                href="/posts"
+                className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
+              >
+                {" "}
+                Posts
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/projects"
+                className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
+              >
+                {" "}
+                Projects
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/uses"
+                className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
+              >
+                {" "}
+                Uses
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/about"
+                className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
+              >
+                {" "}
+                About
+              </Link>
+            </li>
+            <Button variant="ghost" size="icon">
+              <Link href="/search" className="">
+                <MagnifyingGlassIcon className="h-5 w-5" />
+              </Link>
+            </Button>
 
-						<ThemeToggle />
-					</ul>
-				</nav>
-				<Button
-					variant='ghost'
-					size='icon'
-					className='md:hidden'
-					onClick={() => setIsNavOpen((isNavOpen) => !isNavOpen)}
-				>
-					{isNavOpen ? <Icons.close /> : <Icons.menu />}
-				</Button>
-			</div>
-			<div className='w-full px-4'>
-				<hr aria-hidden='true' className='border-destructive border' />
-			</div>
-		</>
-	);
+            <ThemeToggle />
+          </ul>
+        </nav>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={() => setIsNavOpen((isNavOpen) => !isNavOpen)}
+        >
+          {isNavOpen ? <Icons.close /> : <Icons.menu />}
+        </Button>
+      </div>
+      <Divider />
+    </>
+  );
 }
