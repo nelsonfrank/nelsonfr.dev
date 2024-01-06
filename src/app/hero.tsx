@@ -9,7 +9,7 @@ const Hero = () => {
 	return (
     <header>
       <section className="flex flex-col-reverse md:flex-row">
-        <div className="flex flex-1 flex-col md:items-center md:px-8">
+        <div className="flex flex-1 flex-col md:items-center">
           <div className="text-center md:mt-20 md:text-left">
             <h1 className="my-4 text-2xl font-light">
               Hello👋, I'm{" "}
