@@ -74,3 +74,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .squiggle {
+    filter: url("#squiggle");
+    position: relative;
+    transform: translateZ(0);
+  }
+
+  .card-img {
+    width: 100%;
+    aspect-ratio: 15/7;
+    object-fit: cover;
+  }
+}
