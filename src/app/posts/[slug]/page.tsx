@@ -35,7 +35,6 @@ const BlogPost = async ({ params }: { params: { slug: string } }) => {
 	const Img = Image;
 	return (
 		<div className='py-8 mx-4'>
-			{/* <SEO title={post.meta.title} description={post.meta.excerpt} /> */}
 			<h1>{post.meta.title}</h1>
 			<Suspense fallback={<>Loading...</>}>
 				<MDXRemote source={post.source} components={{ YouTube }} />
