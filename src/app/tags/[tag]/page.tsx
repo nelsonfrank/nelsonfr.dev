@@ -7,42 +7,36 @@ import Posts from "@/components/posts";
 
 // utils
 import { getAllPosts, PostMeta } from "@/libs/mdx";
+import { PostCard } from "@/app/posts";
 
 export const metadata: Metadata = {
-	title: "Tags",
+  title: "Tags",
 };
 
-const Tags = ({ tag, posts }: { tag: string; posts: PostMeta[] }) => {
-	return (
-		<div>
-			{/* <SEO title={`Tag: ${tag}`} /> */}
-			<h1 className='text-4xl font-semibold capitalize'>Tag:{tag}</h1>
-			<div className='my-4'>
-				<Posts posts={posts} />
-			</div>
-		</div>
-	);
-};
-
-export const getStaticProps: GetStaticProps = ({ params }) => {
-	const { tag } = params as { tag: string };
-	const posts = getAllPosts().filter((post) => post.meta.tags.includes(tag));
-	return {
-		props: {
-			tag,
-			posts: posts.map((post) => post.meta),
-		},
-	};
-};
-
-export const getStaticPaths: GetStaticPaths = () => {
-	const posts = getAllPosts();
-	const tags = new Set(posts.map((post) => post.meta.tags).flat());
-	const paths = Array.from(tags).map((tag) => ({ params: { tag } }));
+const filterAllPostsByTag = async ({ params }: { params: { tag: string } }) => {
+  const { tag } = params;
+  const posts = getAllPosts().filter((post) => post.meta.tags.includes(tag));
 
 	return {
-		paths,
-		fallback: false,
-	};
+    tag,
+    posts: posts.map((post) => post.meta),
+  };
 };
+const Tags = async ({params}: {params: {tag: string}}) => {
+	const { posts, tag } = await filterAllPostsByTag({ params });
+	
+  return (
+    <div className="my-8">
+      <h1 className="text-4xl font-semibold capitalize">Tag:{tag}</h1>
+      <section className="grid grid-cols-1 gap-6 py-8 md:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post) => (
+          <div className="col-span-1" key={post.slug}>
+            <PostCard post={post} />
+          </div>
+        ))}
+      </section>
+    </div>
+  );
+};
+
 export default Tags;
