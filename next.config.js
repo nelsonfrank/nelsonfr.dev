@@ -16,14 +16,14 @@ module.exports = withSentryConfig(
 		// For all available options, see:
 		// https://github.com/getsentry/sentry-webpack-plugin#options
 
-		// Suppresses source map uploading logs during build
-		silent: true,
-		org: "nelson-frank",
-		project: "nelsonfrdotdev",
-	},
-	{
-		// For all available options, see:
-		// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+    // Suppresses source map uploading logs during build
+    silent: true,
+    org: "nelson-frank",
+    project: "nelsonfrdotdev",
+  },
+  {
+    // For all available options, see:
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
 		// Upload a larger set of source maps for prettier stack traces (increases build time)
 		widenClientFileUpload: true,
