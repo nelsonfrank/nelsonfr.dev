@@ -11,7 +11,7 @@ const Uses = () => (
 		</div>
 		<div className='flex justify-center'>
 			<div>
-				<img src='/desktop-setup.jpg' alt='Desktop setup' />
+				<img src='/desktop-setup.webp' alt='Desktop setup' fetchPriority="high" />
 			</div>
 		</div>
 		<div className='my-8'>
