@@ -12,7 +12,7 @@ export function MainNav() {
 
   return (
     <>
-      <div className="flex items-center justify-between px-4 py-6">
+      <div className="flex items-center justify-between py-6">
         <div>
           <Link href="/">
             <span className="font-headiing hidden text-2xl md:block">
@@ -25,7 +25,7 @@ export function MainNav() {
         </div>
         <nav className="hidden md:flex">
           <ul className="flex items-center gap-5">
-            <li>
+            <li className="list-none">
               <Link
                 href="/posts"
                 className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
@@ -34,7 +34,7 @@ export function MainNav() {
                 Posts
               </Link>
             </li>
-            <li>
+            <li className="list-none">
               <Link
                 href="/projects"
                 className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
@@ -43,7 +43,7 @@ export function MainNav() {
                 Projects
               </Link>
             </li>
-            <li>
+            <li className="list-none">
               <Link
                 href="/uses"
                 className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
@@ -52,7 +52,7 @@ export function MainNav() {
                 Uses
               </Link>
             </li>
-            <li>
+            <li className="list-none">
               <Link
                 href="/about"
                 className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
