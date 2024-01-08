@@ -33,14 +33,14 @@ const Hero = () => {
             </div>
           </div>
         </div>
-        <div className="hidden flex-1  md:flex md:justify-center">
+        <div className=" flex justify-center md:flex-1">
           <Image
-            src="/hero_coding_illustration.svg"
+            src="/landing-page.png"
             height={200}
             width={400}
             alt="hero illustrations"
             priority
-            className="rounded-full"
+            className="rounded-2xl"
           />
         </div>
       </section>
