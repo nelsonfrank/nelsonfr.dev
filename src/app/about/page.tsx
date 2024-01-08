@@ -21,15 +21,27 @@ const About = () => {
     <section className="mx-auto mb-8 mt-4 flex max-w-screen-lg flex-1 flex-col px-4">
       <div className="mx-1 md:mx-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-          <div className="mb-8 flex justify-center md:mb-0 md:mr-8">
-            <Image
-              src="/profile.png"
-              width={150}
-              height={150}
-              layout="fixed"
-              className="rounded-full"
-              alt="profile image"
-            />
+          <div className="mb-4 flex justify-center md:mb-0 md:mr-8">
+            <div className="flex md:hidden">
+              <Image
+                src="/about-me.png"
+                width={150}
+                height={150}
+                layout="fixed"
+                className="rounded-full"
+                alt="profile image"
+              />
+            </div>
+            <div className="hidden md:flex">
+              <Image
+                src="/about-me.png"
+                width={550}
+                height={250}
+                layout="fixed"
+                className="rounded-full"
+                alt="profile image"
+              />
+            </div>
           </div>
           <div>
             <div>
@@ -39,8 +51,7 @@ const About = () => {
               </div>
             </div>
             <p>
-              Hi, my name is Nelson Frank and I am a 25-year-old fullstack
-              JavaScript developer. I have been working as a developer for about
+              Hi, my name is Nelson Frank and I am a senior software developer. I have been working as a developer for about
               four years now and have gained a lot of experience in both
               frontend and backend technologies. In my free time, I enjoy
               staying up to date with the latest developments in the world of
