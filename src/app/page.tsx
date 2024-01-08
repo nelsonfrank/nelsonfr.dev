@@ -35,6 +35,19 @@ const Home: NextPage = () => {
 				</div>
 				<Posts />
 			</div>
+			<div className="mt-8">
+				<div className="flex justify-between items-center">
+					<div>
+						<h2 className="text-3xl font-bold">Recent Projects</h2>
+					</div>
+					<div>
+						<Button variant="link" asChild>
+							<Link href="/posts">All Projects</Link>
+						</Button>
+					</div>
+				</div>
+				<Projects />
+			</div>
 		</section>
 	);
 };
