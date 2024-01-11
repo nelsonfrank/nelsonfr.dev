@@ -4,7 +4,7 @@ import { cn, randomizeBadgeColor } from "@/libs/utils";
 import Link from "next/link";
 
 export const PostCard = ({ post }: { post: PostMeta }) => (
-  <div className="relative top-0 flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-75 ease-in-out hover:-top-2 hover:shadow-xl">
+  <div className="relative top-0 flex h-full flex-col border border-border overflow-hidden rounded-xl shadow-lg transition-all duration-75 ease-in-out hover:-top-2 hover:shadow-xl">
     <Link href={`/posts/${post.slug}`}>
       <img
         className="squiggle card-img"
@@ -15,7 +15,7 @@ export const PostCard = ({ post }: { post: PostMeta }) => (
       />
     </Link>
     <div className="relative flex-1 px-8 py-6">
-      <h2 className="text-2xl font-bold capitalize leading-tight text-black">
+      <h2 className="text-2xl font-bold capitalize leading-tight">
         <Link href={`/posts/${post.slug}`}>{post.title.toLowerCase()}</Link>
       </h2>
       <p className="my-4 flex items-center text-xs text-gray-600">
