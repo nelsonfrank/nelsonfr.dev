@@ -39,12 +39,14 @@ interface ProjectCardProp {
 }
 export function ProjectCard({ project }: { project: ProjectCardProp }) {
   return (
-    <Card className="relative top-0 shadow-lg transition-all duration-75 ease-in-out hover:-top-2 hover:shadow-xl">
+    <Card
+      className="relative flex flex-col top-0 shadow-lg transition-all duration-75 ease-in-out hover:-top-2 hover:shadow-xl"
+    >
       <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
         <div className="space-y-1">
           <CardTitle>
             <Link
-              className="hover:text-underline flex items-center"
+              className="hover:text-underline flex items-center leading-relaxed"
               target="_blank"
               href={project.demoLink}
             >
@@ -103,8 +105,8 @@ export function ProjectCard({ project }: { project: ProjectCardProp }) {
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="flex justify-between space-x-4 text-sm text-muted-foreground">
+      <CardContent className="flex-1 relative">
+        <div className="flex justify-between absolute bottom-4 space-x-4 text-sm text-muted-foreground">
           <div className="flex items-center">
             <CircleIcon className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
             {project.language}
