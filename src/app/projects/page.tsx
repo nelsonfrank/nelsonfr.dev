@@ -1,28 +1,25 @@
 import { Metadata } from "next";
-// components
-import Card from "@/components/card";
 
 import ProjectsData from "@/content/data/projects.json";
+import { ProjectCard } from "@/components/card/project-card";
 
 export const metadata: Metadata = {
 	title: "Projects",
 };
 
-const Projects = () => {
+const Page = () => {
 	return (
-		<div className='grid grid-cols-auto-fit gap-2 justify-items-center'>
-			{ProjectsData.map((project) => (
-				<Card
-					key={project.name}
-					title={project.name}
-					description={project.description}
-					img={project.img}
-					repoUrl={project.repoUrl}
-					url={project.url}
-				/>
-			))}
-		</div>
-	);
+    <div className="grid grid-cols-auto-fit justify-items-center gap-2">
+      {ProjectsData.map((project, index) => (
+        <div
+          className="mx-2 my-4 flex"
+          key={index + 1}
+        >
+          <ProjectCard project={project} />
+        </div>
+      ))}
+    </div>
+  );
 };
 
-export default Projects;
+export default Page;
