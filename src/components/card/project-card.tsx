@@ -1,22 +1,23 @@
-'use client'
+"use client";
 import {
   ChevronDownIcon,
   CircleIcon,
   PlusIcon,
-    StarIcon,
-    GitHubLogoIcon,
-    ExternalLinkIcon,
-  GlobeIcon
-} from "@radix-ui/react-icons"
+  StarIcon,
+  GitHubLogoIcon,
+  ExternalLinkIcon,
+  GlobeIcon,
+  ArrowTopRightIcon,
+} from "@radix-ui/react-icons";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,34 +25,45 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
-interface ProjectProp {
-    "name": string
-    "description": string
-    "liveDemo": string
-    "img": string
-    technology: string
-    repoUrl: string
-    start: string
-    lastUpdated: string
+interface ProjectCardProp {
+  name: string;
+  description: string;
+  demoLink: string;
+  img: string;
+  sourceCode: string;
+  language: string;
 }
-export function ProjectCard() {
+export function ProjectCard({ project }: { project: ProjectCardProp }) {
   return (
     <Card className="relative top-0 shadow-lg transition-all duration-75 ease-in-out hover:-top-2 hover:shadow-xl">
       <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
         <div className="space-y-1">
-          <CardTitle>shadcn/ui</CardTitle>
-          <CardDescription>
-            Beautifully designed components that you can copy and paste into
-            your apps. Accessible. Customizable. Open Source.
-          </CardDescription>
+          <CardTitle>
+            <Link
+              className="hover:text-underline flex items-center"
+              target="_blank"
+              href={project.demoLink}
+            >
+              {project.name}
+              <ArrowTopRightIcon className="ml-2 h-5 w-5" />
+            </Link>
+          </CardTitle>
+          <CardDescription>{project.description}</CardDescription>
         </div>
         <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
           <Button variant="secondary" className="px-3 shadow-none">
-            <GitHubLogoIcon className="mr-2 h-4 w-4" />
-            Code
+            <Link
+              className="flex items-center"
+              target="_blank"
+              href={project.sourceCode}
+            >
+              <GitHubLogoIcon className="mr-2 h-4 w-4" />
+              Code
+            </Link>
           </Button>
           <Separator orientation="vertical" className="h-[20px]" />
           <DropdownMenu>
@@ -69,27 +81,37 @@ export function ProjectCard() {
               <DropdownMenuLabel>Suggested Lists</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-               <ExternalLinkIcon className="mr-2 h-4 w-4" /> Live Demo
+                <Link
+                  className="flex items-center"
+                  target="_blank"
+                  href={project.demoLink}
+                >
+                  <ExternalLinkIcon className="mr-2 h-4 w-4" /> Live Demo
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem><GitHubLogoIcon className="mr-2 h-4 w-4" /> Source Code</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link
+                  className="flex items-center"
+                  target="_blank"
+                  href={project.sourceCode}
+                >
+                  <GitHubLogoIcon className="mr-2 h-4 w-4" /> Source Code
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex space-x-4 text-sm text-muted-foreground">
+        <div className="flex justify-between space-x-4 text-sm text-muted-foreground">
           <div className="flex items-center">
             <CircleIcon className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
-            TypeScript
-          </div>
-          <div className="flex items-center">
-            <StarIcon className="mr-1 h-3 w-3" />
-            20k
+            {project.language}
           </div>
           <div>Updated April 2023</div>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

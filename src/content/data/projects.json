@@ -2,53 +2,65 @@
     {
         "name": "Mhelepu Shillingi Arts",
         "description": "Contemporary artist portifolio and gallery",
-        "url": "https://mhelepushillingiarts.com",
-        "img": "https://images.unsplash.com/photo-1507643179773-3e975d7ac515?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+        "demoLink": "https://mhelepushillingiarts.com",
+        "img": "https://images.unsplash.com/photo-1507643179773-3e975d7ac515?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+        "sourceCode": "https://github.com/nelsonfrank/AI-powered-text-generator",
+        "language":"Typescript"
     },
     {
         "name": "Wasaa wa Sifa Online",
         "description": "24/7 Worship/Praise Gospel Online Radio",
         "img": "/images/projects/wasaa-wa-sifa-online.png",
-        "url": "https://wasaawasifa.online/"
+        "demoLink": "https://wasaawasifa.online/",
+        "sourceCode": "https://github.com/nelsonfrank/AI-powered-text-generator",
+        "language":"Typescript"
     },
     {
-        "name": "AI Powered Text Generatoe",
+        "name": "AI Powered Text Generator",
         "description": "Text generator powered by OpenAI API, based on GPT-3.5",
         "img": "https://images.unsplash.com/photo-1655890954739-c5782b4a8211?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80",
-        "repoUrl": "https://github.com/nelsonfrank/AI-powered-text-generator"
+        "demoLink": "https://good-doctor-app.vercel.app/",
+        "sourceCode": "https://github.com/nelsonfrank/AI-powered-text-generator",
+        "language":"Typescript"
     },
     {
         "name": "Live Markdown Editor",
         "description": "Live Preview markdown editor",
         "img": "/images/projects/live-mardown-app.png",
-        "url": "https://tourmaline-sprinkles-3b0e04.netlify.app/",
-        "repoUrl": "https://github.com/nelsonfrank/live-markdown-editor"
+        "demoLink": "https://tourmaline-sprinkles-3b0e04.netlify.app/",
+        "sourceCode": "https://github.com/nelsonfrank/live-markdown-editor",
+        "language":"Typescript"
     },
     {
         "name": "Booking app",
         "description": "A booking app made using Flutter",
         "img": "/images/projects/booking-app.png",
-        "repoUrl": "https://github.com/nelsonfrank/booking-app-mobile"
+        "demoLink": "https://good-doctor-app.vercel.app/",
+        "sourceCode": "https://github.com/nelsonfrank/booking-app-mobile",
+        "language":"Typescript"
     },
     {
         "name": "Good Doctor web app",
         "description": "Make doctor appointment online",
         "img": "/images/projects/good-doctor.png",
-        "url": "https://good-doctor-app.vercel.app/",
-        "repoUrl": "https://github.com/nelsonfrank/good-doctor-web"
+        "demoLink": "https://good-doctor-app.vercel.app/",
+        "sourceCode": "https://github.com/nelsonfrank/good-doctor-web",
+        "language":"Typescript"
     },
     {
         "name": "Ansible Template",
         "description": "A simple ansible template with descriptive readme file",
         "img": "/images/projects/ansible-template.jpg",
-        "url": "",
-        "repoUrl": "https://github.com/nelsonfrank/ansible-template"
+        "demoLink": "",
+        "sourceCode": "https://github.com/nelsonfrank/ansible-template",
+        "language":"Typescript"
     },
     {
         "name": "Food Delivery REST API",
         "description": "A complex food delivery nodejs rest api application",
         "img": "/images/projects/food-delivery-rest-api.jpg",
-        "url": "",
-        "repoUrl": "https://github.com/food-forward/food-delivery-backend"
+        "demoLink": "",
+        "sourceCode": "https://github.com/food-forward/food-delivery-backend",
+        "language":"Typescript"
     }
 ]
