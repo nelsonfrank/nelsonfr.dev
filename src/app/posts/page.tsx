@@ -1,15 +1,11 @@
-// components
-import Posts from "@/components/posts";
 import { Metadata } from "next";
-
-// utils
 import { getAllPosts, PostMeta } from "@/libs/mdx";
 import { PostCard } from "../posts";
 
 export const metadata: Metadata = {
   title: "Posts",
   description:
-    "I writes and posts articles based on web development regularly, check them out",
+    "I writes and posts articles based on tech and programming.",
 };
 
 const Blog = () => {

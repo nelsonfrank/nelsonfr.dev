@@ -86,3 +86,7 @@ picture {
   max-width: 100%;
   display: block;
 }
+
+code{
+  border-radius: 20px;
+}
