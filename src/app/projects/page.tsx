@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 
 const Page = () => {
 	return (
-    <div className="grid grid-cols-auto-fit justify-items-center gap-2">
+    <div className="grid grid-cols-auto-fit justify-items-center gap-4 my-4">
       {ProjectsData.map((project, index) => (
         <div
-          className="mx-2 my-4 px-4 flex w-full md:px-0"
+          className="flex w-full"
           key={index + 1}
         >
           <ProjectCard project={project} />

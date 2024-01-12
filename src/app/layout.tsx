@@ -37,7 +37,7 @@ export default function RootLayout({
 						<main className='flex flex-col min-h-screen max-w-5xl mx-auto relative'>
 							<SiteHeader />
 							<section className='flex-1'>
-								<div className='max-w-screen-lg mx-auto'>{children}</div>
+								<div className='max-w-screen-lg mx-4 lg:mx-auto'>{children}</div>
 							</section>
 							<Footer />
 						</main>

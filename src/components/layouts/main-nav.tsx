@@ -12,7 +12,7 @@ export function MainNav() {
 
   return (
     <>
-      <div className="flex items-center justify-between py-6">
+      <div className="flex items-center justify-between py-6 px-4 lg:px-0">
         <div>
           <Link href="/">
             <span className="font-headiing hidden text-2xl md:block">
