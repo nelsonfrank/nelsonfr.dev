@@ -16,7 +16,7 @@ export function PostBody({ children }: { children: string }) {
       options={{
         mdxOptions: {
           remarkPlugins: [
-            // remarkGfm,
+            remarkGfm,
             remarkA11yEmoji,
             remarkToc,
           ],
