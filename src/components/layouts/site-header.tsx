@@ -31,19 +31,19 @@ const SiteHeader = () => {
   };
 	return (
 		<header>
-			<MainNav isActive={isActive} toggleMenu={()=>setIsActive(!isActive)} />
-      {isActive &&
+			<MainNav isActive={isActive} toggleMenu={()=>{setIsActive(!isActive)}} />
+      
       <motion.div
-        className={cn(isActive ? "block px-4" : "hidden")}
+        className="px-4"
         variants={menu}
         animate={isActive ? "open" : "closed"}
         initial="closed"
       >
-		<AnimatePresence>
-			<MobileNav />
-		</AnimatePresence>
-				</motion.div>
-			}
+        <AnimatePresence>
+          {isActive &&<MobileNav />}
+        </AnimatePresence>
+			</motion.div>
+			
     </header>
   );
 };
