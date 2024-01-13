@@ -61,11 +61,12 @@ export function MainNav() {
                 About
               </Link>
             </li>
-            <Button variant="ghost" size="icon">
+            {/* TODO: Enable this after implement search functionality */}
+            {/* <Button variant="ghost" size="icon">
               <Link href="/search" className="">
                 <MagnifyingGlassIcon className="h-5 w-5" />
               </Link>
-            </Button>
+            </Button> */}
 
             <ThemeToggle />
           </ul>
