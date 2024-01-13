@@ -83,5 +83,6 @@ module.exports = {
 		require("tailwindcss-animate"),
 		require("@tailwindcss/typography"),
 		require("@headlessui/tailwindcss"),
+		require('@kamona/tailwindcss-perspective'),
 	],
 };

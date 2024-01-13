@@ -7,12 +7,16 @@ import { Icons } from "@/components/icons";
 import { useState } from "react";
 import { Divider } from "@/components/ui/divider";
 
-export function MainNav() {
-  const [isNavOpen, setIsNavOpen] = useState(false);
+export interface MainNavProps {
+  isActive: boolean,
+  toggleMenu: () => void
+}
+
+export function MainNav({isActive, toggleMenu}: MainNavProps) {
 
   return (
     <>
-      <div className="flex items-center justify-between py-6 px-4 lg:px-0">
+      <div className="flex items-center justify-between px-4 py-6 lg:px-0">
         <div>
           <Link href="/">
             <span className="font-headiing hidden text-2xl md:block">
@@ -71,13 +75,14 @@ export function MainNav() {
             <ThemeToggle />
           </ul>
         </nav>
+
         <Button
           variant="ghost"
           size="icon"
           className="md:hidden"
-          onClick={() => setIsNavOpen((isNavOpen) => !isNavOpen)}
+          onClick={toggleMenu}
         >
-          {isNavOpen ? <Icons.close /> : <Icons.menu />}
+          {isActive ? <Icons.close /> : <Icons.menu />}
         </Button>
       </div>
       <Divider />
