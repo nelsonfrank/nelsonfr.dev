@@ -11,12 +11,12 @@ const BlogPost = async ({ params }: { params: { slug: string } }) => {
 
   
   return (
-    <div className="mx-4 py-8">
+    <article className="mx-4 py-8 leading-relaxed">
       <h1>{post.meta.title}</h1>
       <Suspense fallback={<>Loading...</>}>
         <PostBody>{ post?.source }</PostBody>
       </Suspense>
-    </div>
+    </article>
   );
 };
 

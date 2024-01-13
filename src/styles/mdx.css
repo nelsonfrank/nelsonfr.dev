@@ -13,7 +13,7 @@ font-weight: bold;
 }
 
 h1{
-font-size: 2em;
+font-size: 2.3rem;
 margin-top: 0.67em;
 margin-bottom: 0.67em;
 
@@ -69,10 +69,11 @@ li {
 }
 p{
   display: block;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
   margin-left: 0;
   margin-right: 0;
+  font-size: 1.1rem;
 }
 /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
 ul[role='list'],
