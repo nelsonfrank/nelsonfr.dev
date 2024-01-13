@@ -1,46 +1,23 @@
-// dependencies
-import { Metadata } from "next";
-import Image from "next/image";
-import { MDXRemoteSerializeResult } from "next-mdx-remote";
-import { MDXRemote } from "next-mdx-remote/rsc";
-
-import "highlight.js/styles/atom-one-dark.css";
-
-// components
-import YouTube from "@/components/youtube";
-
-// utils
-import { getPostFromSlug, getSlugs, PostMeta } from "@/libs/mdx";
 import { Suspense } from "react";
-import "@/styles/mdx.css";
-interface MDXPost {
-	source: MDXRemoteSerializeResult<Record<string, unknown>>;
-	meta: PostMeta;
-}
+import { notFound } from "next/navigation";
+import { getPost } from "@/libs/mdx";
+import {PostBody} from './components/post-body';
 
-// export const metadata: Metadata = {
-// 	title: "My Page Title",
-// };
-
-const getPost = async ({ params }: { params: { slug: string } }) => {
-	const { slug } = params;
-	const { content, meta } = getPostFromSlug(slug);
-
-	return { post: { source: content, meta } };
-};
 
 const BlogPost = async ({ params }: { params: { slug: string } }) => {
-	const { post } = await getPost({ params });
-	// console.log({ post });
-	const Img = Image;
-	return (
-		<div className='py-8 mx-4'>
-			<h1>{post.meta.title}</h1>
-			<Suspense fallback={<>Loading...</>}>
-				<MDXRemote source={post.source} components={{ YouTube }} />
-			</Suspense>
-		</div>
-	);
+  const { post } = await getPost({ params });
+
+  if (!post) return notFound();
+
+  
+  return (
+    <article className="mx-4 py-8 leading-relaxed">
+      <h1>{post.meta.title}</h1>
+      <Suspense fallback={<>Loading...</>}>
+        <PostBody>{ post?.source }</PostBody>
+      </Suspense>
+    </article>
+  );
 };
 
 export default BlogPost;

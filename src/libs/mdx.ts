@@ -59,3 +59,11 @@ export const getPostFromSlug = (slug: string): Post => {
     },
   };
 };
+
+
+export const getPost = async ({ params }: { params: { slug: string } }) => {
+  const { slug } = params;
+  const { content, meta } = getPostFromSlug(slug);
+
+  return { post: { source: content, meta } };
+};

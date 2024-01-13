@@ -12,7 +12,7 @@ export function MainNav() {
 
   return (
     <>
-      <div className="flex items-center justify-between py-6">
+      <div className="flex items-center justify-between py-6 px-4 lg:px-0">
         <div>
           <Link href="/">
             <span className="font-headiing hidden text-2xl md:block">
@@ -61,11 +61,12 @@ export function MainNav() {
                 About
               </Link>
             </li>
-            <Button variant="ghost" size="icon">
+            {/* TODO: Enable this after implement search functionality */}
+            {/* <Button variant="ghost" size="icon">
               <Link href="/search" className="">
                 <MagnifyingGlassIcon className="h-5 w-5" />
               </Link>
-            </Button>
+            </Button> */}
 
             <ThemeToggle />
           </ul>

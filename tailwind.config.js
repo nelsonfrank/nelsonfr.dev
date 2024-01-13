@@ -69,8 +69,8 @@ module.exports = {
 				"accordion-up": "accordion-up 0.2s ease-out",
 			},
 			fontFamily: {
-				mono: ["var(--font-ibmplex-mono)", ...fontFamily.mono],
-				sans: ["var(--font-sans)", ...fontFamily.sans],
+				mono: ["var(--font-geist-mono)", ...fontFamily.mono],
+				sans: ["var(--font-geist-sans)", ...fontFamily.sans],
 				heading: ["var(--font-heading)", ...fontFamily.sans],
 				logo: ["var(--font-sacramento-mono)", ...fontFamily.mono],
 			},

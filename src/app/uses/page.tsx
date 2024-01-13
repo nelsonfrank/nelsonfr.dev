@@ -11,7 +11,7 @@ const Uses = () => (
 		</div>
 		<div className='flex justify-center'>
 			<div>
-				<img src='/desktop-setup.webp' alt='Desktop setup' fetchPriority="high" />
+				<img src='/desktop-setup.webp' alt='Desktop setup' />
 			</div>
 		</div>
 		<div className='my-8'>
@@ -35,7 +35,7 @@ const Uses = () => (
 			<div className='my-4'>
 				<h2 className='font-medium text-xl'>OS and Configuration</h2>
 				<ul>
-					<li className='list-disc ml-8'>Ubuntu 20.04</li>
+					<li className='list-disc ml-8'>Ubuntu 22.04</li>
 					<li className='list-disc ml-8'>i3 window manager</li>
 					<li className='list-disc ml-8'>Polybar</li>
 					<li className='list-disc ml-8'>Rofi</li>

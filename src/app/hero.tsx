@@ -15,12 +15,12 @@ const Hero = () => {
               Hello👋, I'm{" "}
               <span className="font-medium text-primary">Nelson Frank</span>
             </h1>
-            <h2 className="animate-typing text-3xl font-semibold md:text-4xl lg:text-5xl">
-              A Fullstack Web Developer
+            <h2 className="animate-typing text-3xl font-semibold md:text-4xl">
+              A Fullstack Software Developer
             </h2>
 
             <p className="my-4">
-              Delivering Seamless User Experiences Across Platforms.
+             I'm interested in tech and building a robust software using latest technology.
             </p>
             <div className="my-8 flex justify-center md:justify-start">
               <Button

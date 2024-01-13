@@ -1,16 +1,11 @@
-import { IBM_Plex_Mono as FontMono, Inter as FontSans, Sacramento as FontLogo } from "next/font/google"
+import { Sacramento as FontLogo } from "next/font/google"
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 import localFont from "next/font/local"
 
-export const fontSans = FontSans({
-    subsets: ["latin"],
-    variable: "--font-sans",
-})
+export const fontSans = GeistSans
 
-export const fontMono = FontMono({
-    weight: ['300', '400', '500', '600', '700'],
-    subsets: ["latin"],
-    variable: "--font-ibmplex-mono",
-})
+export const fontMono = GeistMono
 
 export const fontLogo = FontLogo({
     weight: ['400'],
