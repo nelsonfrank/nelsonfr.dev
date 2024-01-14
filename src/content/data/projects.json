@@ -4,7 +4,7 @@
         "description": "Contemporary artist portifolio and gallery",
         "demoLink": "https://mhelepushillingiarts.com",
         "img": "https://images.unsplash.com/photo-1507643179773-3e975d7ac515?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        "sourceCode": "https://github.com/nelsonfrank/AI-powered-text-generator",
+        "sourceCode": "",
         "language":"Typescript"
     },
     {
@@ -12,7 +12,7 @@
         "description": "24/7 Worship/Praise Gospel Online Radio",
         "img": "/images/projects/wasaa-wa-sifa-online.png",
         "demoLink": "https://wasaawasifa.online/",
-        "sourceCode": "https://github.com/nelsonfrank/AI-powered-text-generator",
+        "sourceCode": "",
         "language":"Typescript"
     },
     {
@@ -35,9 +35,9 @@
         "name": "Booking app",
         "description": "A booking app made using Flutter",
         "img": "/images/projects/booking-app.png",
-        "demoLink": "https://good-doctor-app.vercel.app/",
+        "demoLink": "",
         "sourceCode": "https://github.com/nelsonfrank/booking-app-mobile",
-        "language":"Typescript"
+        "language":"Flutter"
     },
     {
         "name": "Good Doctor web app",
@@ -53,7 +53,7 @@
         "img": "/images/projects/ansible-template.jpg",
         "demoLink": "",
         "sourceCode": "https://github.com/nelsonfrank/ansible-template",
-        "language":"Typescript"
+        "language":"Ansible"
     },
     {
         "name": "Food Delivery REST API",
@@ -61,6 +61,6 @@
         "img": "/images/projects/food-delivery-rest-api.jpg",
         "demoLink": "",
         "sourceCode": "https://github.com/food-forward/food-delivery-backend",
-        "language":"Typescript"
+        "language":"Nodejs"
     }
 ]
