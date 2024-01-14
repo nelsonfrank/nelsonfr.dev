@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-import { links, footerLinks } from "./data";
-import { perspective, slideIn } from "./nav-anim";
+import { navLinks, footerLinks } from "@/configs";
+import { perspective, slideIn } from "./animations/nav-anim";
 
 export function MobileNav() {
   return (
     <div className={"flex flex-col justify-between pt-12 py-10 pb-12 h-full box-border"}>
-      <div className={"flex gap-3 flex-col"}>
-        {links.map((link, i) => {
+      <div className={"flex gap-4 flex-col"}>
+        {navLinks.map((link, i) => {
           const { title, href } = link;
           return (
             <div

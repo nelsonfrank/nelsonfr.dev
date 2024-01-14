@@ -2,7 +2,6 @@
 import { MainNav } from "./main-nav";
 import { AnimatePresence, motion } from "framer-motion";
 import { MobileNav } from "./mobile-nav";
-import { cn } from "@/libs/utils";
 import { useState } from "react";
 
 const SiteHeader = () => {

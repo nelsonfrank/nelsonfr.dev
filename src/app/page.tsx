@@ -42,7 +42,7 @@ const Home: NextPage = () => {
 					</div>
 					<div>
 						<Button variant="link" asChild>
-							<Link href="/posts">All Projects</Link>
+							<Link href="/projects">All Projects</Link>
 						</Button>
 					</div>
 				</div>

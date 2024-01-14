@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { useState } from "react";
 import { Divider } from "@/components/ui/divider";
+import { navLinks } from "@/configs";
 
 export interface MainNavProps {
   isActive: boolean,
@@ -29,42 +30,17 @@ export function MainNav({isActive, toggleMenu}: MainNavProps) {
         </div>
         <nav className="hidden md:flex">
           <ul className="flex items-center gap-5">
-            <li className="list-none">
-              <Link
-                href="/posts"
-                className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
-              >
-                {" "}
-                Posts
-              </Link>
-            </li>
-            <li className="list-none">
-              <Link
-                href="/projects"
-                className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
-              >
-                {" "}
-                Projects
-              </Link>
-            </li>
-            <li className="list-none">
-              <Link
-                href="/uses"
-                className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
-              >
-                {" "}
-                Uses
-              </Link>
-            </li>
-            <li className="list-none">
-              <Link
-                href="/about"
-                className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
-              >
-                {" "}
-                About
-              </Link>
-            </li>
+            {navLinks.filter(link => link.title !== 'Home').map(({title, href}, i) => (
+              <li className="list-none" key={i+1}>
+                <Link
+                  href={href}
+                  className="mx-2 my-1 text-base font-medium hover:text-destructive focus:underline focus:decoration-wavy focus:decoration-2 focus:underline-offset-4 active:underline active:decoration-wavy active:decoration-2 active:underline-offset-4"
+                >
+                  {" "}
+                 {title}
+                </Link>
+              </li>
+            ))}
             {/* TODO: Enable this after implement search functionality */}
             {/* <Button variant="ghost" size="icon">
               <Link href="/search" className="">
