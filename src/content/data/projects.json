@@ -1,25 +1,9 @@
 [
     {
-        "name": "Mhelepu Shillingi Arts",
-        "description": "Contemporary artist portifolio and gallery",
-        "demoLink": "https://mhelepushillingiarts.com",
-        "img": "https://images.unsplash.com/photo-1507643179773-3e975d7ac515?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        "sourceCode": "",
-        "language":"Typescript"
-    },
-    {
-        "name": "Wasaa wa Sifa Online",
-        "description": "24/7 Worship/Praise Gospel Online Radio",
-        "img": "/images/projects/wasaa-wa-sifa-online.png",
-        "demoLink": "https://wasaawasifa.online/",
-        "sourceCode": "",
-        "language":"Typescript"
-    },
-    {
         "name": "AI Powered Text Generator",
         "description": "Text generator powered by OpenAI API, based on GPT-3.5",
         "img": "https://images.unsplash.com/photo-1655890954739-c5782b4a8211?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80",
-        "demoLink": "https://good-doctor-app.vercel.app/",
+        "demoLink": "https://ai-powered-text-generator.vercel.app/",
         "sourceCode": "https://github.com/nelsonfrank/AI-powered-text-generator",
         "language":"Typescript"
     },
