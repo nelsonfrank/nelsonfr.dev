@@ -101,3 +101,18 @@ article blockquote {
   color: hsl(var(--primary));
   margin: 0.5rem 0;
 }
+
+/* code tag without pre */
+article *:not(pre) > code {
+  background: hsl(var(--accent));
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+/* code tag without pre inside note(aside) */
+article aside *:not(pre) > code {
+  background: hsl(var(--ring));
+  color: hsl(var(--secondary));
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+}

@@ -176,22 +176,22 @@ describe('Express App Tests', () => {
 <Note>
 **Explanation:**
 
-1. `start` command
-    - **`"start"`**: This is the name of the npm script. When you run **`pnpm run start`** in the terminal, it executes the command associated with this script.
-    - **`"NODE_PATH=./dist"`**: This sets the **`NODE_PATH`** environment variable to **`./dist`**. The **`NODE_PATH`** environment variable is used by Node.js to specify additional directories to search for modules when you use **`require`** in your code. In this case, it's telling Node.js to look for modules in the **`./dist`** directory.
-    - **`node dist/app.js`**: This is the actual command to start the Node.js application. It tells Node.js to execute the **`app.js`** file located in the **`dist`** directory.
+1. **start** command
+    - **`"start"`**: This is the name of the npm script. When you run **pnpm run start** in the terminal, it executes the command associated with this script.
+    - **`"NODE_PATH=./dist"`**: This sets the **NODE_PATH** environment variable to **./dist**. The **NODE_PATH** environment variable is used by Node.js to specify additional directories to search for modules when you use **require** in your code. In this case, it's telling Node.js to look for modules in the **./dist** directory.
+    - **`node dist/app.js`**: This is the actual command to start the Node.js application. It tells Node.js to execute the **app.js** file located in the **dist** directory.
 
-2. `dev` command
-    - **`"dev"`**: This is the name of the npm script. When you run **`pnpm run dev`** in the terminal, it executes the command associated with this script.
-    - **`"NODE_ENV=dev"`**: This sets the **`NODE_ENV`** environment variable to **`'dev'`**. The **`NODE_ENV`** variable is commonly used to indicate the environment in which the application is running. In this case, it's set to **`'dev'`**, suggesting that the application is running in a development environment. This can be useful for configuring the application differently based on the environment.
+2. **dev** command
+    - **`"dev"`**: This is the name of the npm script. When you run **pnpm run dev** in the terminal, it executes the command associated with this script.
+    - **`"NODE_ENV=dev"`**: This sets the **NODE_ENV** environment variable to **'dev'**. The **NODE_ENV** variable is commonly used to indicate the environment in which the application is running. In this case, it's set to **'dev'**, suggesting that the application is running in a development environment. This can be useful for configuring the application differently based on the environment.
     - **`nodemon`**: This is a utility that monitors for changes in files and automatically restarts the Node.js application when changes are detected. It's commonly used in development to speed up the development process by avoiding manual restarts.
-    - **`-r tsconfig-paths/register`**: This option is telling **`nodemon`** to use the **`tsconfig-paths/register`** module when running the application. This module helps handle TypeScript path mapping in development, ensuring that TypeScript can resolve module paths correctly.
-    - **`src/app.ts`**: This is the entry point of the application. It tells **`nodemon`** to watch changes in the **`src`** directory, specifically in the **`app.ts`** file, and restart the application when changes are detected.
+    - **`-r tsconfig-paths/register`**: This option is telling **nodemon** to use the **tsconfig-paths/register** module when running the application. This module helps handle TypeScript path mapping in development, ensuring that TypeScript can resolve module paths correctly.
+    - **`src/app.ts`**: This is the entry point of the application. It tells **nodemon** to watch changes in the **src** directory, specifically in the **app.ts** file, and restart the application when changes are detected.
     
-3. `build` command
-        - **`"build"`**: This is the name of the npm script. When you run **`pnpm run build`** in the terminal, it executes the command associated with this script.
-        - **`"tsc"`**: This is the TypeScript compiler command. It is used to compile TypeScript files (**`.ts`**) into JavaScript files (**`.js`**). The **`tsc`** command stands for TypeScript Compiler.
-        - **`"-p"`**: This option is used to specify the path to the TypeScript configuration file (typically **`tsconfig.json`**). In this case, the **`p`** flag is followed by an empty string, which means that the TypeScript compiler should look for the **`tsconfig.json`** file in the project's root directory.
+3. **build** command
+        - **`"build"`**: This is the name of the npm script. When you run **pnpm run build** in the terminal, it executes the command associated with this script.
+        - **`"tsc"`**: This is the TypeScript compiler command. It is used to compile TypeScript files (**.ts**) into JavaScript files (**.js**). The **tsc** command stands for TypeScript Compiler.
+        - **`"-p"`**: This option is used to specify the path to the TypeScript configuration file (typically **tsconfig.json**). In this case, the **p** flag is followed by an empty string, which means that the TypeScript compiler should look for the **tsconfig.json** file in the project's root directory.
 
 </Note>
 
@@ -361,4 +361,4 @@ describe("auth routes", function () {
 });
 ```
 
-The test code above uses `**mocha**` **`supertest`** and **`chai`** to test authentication routes . It verifies that a GET request to "/auth" results in a 200 status code response.
+The test code above uses `mocha` **`supertest`** and **`chai`** to test authentication routes . It verifies that a GET request to "/auth" results in a 200 status code response.
