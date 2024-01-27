@@ -1,0 +1,364 @@
+---
+title: "A Step-by-Step Guide to Setting Up a Node.js and Express App with TypeScript"
+tags:
+  - Node.js
+  - express.js
+  - Typescript
+  - Unit-test
+  - templates
+  - API
+date: 2024-01-27
+excerpt: Harness the Power of TypeScript for Strong Typing and Maintainable Code in Your Node.js and Express Projects.
+image: https://images.unsplash.com/photo-1614624532983-4ce03382d63d?q=80&w=2531&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
+---
+
+
+
+In this post, I will show you step by step how to setup an express rest api app with Typescript.
+
+## Requirements
+
+- Nodejs 18 or greater
+- Basic Javascript  Knowledge
+
+## Step 1: Initialize the project
+
+In this project we will use `pnpm` as our package manager. If you are not yet install in you machine, check out here ([pnpm installation](https://pnpm.io/installation)) how to setup in your pc/laptop.
+
+```bash
+# This command will initialize the project by create a package.json file.
+pnpm init
+```
+
+## Step 2: Install Dependencies
+
+We will install all dependencies that will help us setup our project.
+
+```bash
+# required dependencies
+pnpm add express dotenv cors
+
+# dev dependences
+pnpm add -D typescript ts-node tsconfig-paths @types/express @types/node nodemon
+```
+
+- `express`: A fast and minimalist web application framework for Node.js.
+- `dotenv`: A zero-dependency module that loads environment variables from a `.env` file into `process.env`.
+- `cors`: A middleware that enables Cross-Origin Resource Sharing (CORS) for Express.js.
+- `typescript`: A typed superset of JavaScript that compiles to plain JavaScript.
+- `ts-node`: A TypeScript execution and REPL for Node.js. It provides an interactive TypeScript console and also allows running TypeScript files directly.
+- `tsconfig-paths`: A module that adds support for TypeScript path mapping when executing TypeScript files.
+- `nodemon`: A utility that monitors for changes in files and automatically restarts the Node.js application when changes are detected.
+- `@types/express`: TypeScript definitions for the Express.js framework.
+- `@types/node`: TypeScript definitions for Node.js.
+
+## Step 3: **Configuring TypeScript Compiler Options**
+
+```bash
+tsc --init
+```
+
+When you run the command above, TypeScript will generate a basic **`tsconfig.json`** file with default settings. The **`tsconfig.json`** file is used to configure various aspects of the TypeScript compiler's behavior for your project.
+
+The `tsconfig.json` options used in this example
+
+
+```tsconfig.json
+{
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+
+    /* Language and Environment */
+    "target": "es2016",  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+
+    /* Modules */
+    "module": "commonjs",       /* Specify what module code is generated. */
+    "rootDir": "./src",         /* Specify the root folder within your source files. */
+    "moduleResolution": "node", /* Specify how TypeScript looks up a file from a given module specifier. */
+    "baseUrl": "./src",         /* Specify the base directory to resolve non-relative module names. */
+
+    /* Emit */
+    "outDir": "./dist",         /* Specify an output folder for all emitted files. */
+
+    /* Interop Constraints */
+    "esModuleInterop": true,    /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "forceConsistentCasingInFileNames": true,      /* Ensure that casing is correct in imports. */
+
+    /* Type Checking */
+    "strict": true,       /* Enable all strict type-checking options. */
+
+    /* Completeness */
+    "skipLibCheck": true  /* Skip type checking all .d.ts files. */
+  }
+}
+```
+
+<br/>
+## Step 4: Create Server and App file
+
+Create a folder `src` then add two file files - `server.ts` and `app.ts` 
+
+
+```servers.ts
+import "dotenv/config";
+import createServer from "server";
+
+const startServer = () => {
+    const app = createServer();
+    const port: number = parseInt(<string>process.env.PORT, 10) || 4000;
+    app.listen(port, () => {
+        console.log(`[server]: ⚡⚡Server is running at port ${port}`);
+    });
+};
+
+startServer();
+```
+
+<br />
+```app.ts
+import express, { Application, Request, Response, NextFunction } from "express";
+
+export default function createServer() {
+    const app: Application = express();
+
+    app.get("/", (req: Request, res: Response, next: NextFunction) => {
+        res.send("Hello world!");
+    });
+
+    return app;
+}
+
+```
+
+<br />
+
+<Note>
+💡 Why two files, server.ts and app.ts?
+1. The main reasons to separate app.ts and server.ts is to divide the application's concerns. 
+    **app.ts** is responsible for defining the routes, middleware, and other application-level functionality. 
+    **server.ts**, on the other hand, is responsible for creating the server, listening for incoming requests, and handling errors.
+
+2. Other important reason is eases mocking and testing the system by testing the API in-process, without performing network calls.
+    This ensure fast testing execution and getting coverage metrics of the code.
+
+```index.spec.ts
+import supertest from 'supertest';
+import app from './app';
+import { expect } from 'chai';
+
+describe('Express App Tests', () => {
+  it('should respond with Hello, world! on /api/greet', async () => {
+    const response = await supertest(app).get('/api/greet');
+    
+    expect(response.status).to.equal(200);
+    expect(response.body).to.deep.equal({ message: 'Hello, world!' });
+  });
+});
+```
+</Note>
+
+<br/>
+## Step 5: Add scripts in package.json
+
+```package.json
+// package.json
+{
+ ...
+ "scripts": {
+		"start": "NODE_PATH=./dist node dist/server.js",
+    "dev": "NODE_ENV=dev nodemon -r tsconfig-paths/register src/server.ts",
+    "build": "tsc -p"
+  }
+  ...
+}
+```
+
+<Note>
+**Explanation:**
+
+1. `start` command
+    - **`"start"`**: This is the name of the npm script. When you run **`pnpm run start`** in the terminal, it executes the command associated with this script.
+    - **`"NODE_PATH=./dist"`**: This sets the **`NODE_PATH`** environment variable to **`./dist`**. The **`NODE_PATH`** environment variable is used by Node.js to specify additional directories to search for modules when you use **`require`** in your code. In this case, it's telling Node.js to look for modules in the **`./dist`** directory.
+    - **`node dist/app.js`**: This is the actual command to start the Node.js application. It tells Node.js to execute the **`app.js`** file located in the **`dist`** directory.
+
+2. `dev` command
+    - **`"dev"`**: This is the name of the npm script. When you run **`pnpm run dev`** in the terminal, it executes the command associated with this script.
+    - **`"NODE_ENV=dev"`**: This sets the **`NODE_ENV`** environment variable to **`'dev'`**. The **`NODE_ENV`** variable is commonly used to indicate the environment in which the application is running. In this case, it's set to **`'dev'`**, suggesting that the application is running in a development environment. This can be useful for configuring the application differently based on the environment.
+    - **`nodemon`**: This is a utility that monitors for changes in files and automatically restarts the Node.js application when changes are detected. It's commonly used in development to speed up the development process by avoiding manual restarts.
+    - **`-r tsconfig-paths/register`**: This option is telling **`nodemon`** to use the **`tsconfig-paths/register`** module when running the application. This module helps handle TypeScript path mapping in development, ensuring that TypeScript can resolve module paths correctly.
+    - **`src/app.ts`**: This is the entry point of the application. It tells **`nodemon`** to watch changes in the **`src`** directory, specifically in the **`app.ts`** file, and restart the application when changes are detected.
+    
+3. `build` command
+        - **`"build"`**: This is the name of the npm script. When you run **`pnpm run build`** in the terminal, it executes the command associated with this script.
+        - **`"tsc"`**: This is the TypeScript compiler command. It is used to compile TypeScript files (**`.ts`**) into JavaScript files (**`.js`**). The **`tsc`** command stands for TypeScript Compiler.
+        - **`"-p"`**: This option is used to specify the path to the TypeScript configuration file (typically **`tsconfig.json`**). In this case, the **`p`** flag is followed by an empty string, which means that the TypeScript compiler should look for the **`tsconfig.json`** file in the project's root directory.
+
+</Note>
+
+<br />
+## Step 6: Add Basic Feature
+
+In this example, we are going to add product as an business module. First create product folder with the following files: `routes.ts` , `controller.ts` and `model.ts` .
+
+
+```product/controllers.ts
+import  {  Request, Response  } from "express";
+
+const ProductController = {
+    getProducts: (req: Request, res: Response) => {
+        return res.status(200).json([])
+    },
+
+    getProductById: (req: Request, res: Response) => {
+        return res.status(200).json([])
+    },
+
+    createProduct: (req: Request, res: Response) => {
+        return res.status(201).json([])
+    },
+    updateProduct: (req: Request, res: Response) => {
+        return res.status(201).json([])
+    },
+
+    deleteProduct: (req: Request, res: Response) => {
+        return res.status(201).json([])
+    },
+}
+
+export default ProductController
+```
+
+<br/>        
+```product/routes.ts
+import { Router } from "express";
+import controller from './controllers';
+
+const router = Router();
+
+router.get('/', controller.getProducts)
+
+router.get('/:id', controller.getProductById)
+
+router.post('/', controller.createProduct)
+
+router.put('/:id', controller.updateProduct)
+
+router.delete('/:id',controller.deleteProduct)
+
+export default router;
+```
+
+<br />
+
+Then import the `product routes`  to base routes
+
+
+```src/routes.ts
+import { Router } from "express";
+
+// business modules routes
+import productRoutes from './product/routes';
+import authRoutes from "./auth/routes";
+
+const router = Router();
+
+router.use("/products", productRoutes);
+// you can add other business module
+router.use("/auth", authRoutes);
+
+export default router;
+```
+<br />
+And finally you can add the base routes to `app.ts` .
+
+```src/app.ts
+import express, { Application, Request, Response, NextFunction } from "express";
+import routes from "routes";
+import cors from 'cors';
+
+export default function createServer() {
+    const app: Application = express();
+
+    // cors middleware
+    app.use(cors());
+
+    // json parser
+    app.use(express.json());
+
+    app.get("/", (req: Request, res: Response, next: NextFunction) => {
+        res.send("Hello world!");
+    });
+
+    app.use("api/v1", routes);
+
+    return app;
+}
+```
+<br />
+## Bonus: Add Unit Test
+
+### Install dependencies
+
+```bash
+# dependencies
+pnpm add mocha chai supertest
+
+# dev-dependencies
+pnpm add -D @types/chai @types/mocha @types/supertest
+```
+
+Below is a brief description of the dependencies mentioned above:
+
+- `mocha`: A feature-rich testing framework for JavaScript and Node.js applications.
+- `chai`: An assertion library that provides a set of chainable assertions for testing JavaScript code.
+- `supertest`: A library for testing HTTP servers and making assertions on their responses.
+
+### Add test script in package.json
+
+```package.json
+{
+  ...
+  "scripts": {
+    "start": "NODE_PATH=./dist node dist/app.js",
+    "dev": "NODE_ENV=dev nodemon -r tsconfig-paths/register src/app.ts",
+    "build": "tsc -p .",
+    "test": "NODE_ENV=test mocha --check-leaks -r ts-node/register -r tsconfig-paths/register \"src/test/**/*.spec.ts\""
+  },
+  ...
+}
+```
+
+Here is an explanation of the different components of the `test` script:
+
+- `"NODE_ENV=test"`: This sets the `NODE_ENV` environment variable to `'test'`. The `NODE_ENV` variable is commonly used to indicate the environment in which the application is running. In this case, it's set to `'test'`, suggesting that the application is running in a testing environment. This can be useful for configuring the application differently based on the environment.
+- `mocha`: Mocha is a feature-rich testing framework for JavaScript and Node.js applications. It provides a flexible and powerful API for writing tests and generating detailed test reports.
+- `-check-leaks`: This option tells Mocha to check for global variable leaks. It helps ensure that tests are properly isolated and that one test doesn't inadvertently affect another.
+- `-r ts-node/register`: This option registers the `ts-node` module with Mocha. `ts-node` allows Mocha to directly run TypeScript files without the need for compilation.
+- `-r tsconfig-paths/register`: This option registers the `tsconfig-paths` module with Mocha. `tsconfig-paths` helps handle TypeScript path mapping in tests, ensuring that TypeScript can resolve module paths correctly.
+- `"src/test/**/*.spec.ts"`: This is the glob pattern that specifies the location of the test files. In this case, it looks for all files with the `.spec.ts` extension in the `src/test` directory and its sub-directories.
+
+When you run the `test` script, Mocha will discover and execute all the test files matching the specified pattern. It will report the test results, including any failures or errors encountered during the tests.
+
+### Start write unit test
+
+Inside `src` file create another folder `test` then based on your business modules create test file.
+
+for example, inside `test` folder create `auth/index.spec.ts` 
+
+auth/index.spec.ts
+
+```test/auth/index.spec.ts
+import request from "supertest";
+import { expect } from "chai";
+
+import createServer from "server";
+const app = createServer();
+
+describe("auth routes", function () {
+  it("/auth responds with 200", function (done) {
+    request(app).get("/auth").expect(200, done);
+  });
+});
+```
+
+The test code above uses `**mocha**` **`supertest`** and **`chai`** to test authentication routes . It verifies that a GET request to "/auth" results in a 200 status code response.
