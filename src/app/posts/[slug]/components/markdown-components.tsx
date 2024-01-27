@@ -7,7 +7,7 @@ import { MDXNote } from "./mdx-note";
 export const mdxComponents: MDXComponents = {
   a: ({ children, ...props }: any) => {
     return (
-      <Link {...props} href={props.href || ""}>
+      <Link {...props} href={props.href || ""} target="_blank">
         {children}
       </Link>
     );
