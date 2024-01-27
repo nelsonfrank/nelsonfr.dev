@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Code } from "bright";
 import YouTube from "@/components/youtube";
 import { MDXComponents } from "mdx/types";
+import { MDXNote } from "./mdx-note";
 
 export const mdxComponents: MDXComponents = {
   a: ({ children, ...props }: any) => {
@@ -11,7 +12,7 @@ export const mdxComponents: MDXComponents = {
       </Link>
     );
   },
-  pre:  ({
+  pre: ({
     children,
     ...props
   }: React.DetailedHTMLProps<
@@ -22,7 +23,8 @@ export const mdxComponents: MDXComponents = {
       <Code {...props} theme="material-default">
         {children as any}
       </Code>
-    )
+    );
   },
+  Note: MDXNote,
   YouTube,
 };

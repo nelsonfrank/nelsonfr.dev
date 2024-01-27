@@ -1,10 +1,10 @@
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6
+article h1,
+article h2,
+article h3,
+article h4,
+article h5,
+article h6
  {
 display: block; 
 margin-left: 0; 
@@ -12,49 +12,49 @@ margin-right: 0;
 font-weight: bold;
 }
 
-h1{
+article h1{
 font-size: 2.3rem;
 margin-top: 0.67em;
 margin-bottom: 0.67em;
 
 }
 
-h2{
+article h2{
 font-size: 1.5em;
 margin-top: 0.83em;
 margin-bottom: 0.83em;
 
 }
 
-h3{
+article h3{
 font-size: 1.17em;
 margin-top: 1em;
 margin-bottom: 1em;
 
 }
 
-h4 {
+article h4 {
   display: block;
 margin-top: 1.33em;
 margin-bottom: 1.33em;
 
 }
 
-h5{
+article h5{
 font-size: .83em;
 margin-top: 1.67em;
 margin-bottom: 1.67em;
 
 }
 
-h6{
+article h6{
 font-size: .67em;
 margin-top: 2.33em;
 margin-bottom: 2.33em;
 
 }
 
-ul{
+article ul{
   display: block;
 list-style-type: disc;
 margin-top: 1em;
@@ -64,10 +64,10 @@ margin-right: 0;
 padding-left: 40px;
 }
 
-li {
+article li {
   display: list-item;
 }
-p{
+article p{
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
@@ -76,18 +76,28 @@ p{
   font-size: 1.1rem;
 }
 /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
-ul[role='list'],
-ol[role='list'] {
+article ul[role='list'],
+article ol[role='list'] {
   list-style: disc;
 }
 
 /* Make images easier to work with */
-img,
-picture {
+article img,
+article picture {
   max-width: 100%;
   display: block;
 }
 
-code{
+article code{
   border-radius: 20px;
+}
+
+
+article aside,
+article blockquote {
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--muted));
+  padding: 1rem;
+  color: hsl(var(--primary));
+  margin: 0.5rem 0;
 }
