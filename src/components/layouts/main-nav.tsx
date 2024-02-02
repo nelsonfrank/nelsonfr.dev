@@ -48,20 +48,22 @@ export function MainNav({isActive, toggleMenu}: MainNavProps) {
               </Link>
             </Button> */}
 
-            <ThemeToggle />
           </ul>
         </nav>
+        
+        <div className="flex gap-2">
+          <ThemeToggle />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={toggleMenu}
+          >
+            {isActive ? <Icons.close /> : <Icons.menu />}
+          </Button>
+        </div>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          onClick={toggleMenu}
-        >
-          {isActive ? <Icons.close /> : <Icons.menu />}
-        </Button>
       </div>
-      <Divider />
     </>
   );
 }
