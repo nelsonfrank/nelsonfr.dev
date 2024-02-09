@@ -1,5 +1,6 @@
 import { twMerge } from "tailwind-merge"
 import { clsx, type ClassValue } from "clsx"
+import { env } from "@/env.mjs";
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -21,4 +22,8 @@ export function randomizeBadgeColor() {
     const randomIndex = Math.floor(Math.random() * backgroundColorClasses.length);
 
    return backgroundColorClasses[randomIndex];
+}
+
+export function absoluteUrl(path: string) {
+    return `${env.NEXT_PUBLIC_APP_URL}/${path}`
 }
