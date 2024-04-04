@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getPost } from "@/libs/mdx";
+import { PostMeta, getAllPosts, getPost } from "@/libs/mdx";
 import {PostBody} from './components/post-body';
 import { Metadata } from "next";
 
@@ -56,6 +56,15 @@ export async function generateMetadata({
     },
   };
 }
+
+export async function generateStaticParams() {
+ const posts = getAllPosts();
+
+  return posts.map((post) => ({
+    slug: post.meta.slug,
+  }));
+}
+
 const BlogPost = async ({ params }: PostPageProps) => {
   const { post } = await getPost({ params });
 

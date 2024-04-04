@@ -25,7 +25,7 @@ const ExperinceTitleCard = ({ title, organizationName, location, duration, Flag 
     const to = `${typeof duration.to === 'string' ? duration.to : getMonthYear(duration.to)}`
 
     return (
-			<div className='flex items-center mt-4'>
+			<div className='flex items-center mt-8'>
 				<div
 					className={`w-4 h-4 border-4 border-primary rounded-full mr-4 md:mr-8 ${
 						isPresent ? "animate-ping" : ""

@@ -27,7 +27,6 @@ const About = () => {
                 src="/about-me.png"
                 width={150}
                 height={150}
-                layout="fixed"
                 className="rounded-full"
                 alt="profile image"
               />
@@ -37,7 +36,6 @@ const About = () => {
                 src="/about-me.png"
                 width={550}
                 height={250}
-                layout="fixed"
                 className="rounded-full"
                 alt="profile image"
               />
@@ -52,7 +50,7 @@ const About = () => {
             </div>
             <p>
               Hi, my name is Nelson Frank and I am a senior software developer. I have been working as a developer for about
-              four years now and have gained a lot of experience in both
+              six years now and have gained a lot of experience in both
               frontend and backend technologies. In my free time, I enjoy
               staying up to date with the latest developments in the world of
               technology and coding. I am always looking for new challenges and
