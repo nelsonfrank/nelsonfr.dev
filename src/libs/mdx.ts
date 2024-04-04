@@ -27,12 +27,14 @@ export interface PostMeta {
   title: string;
   tags: string[];
   date: string;
-  image: string
+  image: string;
+  status: "draft" | "published";
 }
 
 export const getAllPosts = () => {
   const posts = getSlugs()
     .map((slug) => getPostFromSlug(slug))
+    .filter((post) => post.meta.status === "published")
     .sort((a, b) => {
       if (a.meta.date > b.meta.date) return 1;
       if (a.meta.date < b.meta.date) return -1;
@@ -55,7 +57,8 @@ export const getPostFromSlug = (slug: string): Post => {
       title: data.title ?? slug,
       tags: (data.tags ?? []).sort(),
       date: (data.date ?? new Date()).toString(),
-      image: data.image ?? ""
+      image: data.image ?? "",
+      status: data.status ?? "draft",
     },
   };
 };
