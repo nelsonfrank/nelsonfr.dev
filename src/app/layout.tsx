@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/providers";
 
 import "@/styles/globals.css";
 import SiteHeader from "@/components/layouts/site-header";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@/components/analytics";
 
 export const metadata = {
 	title: "Nelson Frank, Software Developer Based in Dar es salaam, Tanzania.",
