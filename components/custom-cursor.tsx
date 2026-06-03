@@ -38,16 +38,21 @@ export function CustomCursor() {
 
     // Animate cursor with lag
     const animate = () => {
-      // Main cursor follows with smooth lag
-      cursorX += (mouseX - cursorX) * 0.15
-      cursorY += (mouseY - cursorY) * 0.15
-      
-      // Dot follows more quickly
-      dotX += (mouseX - dotX) * 0.35
-      dotY += (mouseY - dotY) * 0.35
+      const cursor = cursorRef.current
+      const cursorDot = cursorDotRef.current
 
-      gsap.set(cursor, { x: cursorX, y: cursorY })
-      gsap.set(cursorDot, { x: dotX, y: dotY })
+      if (cursor && cursorDot) {
+        // Main cursor follows with smooth lag
+        cursorX += (mouseX - cursorX) * 0.15
+        cursorY += (mouseY - cursorY) * 0.15
+        
+        // Dot follows more quickly
+        dotX += (mouseX - dotX) * 0.35
+        dotY += (mouseY - dotY) * 0.35
+
+        gsap.set(cursor, { x: cursorX, y: cursorY })
+        gsap.set(cursorDot, { x: dotX, y: dotY })
+      }
 
       requestAnimationFrame(animate)
     }
@@ -83,8 +88,6 @@ export function CustomCursor() {
     }
   }, [])
 
-  if (isHidden) return null
-
   return (
     <>
       {/* Main cursor ring */}
@@ -92,7 +95,7 @@ export function CustomCursor() {
         ref={cursorRef}
         className={`fixed top-0 left-0 pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 mix-blend-difference transition-all duration-300 ease-out hidden md:flex items-center justify-center ${
           isHovering ? "w-20 h-20" : "w-10 h-10"
-        }`}
+        } ${isHidden ? "opacity-0 scale-0" : "opacity-100 scale-100"}`}
       >
         <div
           className={`rounded-full border-2 border-white transition-all duration-300 ${
@@ -109,9 +112,9 @@ export function CustomCursor() {
       {/* Cursor dot */}
       <div
         ref={cursorDotRef}
-        className={`fixed top-0 left-0 pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 hidden md:block transition-opacity duration-200 ${
+        className={`fixed top-0 left-0 pointer-events-none z-9999 -translate-x-1/2 -translate-y-1/2 hidden md:block transition-all duration-200 ${
           isHovering ? "opacity-0" : "opacity-100"
-        }`}
+        } ${isHidden ? "opacity-0" : "opacity-100"}`}
       >
         <div className="w-1.5 h-1.5 bg-white rounded-full mix-blend-difference" />
       </div>
