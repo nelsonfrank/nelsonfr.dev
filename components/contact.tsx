@@ -1,0 +1,277 @@
+"use client"
+
+import { useEffect, useRef, useState } from "react"
+import Link from "next/link"
+import { Mail, Github, Linkedin, Twitter, Send, CheckCircle } from "lucide-react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useFadeUp, useMagnetic, useScaleUp } from "@/hooks/use-gsap"
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
+
+const socialLinks = [
+  { name: "GitHub", href: "https://github.com", icon: Github },
+  { name: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
+  { name: "Twitter", href: "https://twitter.com", icon: Twitter },
+  { name: "Email", href: "mailto:hello@nelsonfrank.com", icon: Mail },
+]
+
+function SocialLink({ link, index }: { link: typeof socialLinks[0]; index: number }) {
+  const linkRef = useMagnetic<HTMLAnchorElement>(0.4)
+  const containerRef = useRef<HTMLAnchorElement>(null)
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    gsap.set(container, { opacity: 0, y: 30, scale: 0.8 })
+
+    ScrollTrigger.create({
+      trigger: container,
+      start: "top 90%",
+      onEnter: () => {
+        gsap.to(container, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.6,
+          delay: 0.3 + index * 0.1,
+          ease: "back.out(1.7)",
+        })
+      },
+    })
+  }, [index])
+
+  return (
+    <Link
+      ref={(el) => {
+        (containerRef as React.MutableRefObject<HTMLAnchorElement | null>).current = el
+        if (linkRef && typeof linkRef === "object" && "current" in linkRef) {
+          (linkRef as React.MutableRefObject<HTMLAnchorElement | null>).current = el
+        }
+      }}
+      href={link.href}
+      className="p-4 bg-secondary rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 group relative overflow-hidden"
+      aria-label={link.name}
+      data-cursor={link.name}
+    >
+      <div className="absolute inset-0 bg-primary/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-xl" />
+      <link.icon className="size-6 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+    </Link>
+  )
+}
+
+export function Contact() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const headingRef = useFadeUp<HTMLHeadingElement>()
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const descRef = useRef<HTMLParagraphElement>(null)
+  const formRef = useScaleUp<HTMLDivElement>()
+  const lineRef = useRef<HTMLDivElement>(null)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [focusedField, setFocusedField] = useState<string | null>(null)
+
+  useEffect(() => {
+    const line = lineRef.current
+    if (!line) return
+
+    gsap.set(line, { scaleX: 0, transformOrigin: "left center" })
+
+    ScrollTrigger.create({
+      trigger: line,
+      start: "top 90%",
+      onEnter: () => {
+        gsap.to(line, { scaleX: 1, duration: 1.5, ease: "power3.inOut" })
+      },
+    })
+  }, [])
+
+  useEffect(() => {
+    const title = titleRef.current
+    const desc = descRef.current
+    if (!title || !desc) return
+
+    gsap.set([title, desc], { opacity: 0, y: 30 })
+
+    ScrollTrigger.create({
+      trigger: title,
+      start: "top 85%",
+      onEnter: () => {
+        gsap.to(title, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" })
+        gsap.to(desc, { opacity: 1, y: 0, duration: 0.8, delay: 0.1, ease: "power3.out" })
+      },
+    })
+  }, [])
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitted(true)
+    setTimeout(() => setIsSubmitted(false), 3000)
+  }
+
+  return (
+    <section ref={sectionRef} id="contact" className="py-20 px-6">
+      <div className="mx-auto max-w-6xl">
+        <h2
+          ref={headingRef}
+          className="text-sm font-medium text-primary uppercase tracking-wider mb-12 relative inline-block"
+        >
+          Contact
+          <span ref={lineRef} className="absolute -bottom-2 left-0 w-full h-px bg-primary" />
+        </h2>
+
+        <div className="grid gap-12 lg:grid-cols-2">
+          <div className="space-y-6">
+            <h3
+              ref={titleRef}
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-balance leading-tight"
+            >
+              Let&apos;s build something{" "}
+              <span className="text-primary relative">
+                great
+                <svg
+                  className="absolute -bottom-2 left-0 w-full"
+                  viewBox="0 0 100 10"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M0,5 Q25,0 50,5 T100,5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-primary/50"
+                  />
+                </svg>
+              </span>{" "}
+              together.
+            </h3>
+            <p ref={descRef} className="text-muted-foreground leading-relaxed max-w-lg text-lg">
+              I&apos;m currently open to new opportunities and interesting projects.
+              Whether you have a question, want to collaborate, or just want to say hi,
+              feel free to reach out.
+            </p>
+
+            <div className="flex gap-4 pt-4">
+              {socialLinks.map((link, index) => (
+                <SocialLink key={link.name} link={link} index={index} />
+              ))}
+            </div>
+          </div>
+
+          <div
+            ref={formRef}
+            className="bg-card rounded-2xl border border-border p-8 relative overflow-hidden"
+          >
+            {/* Decorative corner */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-2xl" />
+            
+            <form onSubmit={handleSubmit} className="space-y-6 relative">
+              <div className="space-y-2">
+                <label
+                  htmlFor="name"
+                  className={`text-sm font-medium transition-colors duration-300 ${
+                    focusedField === "name" ? "text-primary" : "text-foreground"
+                  }`}
+                >
+                  Name
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    className="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all duration-300"
+                    placeholder="Your name"
+                    onFocus={() => setFocusedField("name")}
+                    onBlur={() => setFocusedField(null)}
+                  />
+                  <div
+                    className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${
+                      focusedField === "name" ? "w-full" : "w-0"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="email"
+                  className={`text-sm font-medium transition-colors duration-300 ${
+                    focusedField === "email" ? "text-primary" : "text-foreground"
+                  }`}
+                >
+                  Email
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    className="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all duration-300"
+                    placeholder="your@email.com"
+                    onFocus={() => setFocusedField("email")}
+                    onBlur={() => setFocusedField(null)}
+                  />
+                  <div
+                    className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${
+                      focusedField === "email" ? "w-full" : "w-0"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="message"
+                  className={`text-sm font-medium transition-colors duration-300 ${
+                    focusedField === "message" ? "text-primary" : "text-foreground"
+                  }`}
+                >
+                  Message
+                </label>
+                <div className="relative">
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={4}
+                    className="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all duration-300 resize-none"
+                    placeholder="Tell me about your project..."
+                    onFocus={() => setFocusedField("message")}
+                    onBlur={() => setFocusedField(null)}
+                  />
+                  <div
+                    className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${
+                      focusedField === "message" ? "w-full" : "w-0"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitted}
+                className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden disabled:opacity-70"
+                data-cursor="Send"
+              >
+                <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                {isSubmitted ? (
+                  <>
+                    <CheckCircle className="size-5" />
+                    <span>Message Sent!</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="relative z-10">Send Message</span>
+                    <Send className="size-4 relative z-10 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
