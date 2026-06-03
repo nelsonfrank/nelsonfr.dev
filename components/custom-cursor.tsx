@@ -93,7 +93,7 @@ export function CustomCursor() {
       {/* Main cursor ring */}
       <div
         ref={cursorRef}
-        className={`fixed top-0 left-0 pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 mix-blend-difference transition-all duration-300 ease-out hidden md:flex items-center justify-center ${
+        className={`fixed top-0 left-0 pointer-events-none z-9999 -translate-x-1/2 -translate-y-1/2 mix-blend-difference transition-all duration-300 ease-out hidden md:flex items-center justify-center ${
           isHovering ? "w-20 h-20" : "w-10 h-10"
         } ${isHidden ? "opacity-0 scale-0" : "opacity-100 scale-100"}`}
       >

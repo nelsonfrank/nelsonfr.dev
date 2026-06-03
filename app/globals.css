@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import 'tw-animate-css';
+/* @import 'tw-animate-css'; */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -72,7 +72,6 @@
   --sidebar-accent-foreground: oklch(0.95 0.01 240);
   --sidebar-border: oklch(0.28 0.01 240);
   --sidebar-ring: oklch(0.75 0.15 180);
-  
 }
 
 @theme inline {
@@ -116,11 +115,6 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-pixel-square: var(--font-geist-pixel-square);
-  --font-pixel-grid: var(--font-geist-pixel-grid);
-  --font-pixel-circle: var(--font-geist-pixel-circle);
-  --font-pixel-triangle: var(--font-geist-pixel-triangle);
-  --font-pixel-line: var(--font-geist-pixel-line);
 }
 
 @layer base {
@@ -136,14 +130,12 @@
     overflow-x: hidden;
   }
   
-  /* Hide default cursor on desktop */
   @media (min-width: 768px) {
     * {
       cursor: none !important;
     }
   }
   
-  /* Show default cursor on mobile */
   @media (max-width: 767px) {
     html,
     * {
@@ -152,7 +144,6 @@
   }
 }
 
-/* Smooth scroll wrapper */
 .smooth-wrapper {
   position: relative;
   width: 100%;
@@ -163,74 +154,48 @@
   will-change: transform;
 }
 
-/* Custom selection */
 ::selection {
   background: oklch(0.75 0.15 180 / 0.3);
   color: oklch(0.95 0.01 240);
 }
 
-/* Fade in animation */
 @keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
   animation: fade-in 0.8s ease-out forwards;
 }
 
-/* Gradient text animation */
 @keyframes gradient-shift {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
-.animate-gradient {
+.animate-gradient-shimmer {
   background-size: 200% auto;
   animation: gradient-shift 3s ease infinite;
 }
 
-/* Floating animation */
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
 
-/* Pulse glow effect */
 @keyframes pulse-glow {
-  0%, 100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
 }
 
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
-/* Line clamp utilities */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -243,4 +208,52 @@
   -webkit-line-clamp: unset;
   -webkit-box-orient: unset;
   overflow: visible;
+}
+
+/* Premium Utilities */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: -100%;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.05;
+  filter: contrast(150%) brightness(100%);
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: white;
+  background-image: linear-gradient(to right, var(--primary), var(--accent), var(--primary));
+  background-size: 200% auto;
+  animation: gradient-shift 3s ease infinite;
+}
+
+.glass {
+  background-color: color-mix(in srgb, var(--background) 40%, transparent);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-dark {
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.shimmer {
+  @apply relative overflow-hidden;
+}
+
+.shimmer::after {
+  content: "";
+  @apply absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/10 to-transparent animate-[shimmer_2s_infinite];
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
 }
