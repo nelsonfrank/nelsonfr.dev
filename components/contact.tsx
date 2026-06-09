@@ -57,6 +57,8 @@ function SocialLink({ link, index }: { link: typeof socialLinks[0]; index: numbe
       className="p-4 bg-secondary rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 group relative overflow-hidden"
       aria-label={link.name}
       data-cursor={link.name}
+      target="_blank"
+      rel="noopener noreferrer"
     >
       <div className="absolute inset-0 bg-primary/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-xl" />
       <link.icon className="size-6 relative z-10 group-hover:scale-110 transition-transform duration-300" />
