@@ -255,7 +255,7 @@ export function Hero() {
               </div>
               
               {/* Floating glass card */}
-              <div className="absolute -bottom-6 -right-6 md:-right-12 p-6 glass rounded-2xl shadow-2xl z-20 animate-float hidden md:block">
+              <div className="absolute -bottom-6 -right-6 md:-bottom-20 md:-right-20 p-6 glass rounded-2xl shadow-2xl z-20 animate-float hidden md:block">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">NF</div>
                   <div>
