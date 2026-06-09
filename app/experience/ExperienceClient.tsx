@@ -211,7 +211,7 @@ export default function ExperienceClient({ experiences }: ExperienceClientProps)
               <Link
                 ref={resumeRef}
                 href="/resume.pdf"
-                download
+                download="nelson-frank-software-developer.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-primary text-background text-sm font-semibold hover:bg-primary/90 active:scale-95 transition-all duration-200 group shadow-lg shadow-primary/20"
@@ -256,7 +256,7 @@ export default function ExperienceClient({ experiences }: ExperienceClientProps)
               </div>
               <Link
                 href="/resume.pdf"
-                download
+                download="nelson-frank-software-developer.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:border-primary/40 hover:bg-primary/5 hover:text-primary text-sm font-medium text-foreground transition-all duration-200 group shrink-0"
