@@ -1,90 +1,75 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import gsap from "gsap"
 
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const cursorDotRef = useRef<HTMLDivElement>(null)
-  const [isHovering, setIsHovering] = useState(false)
-  const [isHidden, setIsHidden] = useState(false)
-  const [cursorText, setCursorText] = useState("")
+  const cursorTextRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     const cursor = cursorRef.current
     const cursorDot = cursorDotRef.current
     if (!cursor || !cursorDot) return
 
-    // Check for touch device
+    // Hide on touch devices
     if ("ontouchstart" in window) {
-      setIsHidden(true)
+      gsap.set([cursor, cursorDot], { autoAlpha: 0 })
       return
     }
 
-    let mouseX = 0
-    let mouseY = 0
-    let cursorX = 0
-    let cursorY = 0
-    let dotX = 0
-    let dotY = 0
+    // quickTo reuses a single tween per axis — much more efficient than
+    // calling gsap.set() inside a manually-driven RAF loop every frame.
+    const cursorXTo = gsap.quickTo(cursor, "x", { duration: 0.55, ease: "power3.out" })
+    const cursorYTo = gsap.quickTo(cursor, "y", { duration: 0.55, ease: "power3.out" })
+    const dotXTo   = gsap.quickTo(cursorDot, "x", { duration: 0.2,  ease: "power3.out" })
+    const dotYTo   = gsap.quickTo(cursorDot, "y", { duration: 0.2,  ease: "power3.out" })
 
     const handleMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX
-      mouseY = e.clientY
-    }
+      cursorXTo(e.clientX)
+      cursorYTo(e.clientY)
+      dotXTo(e.clientX)
+      dotYTo(e.clientY)
 
-    const handleMouseEnter = () => setIsHidden(false)
-    const handleMouseLeave = () => setIsHidden(true)
-
-    // Animate cursor with lag
-    const animate = () => {
-      const cursor = cursorRef.current
-      const cursorDot = cursorDotRef.current
-
-      if (cursor && cursorDot) {
-        // Main cursor follows with smooth lag
-        cursorX += (mouseX - cursorX) * 0.15
-        cursorY += (mouseY - cursorY) * 0.15
-        
-        // Dot follows more quickly
-        dotX += (mouseX - dotX) * 0.35
-        dotY += (mouseY - dotY) * 0.35
-
-        gsap.set(cursor, { x: cursorX, y: cursorY })
-        gsap.set(cursorDot, { x: dotX, y: dotY })
-      }
-
-      requestAnimationFrame(animate)
-    }
-    animate()
-
-    // Handle hover states
-    const handleLinkHover = (e: MouseEvent) => {
+      // Handle hover state in the same listener to avoid a second mousemove registration
       const target = e.target as HTMLElement
       const interactive = target.closest("a, button, [data-cursor]")
-      
+
       if (interactive) {
-        setIsHovering(true)
+        gsap.to(cursor, { scale: 2, duration: 0.3, ease: "power2.out", overwrite: "auto" })
+        gsap.to(cursorDot, { autoAlpha: 0, duration: 0.2, overwrite: "auto" })
         const cursorData = interactive.getAttribute("data-cursor")
-        if (cursorData) {
-          setCursorText(cursorData)
+        if (cursorTextRef.current) {
+          cursorTextRef.current.textContent = cursorData ?? ""
+          gsap.set(cursorTextRef.current, { autoAlpha: cursorData ? 1 : 0 })
         }
       } else {
-        setIsHovering(false)
-        setCursorText("")
+        gsap.to(cursor, { scale: 1, duration: 0.3, ease: "power2.out", overwrite: "auto" })
+        gsap.to(cursorDot, { autoAlpha: 1, duration: 0.2, overwrite: "auto" })
+        if (cursorTextRef.current) {
+          cursorTextRef.current.textContent = ""
+          gsap.set(cursorTextRef.current, { autoAlpha: 0 })
+        }
       }
     }
 
+    const handleMouseEnter = () =>
+      gsap.to([cursor, cursorDot], { autoAlpha: 1, scale: 1, duration: 0.3 })
+
+    const handleMouseLeave = () =>
+      gsap.to([cursor, cursorDot], { autoAlpha: 0, duration: 0.3 })
+
     window.addEventListener("mousemove", handleMouseMove)
-    window.addEventListener("mousemove", handleLinkHover)
     document.addEventListener("mouseenter", handleMouseEnter)
     document.addEventListener("mouseleave", handleMouseLeave)
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove)
-      window.removeEventListener("mousemove", handleLinkHover)
       document.removeEventListener("mouseenter", handleMouseEnter)
       document.removeEventListener("mouseleave", handleMouseLeave)
+      // Kill quickTo tweens to avoid updates on unmounted nodes
+      gsap.killTweensOf([cursor, cursorDot])
     }
   }, [])
 
@@ -93,28 +78,21 @@ export function CustomCursor() {
       {/* Main cursor ring */}
       <div
         ref={cursorRef}
-        className={`fixed top-0 left-0 pointer-events-none z-9999 -translate-x-1/2 -translate-y-1/2 mix-blend-difference transition-all duration-300 ease-out hidden md:flex items-center justify-center ${
-          isHovering ? "w-20 h-20" : "w-10 h-10"
-        } ${isHidden ? "opacity-0 scale-0" : "opacity-100 scale-100"}`}
+        style={{ willChange: "transform" }}
+        className="fixed top-0 left-0 pointer-events-none z-9999 -translate-x-1/2 -translate-y-1/2 mix-blend-difference hidden md:flex w-10 h-10 items-center justify-center"
       >
-        <div
-          className={`rounded-full border-2 border-white transition-all duration-300 ${
-            isHovering ? "w-full h-full scale-100" : "w-full h-full"
-          }`}
+        <div className="w-full h-full rounded-full border-2 border-white" />
+        <span
+          ref={cursorTextRef}
+          className="absolute text-xs font-medium text-white whitespace-nowrap opacity-0 invisible"
         />
-        {cursorText && (
-          <span className="absolute text-xs font-medium text-white whitespace-nowrap">
-            {cursorText}
-          </span>
-        )}
       </div>
-      
+
       {/* Cursor dot */}
       <div
         ref={cursorDotRef}
-        className={`fixed top-0 left-0 pointer-events-none z-9999 -translate-x-1/2 -translate-y-1/2 hidden md:block transition-all duration-200 ${
-          isHovering ? "opacity-0" : "opacity-100"
-        } ${isHidden ? "opacity-0" : "opacity-100"}`}
+        style={{ willChange: "transform" }}
+        className="fixed top-0 left-0 pointer-events-none z-9999 -translate-x-1/2 -translate-y-1/2 hidden md:block"
       >
         <div className="w-1.5 h-1.5 bg-white rounded-full mix-blend-difference" />
       </div>
