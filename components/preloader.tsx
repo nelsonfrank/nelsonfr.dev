@@ -8,6 +8,11 @@ export function Preloader() {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
+    if (typeof window !== "undefined" && sessionStorage.getItem("preloader-shown") === "true") {
+      setIsLoading(false)
+      return
+    }
+
     // Animate counter
     const counter = { value: 0 }
     gsap.to(counter, {
@@ -20,7 +25,10 @@ export function Preloader() {
       onComplete: () => {
         // Animate out the preloader
         const tl = gsap.timeline({
-          onComplete: () => setIsLoading(false),
+          onComplete: () => {
+            setIsLoading(false)
+            sessionStorage.setItem("preloader-shown", "true")
+          },
         })
 
         tl.to(".preloader-text", {
@@ -50,22 +58,34 @@ export function Preloader() {
   if (!isLoading) return null
 
   return (
-    <div className="preloader fixed inset-0 z-[10000] bg-background flex flex-col items-center justify-center">
-      <div className="preloader-text flex flex-col items-center gap-4">
-        <span className="text-6xl md:text-8xl font-bold text-foreground tabular-nums">
-          {count}%
-        </span>
-        <span className="text-sm text-muted-foreground uppercase tracking-widest">
-          Loading
-        </span>
+    <>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            if (typeof window !== 'undefined' && sessionStorage.getItem('preloader-shown') === 'true') {
+              document.write('<style>.preloader { display: none !important; }</style>');
+            }
+          `,
+        }}
+      />
+      <div className="preloader fixed inset-0 z-10000 bg-background flex flex-col items-center justify-center">
+        <div className="preloader-text flex flex-col items-center gap-4">
+          <span className="text-6xl md:text-8xl font-bold text-foreground tabular-nums">
+            {count}%
+          </span>
+          <span className="text-sm text-muted-foreground uppercase tracking-widest">
+            Loading
+          </span>
+        </div>
+        
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-muted overflow-hidden">
+          <div 
+            className="preloader-bar h-full bg-primary origin-left"
+            style={{ transform: `scaleX(${count / 100})` }}
+          />
+        </div>
       </div>
-      
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-muted overflow-hidden">
-        <div 
-          className="preloader-bar h-full bg-primary origin-left"
-          style={{ transform: `scaleX(${count / 100})` }}
-        />
-      </div>
-    </div>
+    </>
   )
 }
+

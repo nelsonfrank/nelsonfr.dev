@@ -47,7 +47,9 @@ export function Hero() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.5 })
+      const preloaderShown = typeof window !== "undefined" && sessionStorage.getItem("preloader-shown") === "true"
+      const startDelay = preloaderShown ? 0.5 : 3.4
+      const tl = gsap.timeline({ delay: startDelay })
 
       // Badge reveal
       tl.fromTo(
