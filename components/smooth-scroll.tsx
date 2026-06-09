@@ -1,43 +1,24 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger)
-}
+// Register once at module level — calling registerPlugin multiple times is harmless
+// but wasteful; the guard above already ensures this only runs in the browser.
+gsap.registerPlugin(ScrollTrigger)
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
-  const wrapperRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-
   useEffect(() => {
-    // Initialize smooth scroll
-    const wrapper = wrapperRef.current
-    const content = contentRef.current
-    if (!wrapper || !content) return
-
-    // Set up smooth scrolling with GSAP ScrollTrigger
-    gsap.registerPlugin(ScrollTrigger)
-
-    // Refresh ScrollTrigger on resize
-    const handleResize = () => {
-      ScrollTrigger.refresh()
-    }
-
-    window.addEventListener("resize", handleResize)
+    // ScrollTrigger already listens to window resize and calls refresh()
+    // internally with a 200ms debounce — no need to duplicate that here.
 
     return () => {
-      window.removeEventListener("resize", handleResize)
+      // Kill all ScrollTrigger instances created by child components so they
+      // don't leak or fire against stale / unmounted DOM nodes.
+      ScrollTrigger.getAll().forEach((t) => t.kill())
     }
   }, [])
 
-  return (
-    <div ref={wrapperRef} className="smooth-wrapper">
-      <div ref={contentRef} className="smooth-content">
-        {children}
-      </div>
-    </div>
-  )
+  return <div className="smooth-wrapper">{children}</div>
 }

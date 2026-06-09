@@ -147,12 +147,9 @@
 .smooth-wrapper {
   position: relative;
   width: 100%;
-  min-height: 100vh;
 }
 
-.smooth-content {
-  will-change: transform;
-}
+
 
 ::selection {
   background: oklch(0.75 0.15 180 / 0.3);
