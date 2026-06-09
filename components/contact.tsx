@@ -54,7 +54,7 @@ function SocialLink({ link, index }: { link: typeof socialLinks[0]; index: numbe
         }
       }}
       href={link.href}
-      className="p-4 bg-secondary rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 group relative overflow-hidden"
+      className="p-3 md:p-4 bg-secondary rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 group relative overflow-hidden"
       aria-label={link.name}
       data-cursor={link.name}
       target="_blank"
@@ -123,7 +123,7 @@ export function Contact() {
   }
 
   return (
-    <section ref={sectionRef} id="contact" className="py-20 px-6">
+    <section ref={sectionRef} id="contact" className="py-16 md:py-20 px-4 sm:px-6">
       <div className="mx-auto max-w-6xl">
         <h2
           ref={headingRef}
@@ -133,7 +133,7 @@ export function Contact() {
           <span ref={lineRef} className="absolute -bottom-2 left-0 w-full h-px bg-primary" />
         </h2>
 
-        <div className="grid gap-12 lg:grid-cols-2">
+        <div className="grid gap-10 lg:gap-12 lg:grid-cols-2">
           <div className="space-y-6">
             <h3
               ref={titleRef}
@@ -173,7 +173,7 @@ export function Contact() {
 
           <div
             ref={formRef}
-            className="bg-card rounded-2xl border border-border p-8 relative overflow-hidden"
+            className="bg-card rounded-2xl border border-border p-6 sm:p-8 relative overflow-hidden"
           >
             {/* Decorative corner */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-2xl" />
