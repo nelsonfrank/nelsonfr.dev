@@ -1,7 +1,33 @@
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getPost, getAllPosts } from "@/lib/posts"
 import { markdownToHtml } from "@/lib/markdown"
 import PostClient from "./PostClient"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const post = getPost(slug)
+  if (!post) {
+    return {
+      title: "Post Not Found",
+    }
+  }
+
+  return {
+    title: `${post.title} — Nelson Frank`,
+    description: post.excerpt || `Read ${post.title} by Nelson Frank`,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: "article",
+      publishedTime: post.date,
+    },
+  }
+}
 
 export default async function PostPage({
   params,
