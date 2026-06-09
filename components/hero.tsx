@@ -47,7 +47,9 @@ export function Hero() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.5 })
+      const preloaderShown = typeof window !== "undefined" && sessionStorage.getItem("preloader-shown") === "true"
+      const startDelay = preloaderShown ? 0.5 : 3.4
+      const tl = gsap.timeline({ delay: startDelay })
 
       // Badge reveal
       tl.fromTo(
@@ -159,7 +161,7 @@ export function Hero() {
   }, [])
 
   const techStack = [
-    "TypeScript", "React", "Next.js", "Node.js", "GSAP", "TailwindCSS", "PostgreSQL", "SupaBase"
+    "React", "Next.js", "TypeScript", "Tailwind CSS", "Zustand", "React Query", "Node.js", "PostgreSQL", "AWS", "D3.js"
   ]
 
   return (

@@ -36,6 +36,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn("bg-background", GeistSans.variable, GeistMono.variable, GeistPixelSquare.variable)}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (typeof window !== 'undefined' && window.sessionStorage.getItem('preloader-shown') === 'true') {
+                  document.write('<style>.preloader { display: none !important; }</style>');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body className={cn("antialiased")} >
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

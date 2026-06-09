@@ -7,42 +7,12 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useFadeUp, useMagnetic } from "@/hooks/use-gsap"
 
+import { projects } from "@/lib/projects"
+
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-const projects = [
-  {
-    title: "AI Powered Text Generator",
-    description:
-      "Text generator powered by OpenAI API, based on GPT-3.5. Features real-time streaming responses and a clean, intuitive interface.",
-    image: "/projects/ai-text.jpg",
-    technologies: ["TypeScript", "Next.js", "OpenAI", "Tailwind CSS"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: true,
-  },
-  {
-    title: "Live Markdown Editor",
-    description:
-      "A real-time markdown editor with live preview, syntax highlighting, and export functionality. Built for developers who write.",
-    image: "/projects/markdown.jpg",
-    technologies: ["TypeScript", "React", "CodeMirror", "Markdown"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: true,
-  },
-  {
-    title: "Booking App",
-    description:
-      "A full-featured booking application with calendar integration, payment processing, and real-time availability updates.",
-    image: "/projects/booking.jpg",
-    technologies: ["Flutter", "Dart", "Firebase", "Stripe"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: false,
-  },
-]
 
 function ProjectCard({ project, index }: { project: typeof projects[0]; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null)

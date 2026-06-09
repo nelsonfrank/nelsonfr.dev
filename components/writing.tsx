@@ -11,30 +11,28 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
 }
 
+// Preview of the 3 most recent posts shown on the homepage
 const posts = [
   {
     title: "Get Started On GraphQL Query And Mutation",
-    excerpt:
-      "Learn the fundamentals of GraphQL queries and mutations. A comprehensive guide to getting started with GraphQL in your projects.",
+    excerpt: "Learn the fundamentals of GraphQL queries and mutations. A comprehensive guide to getting started with GraphQL in your projects.",
     date: "April 8, 2023",
-    tags: ["API", "GraphQL", "fundamentals"],
-    slug: "/blog/graphql-query-mutation",
+    tags: ["API", "GraphQL", "Fundamentals"],
+    slug: "/writing/graphql-query-mutation",
   },
   {
     title: "A Step-By-Step Guide To Setting Up A Node.js And Express App With TypeScript",
-    excerpt:
-      "Everything you need to know about setting up a modern Node.js and Express application with TypeScript, from scratch to production.",
+    excerpt: "Everything you need to know about setting up a modern Node.js and Express application with TypeScript, from scratch to production.",
     date: "January 27, 2024",
     tags: ["API", "Node.js", "TypeScript"],
-    slug: "/blog/nodejs-express-typescript",
+    slug: "/writing/nodejs-express-typescript",
   },
   {
     title: "Building Scalable React Applications",
-    excerpt:
-      "Best practices and patterns for building scalable React applications that are maintainable and performant.",
+    excerpt: "Best practices and patterns for building scalable React applications that are maintainable and performant.",
     date: "March 15, 2024",
     tags: ["React", "Architecture", "Performance"],
-    slug: "/blog/scalable-react",
+    slug: "/writing/scalable-react",
   },
 ]
 
@@ -151,7 +149,7 @@ export function Writing() {
 
         <Link
           ref={viewAllRef}
-          href="/blog"
+          href="/writing"
           className="inline-flex items-center gap-2 mt-12 text-foreground font-medium hover:text-primary transition-colors group"
           data-cursor="Explore"
         >

@@ -6,16 +6,17 @@ import { Mail, Github, Linkedin, Twitter, Send, CheckCircle } from "lucide-react
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useFadeUp, useMagnetic, useScaleUp } from "@/hooks/use-gsap"
+import { useForm } from "react-hook-form"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
 }
 
 const socialLinks = [
-  { name: "GitHub", href: "https://github.com", icon: Github },
-  { name: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
-  { name: "Twitter", href: "https://twitter.com", icon: Twitter },
-  { name: "Email", href: "mailto:hello@nelsonfrank.com", icon: Mail },
+   { name: "GitHub", href: "https://github.com/nelsonfrank", icon: Github },
+  { name: "LinkedIn", href: "https://www.linkedin.com/in/nelson-frank-munissy/", icon: Linkedin },
+  { name: "Twitter", href: "https://x.com/nelsonfr_", icon: Twitter },
+  { name: "Email", href: "mailto:nelsonfrank741@gmail.com", icon: Mail },
 ]
 
 function SocialLink({ link, index }: { link: typeof socialLinks[0]; index: number }) {
@@ -56,6 +57,8 @@ function SocialLink({ link, index }: { link: typeof socialLinks[0]; index: numbe
       className="p-4 bg-secondary rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 group relative overflow-hidden"
       aria-label={link.name}
       data-cursor={link.name}
+      target="_blank"
+      rel="noopener noreferrer"
     >
       <div className="absolute inset-0 bg-primary/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-xl" />
       <link.icon className="size-6 relative z-10 group-hover:scale-110 transition-transform duration-300" />
@@ -72,6 +75,13 @@ export function Contact() {
   const lineRef = useRef<HTMLDivElement>(null)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [focusedField, setFocusedField] = useState<string | null>(null)
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<{ name: string; email: string; message: string }>()
 
   useEffect(() => {
     const line = lineRef.current
@@ -105,9 +115,10 @@ export function Contact() {
     })
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = (data: { name: string; email: string; message: string }) => {
+    console.log({data})
     setIsSubmitted(true)
+    reset()
     setTimeout(() => setIsSubmitted(false), 3000)
   }
 
@@ -167,7 +178,7 @@ export function Contact() {
             {/* Decorative corner */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-2xl" />
             
-            <form onSubmit={handleSubmit} className="space-y-6 relative">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 relative">
               <div className="space-y-2">
                 <label
                   htmlFor="name"
@@ -181,11 +192,13 @@ export function Contact() {
                   <input
                     type="text"
                     id="name"
-                    name="name"
+                    {...register("name", {
+                      required: "Name is required",
+                      onBlur: () => setFocusedField(null)
+                    })}
+                    onFocus={() => setFocusedField("name")}
                     className="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all duration-300"
                     placeholder="Your name"
-                    onFocus={() => setFocusedField("name")}
-                    onBlur={() => setFocusedField(null)}
                   />
                   <div
                     className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${
@@ -193,6 +206,9 @@ export function Contact() {
                     }`}
                   />
                 </div>
+                {errors.name && (
+                  <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -208,11 +224,17 @@ export function Contact() {
                   <input
                     type="email"
                     id="email"
-                    name="email"
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address"
+                      },
+                      onBlur: () => setFocusedField(null)
+                    })}
+                    onFocus={() => setFocusedField("email")}
                     className="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all duration-300"
                     placeholder="your@email.com"
-                    onFocus={() => setFocusedField("email")}
-                    onBlur={() => setFocusedField(null)}
                   />
                   <div
                     className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${
@@ -220,6 +242,9 @@ export function Contact() {
                     }`}
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -234,12 +259,14 @@ export function Contact() {
                 <div className="relative">
                   <textarea
                     id="message"
-                    name="message"
+                    {...register("message", {
+                      required: "Message is required",
+                      onBlur: () => setFocusedField(null)
+                    })}
+                    onFocus={() => setFocusedField("message")}
                     rows={4}
                     className="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all duration-300 resize-none"
                     placeholder="Tell me about your project..."
-                    onFocus={() => setFocusedField("message")}
-                    onBlur={() => setFocusedField(null)}
                   />
                   <div
                     className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${
@@ -247,6 +274,9 @@ export function Contact() {
                     }`}
                   />
                 </div>
+                {errors.message && (
+                  <p className="text-xs text-red-500 mt-1">{errors.message.message}</p>
+                )}
               </div>
 
               <button

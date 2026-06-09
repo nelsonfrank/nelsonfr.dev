@@ -8,7 +8,7 @@ import { useMagnetic } from "@/hooks/use-gsap"
 
 const navLinks = [
   { href: "#about", label: "About" },
-  { href: "#experience", label: "Experience" },
+  { href: "/experience", label: "Experience" },
   { href: "#projects", label: "Projects" },
   { href: "#writing", label: "Writing" },
   { href: "#contact", label: "Contact" },
@@ -41,11 +41,14 @@ export function Header() {
     const header = headerRef.current
     if (!header) return
 
+    const preloaderShown = typeof window !== "undefined" && sessionStorage.getItem("preloader-shown") === "true"
+    const startDelay = preloaderShown ? 0.2 : 2.8
+
     // Initial animation
     gsap.fromTo(
       header,
       { y: -100, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, delay: 2.8, ease: "power3.out" }
+      { y: 0, opacity: 1, duration: 1, delay: startDelay, ease: "power3.out" }
     )
 
     // Scroll listener for header background
