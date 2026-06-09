@@ -8,67 +8,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useFadeUp, useMagnetic } from "@/hooks/use-gsap"
 import { CustomCursor } from "@/components/custom-cursor"
 import { SmoothScroll } from "@/components/smooth-scroll"
+import { posts } from "@/lib/posts"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-const allPosts = [
-  {
-    title: "Get Started On GraphQL Query And Mutation",
-    excerpt:
-      "Learn the fundamentals of GraphQL queries and mutations. A comprehensive guide to getting started with GraphQL in your projects.",
-    date: "April 8, 2023",
-    readTime: "8 min read",
-    tags: ["API", "GraphQL", "Fundamentals"],
-    slug: "/writing/graphql-query-mutation",
-  },
-  {
-    title: "A Step-By-Step Guide To Setting Up A Node.js And Express App With TypeScript",
-    excerpt:
-      "Everything you need to know about setting up a modern Node.js and Express application with TypeScript, from scratch to production.",
-    date: "January 27, 2024",
-    readTime: "12 min read",
-    tags: ["API", "Node.js", "TypeScript"],
-    slug: "/writing/nodejs-express-typescript",
-  },
-  {
-    title: "Building Scalable React Applications",
-    excerpt:
-      "Best practices and patterns for building scalable React applications that are maintainable and performant.",
-    date: "March 15, 2024",
-    readTime: "10 min read",
-    tags: ["React", "Architecture", "Performance"],
-    slug: "/writing/scalable-react",
-  },
-  {
-    title: "Understanding Next.js App Router",
-    excerpt:
-      "A deep dive into the Next.js App Router — layouts, loading states, error boundaries, and server components explained.",
-    date: "May 3, 2024",
-    readTime: "14 min read",
-    tags: ["Next.js", "React", "Performance"],
-    slug: "/writing/nextjs-app-router",
-  },
-  {
-    title: "CSS Grid vs Flexbox: When To Use Each",
-    excerpt:
-      "A practical guide to understanding the differences between CSS Grid and Flexbox, with real-world examples and use cases.",
-    date: "June 18, 2024",
-    readTime: "6 min read",
-    tags: ["CSS", "Fundamentals", "Layout"],
-    slug: "/writing/grid-vs-flexbox",
-  },
-  {
-    title: "Mastering TypeScript Generics",
-    excerpt:
-      "Go beyond basic types. Learn how generics make your TypeScript code flexible, reusable, and fully type-safe.",
-    date: "August 9, 2024",
-    readTime: "11 min read",
-    tags: ["TypeScript", "Fundamentals"],
-    slug: "/writing/typescript-generics",
-  },
-]
+// Adapt posts from lib to include the slug URL format the list page uses
+const allPosts = posts.map((p) => ({ ...p, slug: `/writing/${p.slug}` }))
 
 const allTags = Array.from(new Set(allPosts.flatMap((p) => p.tags))).sort()
 
