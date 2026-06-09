@@ -103,30 +103,39 @@ export function Header() {
           ))}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-foreground relative z-50 p-2"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
-        >
-          <div className="relative w-6 h-6 flex items-center justify-center">
-            <span
-              className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
-                isOpen ? "rotate-45" : "-translate-y-1.5"
-              }`}
-            />
-            <span
-              className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
-                isOpen ? "opacity-0" : "opacity-100"
-              }`}
-            />
-            <span
-              className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
-                isOpen ? "-rotate-45" : "translate-y-1.5"
-              }`}
-            />
-          </div>
-        </button>
+        {/* Mobile Controls */}
+        <div className="flex md:hidden items-center gap-2">
+          <Link
+            href="/#contact"
+            className="px-3.5 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary hover:text-background transition-all duration-300 active:scale-95 shadow-sm shadow-primary/10"
+          >
+            Contact
+          </Link>
+
+          <button
+            className="text-foreground relative z-50 p-2"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
+          >
+            <div className="relative w-6 h-6 flex items-center justify-center">
+              <span
+                className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
+                  isOpen ? "rotate-45" : "-translate-y-1.5"
+                }`}
+              />
+              <span
+                className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
+                  isOpen ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <span
+                className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
+                  isOpen ? "-rotate-45" : "translate-y-1.5"
+                }`}
+              />
+            </div>
+          </button>
+        </div>
       </nav>
 
       {/* Mobile Navigation */}
