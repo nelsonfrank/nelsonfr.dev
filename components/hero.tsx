@@ -161,7 +161,7 @@ export function Hero() {
   }, [])
 
   const techStack = [
-    "TypeScript", "React", "Next.js", "Node.js", "GSAP", "TailwindCSS", "PostgreSQL", "SupaBase"
+    "React", "Next.js", "TypeScript", "Tailwind CSS", "Zustand", "React Query", "Node.js", "PostgreSQL", "AWS", "D3.js"
   ]
 
   return (
