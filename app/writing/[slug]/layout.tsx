@@ -13,11 +13,7 @@ export async function generateMetadata({
   const { slug } = await params
   const post = getPost(slug)
 
-  if (!post) {
-    return {
-      title: "Post Not Found — Nelson Frank",
-    }
-  }
+  if (!post) return { title: "Post Not Found — Nelson Frank" }
 
   return {
     title: `${post.title} — Nelson Frank`,
@@ -26,7 +22,6 @@ export async function generateMetadata({
       title: post.title,
       description: post.excerpt,
       type: "article",
-      publishedTime: post.date,
       tags: post.tags,
     },
   }
