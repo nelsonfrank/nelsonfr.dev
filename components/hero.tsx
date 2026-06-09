@@ -239,13 +239,13 @@ export function Hero() {
               className="absolute bottom-1/4 -left-12 w-64 h-64 bg-accent/20 rounded-full blur-[80px]"
             />
 
-            <div ref={imageRef} className="relative aspect-square w-full max-w-lg opacity-0">
+            <div ref={imageRef} className="relative aspect-square w-full max-w-xl opacity-0">
               <div className="absolute inset-0 bg-linear-to-tr from-primary/20 to-accent/20 rounded-3xl blur-2xl" />
-              <div className="relative z-10 w-full h-full rounded-2xl border border-white/10 glass-dark overflow-hidden group">
+              <div className="relative z-10 w-full h-full rounded-2xl overflow-hidden group">
                 <img 
-                  src="/hero-abstract.png"
+                  src="/landing-page.png"
                   alt="Nelson Frank Abstract Portfolio"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
                   <p className="text-white/80 text-sm font-light italic">
