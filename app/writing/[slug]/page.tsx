@@ -52,12 +52,36 @@ export default async function PostPage({
   const prevPost = allPosts[idx - 1] ?? null
   const nextPost = allPosts[idx + 1] ?? null
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.excerpt,
+    "datePublished": post.date,
+    "dateModified": post.date,
+    "author": {
+      "@type": "Person",
+      "name": "Nelson Frank",
+      "url": "https://nelsonfrank.dev"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://nelsonfrank.dev/writing/${slug}`
+    }
+  }
+
   return (
-    <PostClient
-      post={post}
-      htmlContent={htmlContent}
-      prevPost={prevPost}
-      nextPost={nextPost}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <PostClient
+        post={post}
+        htmlContent={htmlContent}
+        prevPost={prevPost}
+        nextPost={nextPost}
+      />
+    </>
   )
 }

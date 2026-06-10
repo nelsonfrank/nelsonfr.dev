@@ -1,0 +1,24 @@
+# Nelson Frank — Fullstack Software Developer
+
+Nelson Frank is a fullstack software developer interested in tech and building robust software using modern technologies like React, Next.js, TypeScript, Node.js, and PostgreSQL.
+
+## Core Profile
+- **Website URL**: https://nelsonfrank.dev
+- **Main Stack**: React, Next.js, TypeScript, Tailwind CSS, Node.js, PostgreSQL, AWS, GSAP, D3.js.
+- **Interests**: Clean code, design systems, performance optimization, and robust web applications.
+
+## Site Structure
+
+- [Home](https://nelsonfrank.dev/) — Portfolio landing page, welcome intro, main tech stack, and contact details.
+- [Experience](https://nelsonfrank.dev/experience) — Timeline of professional roles, projects, and key contributions.
+- [Projects](https://nelsonfrank.dev/projects) — Detailed showcase of built web platforms and open-source contributions.
+- [Writing / Blog](https://nelsonfrank.dev/writing) — List of technical articles, deep dives, and tutorials.
+
+## Articles & Deep Dives
+
+- [Understanding Next.js App Router](https://nelsonfrank.dev/writing/nextjs-app-router) — Layouts, loading states, error boundaries, and server components explained.
+- [CSS Grid vs Flexbox: When to Use Which](https://nelsonfrank.dev/writing/grid-vs-flexbox) — Structural layouts vs dynamic content positioning.
+- [Setting Up Node.js with Express and TypeScript](https://nelsonfrank.dev/writing/nodejs-express-typescript) — Step-by-step developer guide.
+- [GraphQL Queries and Mutations](https://nelsonfrank.dev/writing/graphql-query-mutation) — Detailed guide to queries, mutations, schemas, and API integration.
+- [Building Scalable React Applications](https://nelsonfrank.dev/writing/scalable-react) — Folder structure, state management, and design patterns.
+- [Demystifying TypeScript Generics](https://nelsonfrank.dev/writing/typescript-generics) — Writing flexible, type-safe reusable components.
