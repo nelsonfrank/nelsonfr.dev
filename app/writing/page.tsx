@@ -5,6 +5,9 @@ import WritingClient from "./WritingClient"
 export const metadata: Metadata = {
   title: "Writing — Nelson Frank",
   description: "Articles, tutorials, and notes on software engineering, web development, and clean code.",
+  alternates: {
+    canonical: "./",
+  },
 }
 
 export default function WritingPage() {

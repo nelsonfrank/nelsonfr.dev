@@ -22,3 +22,9 @@ Nelson Frank is a fullstack software developer interested in tech and building r
 - [GraphQL Queries and Mutations](https://nelsonfrank.dev/writing/graphql-query-mutation) — Detailed guide to queries, mutations, schemas, and API integration.
 - [Building Scalable React Applications](https://nelsonfrank.dev/writing/scalable-react) — Folder structure, state management, and design patterns.
 - [Demystifying TypeScript Generics](https://nelsonfrank.dev/writing/typescript-generics) — Writing flexible, type-safe reusable components.
+
+## Crawl & Indexing Resources
+
+- [Sitemap](https://nelsonfrank.dev/sitemap.xml) — XML Sitemap for search engines and crawlers.
+- [Robots Directives](https://nelsonfrank.dev/robots.txt) — Web crawler policies and instruction sets.
+

@@ -20,6 +20,9 @@ export async function generateMetadata({
   return {
     title: `${post.title} — Nelson Frank`,
     description: post.excerpt || `Read ${post.title} by Nelson Frank`,
+    alternates: {
+      canonical: "./",
+    },
     openGraph: {
       title: post.title,
       description: post.excerpt,
@@ -70,11 +73,40 @@ export default async function PostPage({
     }
   }
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://nelsonfrank.dev"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Writing",
+        "item": "https://nelsonfrank.dev/writing"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title,
+        "item": `https://nelsonfrank.dev/writing/${slug}`
+      }
+    ]
+  }
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <PostClient
         post={post}
