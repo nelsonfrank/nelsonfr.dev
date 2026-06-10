@@ -11,7 +11,7 @@ import { SmoothScroll } from "@/components/smooth-scroll"
 
 export const metadata: Metadata = {
   title: "Nelson Frank — Portfolio",
-  description: "Senior Frontend Developer specializing in React, TypeScript, and crafting delightful, data-rich web applications.",
+  description: "Fullstack software developer interested in tech and building robust software using latest technology.",
 }
 
 export default function Page() {
