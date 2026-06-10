@@ -7,6 +7,7 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useFadeUp, useMagnetic, useScaleUp } from "@/hooks/use-gsap"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
@@ -80,7 +81,7 @@ export function Contact() {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<{ name: string; email: string; message: string }>()
 
   useEffect(() => {
@@ -115,11 +116,30 @@ export function Contact() {
     })
   }, [])
 
-  const onSubmit = (data: { name: string; email: string; message: string }) => {
-    console.log({data})
-    setIsSubmitted(true)
-    reset()
-    setTimeout(() => setIsSubmitted(false), 3000)
+  const onSubmit = async (data: { name: string; email: string; message: string }) => {
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setIsSubmitted(true)
+        toast.success(result.message || "Message sent successfully!")
+        reset()
+        setTimeout(() => setIsSubmitted(false), 3000)
+      } else {
+        toast.error(result.error || "Failed to send the message. Please try again.")
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error("An unexpected error occurred. Please try again.")
+    }
   }
 
   return (
@@ -281,7 +301,7 @@ export function Contact() {
 
               <button
                 type="submit"
-                disabled={isSubmitted}
+                disabled={isSubmitted || isSubmitting}
                 className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden disabled:opacity-70"
                 data-cursor="Send"
               >
@@ -290,6 +310,11 @@ export function Contact() {
                   <>
                     <CheckCircle className="size-5" />
                     <span>Message Sent!</span>
+                  </>
+                ) : isSubmitting ? (
+                  <>
+                    <span className="animate-spin rounded-full h-4 w-4 border-2 border-background border-t-transparent mr-2" />
+                    <span>Sending...</span>
                   </>
                 ) : (
                   <>

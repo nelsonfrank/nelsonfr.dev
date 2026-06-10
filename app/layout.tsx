@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono";
 import { GeistPixelSquare } from "geist/font/pixel";
 import './globals.css'
 import { cn } from '@/lib/utils';
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   title: 'Nelson Frank - Fullstack Software Developer',
@@ -51,8 +52,10 @@ export default function RootLayout({
       </head>
       <body className={cn("antialiased")} >
         {children}
+        <Toaster />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )
 }
+
