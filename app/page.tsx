@@ -14,9 +14,32 @@ export const metadata: Metadata = {
   description: "Fullstack software developer interested in tech and building robust software using latest technology.",
 }
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Nelson Frank",
+  "url": "https://nelsonfrank.dev",
+  "image": "https://nelsonfrank.dev/profile.png",
+  "jobTitle": "Fullstack Software Developer",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Freelance / Self-employed"
+  },
+  "description": "Fullstack software developer interested in tech and building robust software using latest technology.",
+  "sameAs": [
+    "https://github.com/nelsonfrank",
+    "https://www.linkedin.com/in/nelson-frank-munissy/",
+    "https://x.com/nelsonfr_"
+  ]
+}
+
 export default function Page() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Preloader />
       <CustomCursor />
       <SmoothScroll>
