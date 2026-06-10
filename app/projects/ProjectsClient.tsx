@@ -86,9 +86,9 @@ function ProjectGridCard({
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div className="space-y-3">
           <div className="flex items-start justify-between gap-3">
-            <h3 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors duration-300 leading-snug">
+            <h2 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors duration-300 leading-snug">
               {project.title}
-            </h3>
+            </h2>
             <div className="flex gap-1.5 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity">
               {project.githubUrl && (
                 <Link
