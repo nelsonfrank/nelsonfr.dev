@@ -7,10 +7,30 @@ import './globals.css'
 import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/sonner"
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL
+  ? (process.env.NEXT_PUBLIC_APP_URL.startsWith('http') ? process.env.NEXT_PUBLIC_APP_URL : `https://${process.env.NEXT_PUBLIC_APP_URL}`)
+  : 'https://nelsonfrank.dev'
+
 export const metadata: Metadata = {
-  title: 'Nelson Frank - Fullstack Software Developer',
+  metadataBase: new URL(appUrl),
+  title: {
+    default: 'Nelson Frank - Fullstack Software Developer',
+    template: '%s | Nelson Frank',
+  },
   description: 'Fullstack software developer interested in tech and building robust software using latest technology.',
-  generator: 'v0.app',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://nelsonfrank.dev',
+    siteName: 'Nelson Frank',
+    title: 'Nelson Frank - Fullstack Software Developer',
+    description: 'Fullstack software developer interested in tech and building robust software using latest technology.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Nelson Frank - Fullstack Software Developer',
+    description: 'Fullstack software developer interested in tech and building robust software using latest technology.',
+  },
   icons: {
     icon: [
       {
@@ -29,6 +49,7 @@ export const metadata: Metadata = {
     apple: '/apple-icon.png',
   },
 }
+
 
 export default function RootLayout({
   children,
