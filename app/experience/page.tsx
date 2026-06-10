@@ -5,6 +5,9 @@ import ExperienceClient from "./ExperienceClient"
 export const metadata: Metadata = {
   title: "Experience — Nelson Frank",
   description: "Professional history and timeline of software development roles, projects, and technologies.",
+  alternates: {
+    canonical: "./",
+  },
 }
 
 export default function ExperiencePage() {

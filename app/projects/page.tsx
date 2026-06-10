@@ -5,6 +5,9 @@ import ProjectsClient from "./ProjectsClient"
 export const metadata: Metadata = {
   title: "Projects — Nelson Frank",
   description: "A showcase of web applications, mobile platforms, and open-source software designed, architected, and built by Nelson Frank.",
+  alternates: {
+    canonical: "./",
+  },
 }
 
 export default function ProjectsPage() {

@@ -170,8 +170,31 @@ export default function ExperienceClient({ experiences }: ExperienceClientProps)
     return () => ctx.revert()
   }, [])
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://nelsonfrank.dev"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Experience",
+      "item": "https://nelsonfrank.dev/experience"
+    }
+  ]
+}
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <CustomCursor />
       <SmoothScroll>
 

@@ -13,6 +13,9 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
+  alternates: {
+    canonical: '/',
+  },
   title: {
     default: 'Nelson Frank - Fullstack Software Developer',
     template: '%s | Nelson Frank',
