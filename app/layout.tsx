@@ -77,7 +77,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={cn("antialiased")} >
+      <body className={cn("antialiased relative")} >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
