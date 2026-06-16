@@ -112,7 +112,7 @@ export const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(
           strategy="afterInteractive"
           onLoad={() => setScriptLoaded(true)}
         />
-        <div ref={containerRef} className="w-full flex justify-center py-2" />
+        <div ref={containerRef} className="w-full flex px-2 py-2" />
       </>
     )
   }
