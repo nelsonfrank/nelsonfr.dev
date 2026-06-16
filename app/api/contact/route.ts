@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server"
+import * as Sentry from "@sentry/nextjs"
 
 export const runtime = "edge"
 
 export async function POST(request: Request) {
   try {
     const { name, email, message, captchaToken } = await request.json()
+
+    // Send test metrics to verify Sentry Edge context
+    Sentry.metrics.count("test_metric", 1)
 
     // Validation
     if (!name || !email || !message) {

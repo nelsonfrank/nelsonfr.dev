@@ -9,6 +9,7 @@ import { useFadeUp, useMagnetic, useScaleUp } from "@/hooks/use-gsap"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { Turnstile, type TurnstileRef } from "./turnstile"
+import * as Sentry from "@sentry/nextjs"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
@@ -142,6 +143,10 @@ export function Contact() {
       const result = await response.json()
 
       if (response.ok) {
+        // Send test metrics to verify Sentry configuration
+        Sentry.metrics.count("test_metric", 1)
+        Sentry.metrics.count("contact_form_success", 1)
+
         setIsSubmitted(true)
         toast.success(result.message || "Message sent successfully!")
         reset()
