@@ -147,6 +147,9 @@ export function Contact() {
         Sentry.metrics.count("test_metric", 1)
         Sentry.metrics.count("contact_form_success", 1)
 
+        // Send a test log to Sentry to verify Logs configuration
+        Sentry.logger.info("User triggered test log", { log_source: "sentry_test" })
+
         setIsSubmitted(true)
         toast.success(result.message || "Message sent successfully!")
         reset()

@@ -10,6 +10,9 @@ export async function POST(request: Request) {
     // Send test metrics to verify Sentry Edge context
     Sentry.metrics.count("test_metric", 1)
 
+    // Send a test log to Sentry to verify Logs configuration
+    Sentry.logger.info("User triggered test log", { log_source: "sentry_test" })
+
     // Validation
     if (!name || !email || !message) {
       return NextResponse.json(
