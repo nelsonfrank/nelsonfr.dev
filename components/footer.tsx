@@ -6,6 +6,7 @@ import { Github, Linkedin, Twitter } from "lucide-react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useMagnetic } from "@/hooks/use-gsap"
+import posthog from "posthog-js"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
@@ -18,8 +19,16 @@ function SocialIcon({ href, icon: Icon, label }: { href: string; icon: typeof Gi
     <Link
       ref={ref}
       href={href}
+      onClick={() => {
+        posthog.capture("social_link_clicked", {
+          name: label,
+          href: href,
+        })
+      }}
       className="text-muted-foreground hover:text-primary transition-colors duration-300 p-2 hover:bg-primary/10 rounded-lg"
       aria-label={label}
+      target="_blank"
+      rel="noopener noreferrer"
     >
       <Icon className="size-5" />
     </Link>
@@ -70,9 +79,9 @@ export function Footer() {
           </div>
 
           <div className="flex items-center gap-2">
-            <SocialIcon href="https://github.com" icon={Github} label="GitHub" />
-            <SocialIcon href="https://linkedin.com" icon={Linkedin} label="LinkedIn" />
-            <SocialIcon href="https://twitter.com" icon={Twitter} label="Twitter" />
+            <SocialIcon href="https://github.com/nelsonfrank" icon={Github} label="GitHub" />
+            <SocialIcon href="https://www.linkedin.com/in/nelson-frank-munissy/" icon={Linkedin} label="LinkedIn" />
+            <SocialIcon href="https://x.com/nelsonfr_" icon={Twitter} label="Twitter" />
           </div>
         </div>
 
