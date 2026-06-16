@@ -7,6 +7,8 @@ import { GeistPixelSquare } from "geist/font/pixel";
 import './globals.css'
 import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/sonner"
+import { ThemeProvider } from '@/components/theme-provider'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL
   ? (process.env.NEXT_PUBLIC_APP_URL.startsWith('http') ? process.env.NEXT_PUBLIC_APP_URL : `https://${process.env.NEXT_PUBLIC_APP_URL}`)
@@ -61,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={cn("bg-background", GeistSans.variable, GeistMono.variable, GeistPixelSquare.variable)}>
+    <html lang="en" className={cn("bg-background", GeistSans.variable, GeistMono.variable, GeistPixelSquare.variable)} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -76,26 +78,34 @@ export default function RootLayout({
         />
       </head>
       <body className={cn("antialiased")} >
-        {/* Google Analytics Script */}
-        {process.env.NODE_ENV === 'production' && (
-          <>
-            <Script
-              src="https://www.googletagmanager.com/gtag/js?id=G-1EKCMNQFJR"
-              strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', 'G-1EKCMNQFJR');
-              `}
-            </Script>
-          </>
-        )}
-        {children}
-        <Toaster />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {/* Google Analytics Script */}
+          {process.env.NODE_ENV === 'production' && (
+            <>
+              <Script
+                src="https://www.googletagmanager.com/gtag/js?id=G-1EKCMNQFJR"
+                strategy="afterInteractive"
+              />
+              <Script id="google-analytics" strategy="afterInteractive">
+                {`
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', 'G-1EKCMNQFJR');
+                `}
+              </Script>
+            </>
+          )}
+          {children}
+          <ThemeToggle />
+          <Toaster />
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+        </ThemeProvider>
       </body>
     </html>
   )
