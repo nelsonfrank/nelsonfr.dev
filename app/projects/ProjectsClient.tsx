@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ArrowLeft, ArrowUpRight, Github, ExternalLink, Search, X, FolderGit2 } from "lucide-react"
 import gsap from "gsap"
 import { useMagnetic } from "@/hooks/use-gsap"
@@ -19,6 +20,7 @@ function ProjectGridCard({
   index: number
 }) {
   const cardRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const card = cardRef.current
@@ -33,10 +35,18 @@ function ProjectGridCard({
     })
   }, [project, index])
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest("a")) {
+      return
+    }
+    router.push(`/projects/${project.slug}`)
+  }
+
   return (
     <div
       ref={cardRef}
-      className="group relative flex flex-col bg-secondary/10 hover:bg-secondary/20 rounded-2xl border border-border/60 hover:border-primary/25 transition-all duration-400 overflow-hidden h-full"
+      onClick={handleCardClick}
+      className="group relative flex flex-col bg-secondary/10 hover:bg-secondary/20 rounded-2xl border border-border/60 hover:border-primary/25 transition-all duration-400 overflow-hidden h-full cursor-pointer"
       data-cursor="Explore"
     >
       {/* Visual Header / Placeholder with elegant gradients */}

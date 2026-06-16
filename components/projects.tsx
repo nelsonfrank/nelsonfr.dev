@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ArrowUpRight, Github, ExternalLink } from "lucide-react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -16,6 +17,14 @@ if (typeof window !== "undefined") {
 
 function ProjectCard({ project, index }: { project: typeof projects[0]; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest("a")) {
+      return
+    }
+    router.push(`/projects/${project.slug}`)
+  }
 
   useEffect(() => {
     const card = cardRef.current
@@ -42,7 +51,8 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
   return (
     <div
       ref={cardRef}
-      className="group relative bg-card rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all duration-500"
+      onClick={handleCardClick}
+      className="group relative bg-card rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all duration-500 cursor-pointer"
       style={{ perspective: "1000px" }}
       data-cursor="View"
     >
