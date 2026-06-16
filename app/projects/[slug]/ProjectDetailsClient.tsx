@@ -6,6 +6,7 @@ import { ArrowLeft, Github, ExternalLink, ArrowUpRight, FolderGit2, CheckCircle2
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useMagnetic } from "@/hooks/use-gsap"
+import posthog from "posthog-js"
 import { CustomCursor } from "@/components/custom-cursor"
 import { SmoothScroll } from "@/components/smooth-scroll"
 import type { Project } from "@/lib/projects"
@@ -218,6 +219,12 @@ export default function ProjectDetailsClient({
                       <Link
                         ref={liveBtnRef}
                         href={project.liveUrl}
+                        onClick={() => {
+                          posthog.capture("project_live_website_visited", {
+                            project_title: project.title,
+                            live_url: project.liveUrl,
+                          })
+                        }}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full bg-primary text-background hover:bg-primary/95 text-xs font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 group transition-all duration-300 shadow-sm shadow-primary/10"
@@ -231,6 +238,12 @@ export default function ProjectDetailsClient({
                       <Link
                         ref={githubBtnRef}
                         href={project.githubUrl}
+                        onClick={() => {
+                          posthog.capture("project_source_code_viewed", {
+                            project_title: project.title,
+                            github_url: project.githubUrl,
+                          })
+                        }}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full bg-secondary/85 hover:bg-secondary border border-border text-foreground text-xs font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 group transition-all duration-300"
@@ -253,6 +266,13 @@ export default function ProjectDetailsClient({
               </h3>
               <Link
                 href={`/projects/${nextProject.slug}`}
+                onClick={() => {
+                  posthog.capture("next_project_clicked", {
+                    current_project: project.title,
+                    next_project: nextProject.title,
+                    next_slug: nextProject.slug,
+                  })
+                }}
                 className="group block relative overflow-hidden bg-secondary/5 hover:bg-secondary/15 rounded-2xl border border-border/50 hover:border-primary/30 p-8 md:p-12 transition-all duration-400 max-w-2xl mx-auto"
                 data-cursor="Next"
               >

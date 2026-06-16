@@ -5,6 +5,7 @@ import { useTheme } from "next-themes"
 import { Sun, Moon } from "lucide-react"
 import gsap from "gsap"
 import { useMagnetic } from "@/hooks/use-gsap"
+import posthog from "posthog-js"
 
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(false)
@@ -29,6 +30,7 @@ export function ThemeToggle() {
       )
     }
     
+    posthog.capture("theme_toggled", { theme: nextTheme })
     setTheme(nextTheme)
   }
 

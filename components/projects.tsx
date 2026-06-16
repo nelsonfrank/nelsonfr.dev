@@ -7,6 +7,7 @@ import { ArrowUpRight, Github, ExternalLink } from "lucide-react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useFadeUp, useMagnetic } from "@/hooks/use-gsap"
+import posthog from "posthog-js"
 
 import { projects } from "@/lib/projects"
 
@@ -23,6 +24,10 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
     if ((e.target as HTMLElement).closest("a")) {
       return
     }
+    posthog.capture("project_card_clicked", {
+      project_title: project.title,
+      slug: project.slug,
+    })
     router.push(`/projects/${project.slug}`)
   }
 

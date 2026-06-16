@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { Turnstile, type TurnstileRef } from "./turnstile"
 import * as Sentry from "@sentry/nextjs"
+import posthog from "posthog-js"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
@@ -57,6 +58,12 @@ function SocialLink({ link, index }: { link: typeof socialLinks[0]; index: numbe
         }
       }}
       href={link.href}
+      onClick={() => {
+        posthog.capture("social_link_clicked", {
+          name: link.name,
+          href: link.href,
+        })
+      }}
       className="p-3 md:p-4 bg-secondary rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300 group relative overflow-hidden"
       aria-label={link.name}
       data-cursor={link.name}
@@ -133,6 +140,8 @@ export function Contact() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-PostHog-Distinct-ID": posthog.get_distinct_id() || data.email,
+          "X-PostHog-Session-ID": posthog.get_session_id() || "",
         },
         body: JSON.stringify({
           ...data,
@@ -150,6 +159,18 @@ export function Contact() {
         // Send a test log to Sentry to verify Logs configuration
         Sentry.logger.info("User triggered test log", { log_source: "sentry_test" })
 
+        // Identify the user with their email in PostHog
+        posthog.identify(data.email, {
+          name: data.name,
+          email: data.email,
+        })
+
+        // Capture client-side contact submission
+        posthog.capture("contact_form_submitted", {
+          name: data.name,
+          email: data.email,
+        })
+
         setIsSubmitted(true)
         toast.success(result.message || "Message sent successfully!")
         reset()
@@ -163,6 +184,7 @@ export function Contact() {
       }
     } catch (error) {
       console.error(error)
+      posthog.captureException(error as Error)
       toast.error("An unexpected error occurred. Please try again.")
       setCaptchaToken(null)
       turnstileRef.current?.reset()

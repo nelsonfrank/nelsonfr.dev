@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server"
 import * as Sentry from "@sentry/nextjs"
+import { captureEdgeEvent } from "@/lib/posthog-server"
 
 export const runtime = "edge"
 
 export async function POST(request: Request) {
   try {
     const { name, email, message, captchaToken } = await request.json()
+    const distinctId = request.headers.get("X-PostHog-Distinct-ID") || email || "anonymous_contact"
+    const sessionId = request.headers.get("X-PostHog-Session-ID") || ""
 
     // Send test metrics to verify Sentry Edge context
     Sentry.metrics.count("test_metric", 1)
@@ -80,6 +83,18 @@ export async function POST(request: Request) {
       console.log(`Message: ${message}`)
       console.log("========================================")
 
+      await captureEdgeEvent({
+        distinctId: distinctId,
+        event: "server_contact_form_processed",
+        properties: {
+          sessionId,
+          name,
+          email,
+          email_sent: false,
+          testing_mode: true,
+        },
+      })
+
       return NextResponse.json({
         success: true,
         message: "Message logged successfully (local testing mode). Set RESEND_API_KEY to send emails.",
@@ -116,6 +131,18 @@ export async function POST(request: Request) {
         { status: 500 }
       )
     }
+
+    await captureEdgeEvent({
+      distinctId: distinctId,
+      event: "server_contact_form_processed",
+      properties: {
+        sessionId,
+        name,
+        email,
+        email_sent: true,
+        testing_mode: false,
+      },
+    })
 
     return NextResponse.json({
       success: true,
