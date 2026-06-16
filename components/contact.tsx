@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useFadeUp, useMagnetic, useScaleUp } from "@/hooks/use-gsap"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
+import { Turnstile, type TurnstileRef } from "./turnstile"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
@@ -74,8 +75,12 @@ export function Contact() {
   const descRef = useRef<HTMLParagraphElement>(null)
   const formRef = useScaleUp<HTMLDivElement>()
   const lineRef = useRef<HTMLDivElement>(null)
+  const turnstileRef = useRef<TurnstileRef>(null)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [focusedField, setFocusedField] = useState<string | null>(null)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
   const {
     register,
@@ -117,13 +122,21 @@ export function Contact() {
   }, [])
 
   const onSubmit = async (data: { name: string; email: string; message: string }) => {
+    if (siteKey && !captchaToken) {
+      toast.error("Please complete the captcha verification.")
+      return
+    }
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          captchaToken,
+        }),
       })
 
       const result = await response.json()
@@ -132,13 +145,19 @@ export function Contact() {
         setIsSubmitted(true)
         toast.success(result.message || "Message sent successfully!")
         reset()
+        setCaptchaToken(null)
+        turnstileRef.current?.reset()
         setTimeout(() => setIsSubmitted(false), 3000)
       } else {
         toast.error(result.error || "Failed to send the message. Please try again.")
+        setCaptchaToken(null)
+        turnstileRef.current?.reset()
       }
     } catch (error) {
       console.error(error)
       toast.error("An unexpected error occurred. Please try again.")
+      setCaptchaToken(null)
+      turnstileRef.current?.reset()
     }
   }
 
@@ -299,11 +318,23 @@ export function Contact() {
                 )}
               </div>
 
+              {siteKey && (
+                <div className="flex justify-center pb-2">
+                  <Turnstile
+                    ref={turnstileRef}
+                    siteKey={siteKey}
+                    onVerify={setCaptchaToken}
+                    onExpire={() => setCaptchaToken(null)}
+                    onError={() => setCaptchaToken(null)}
+                  />
+                </div>
+              )}
+
               <button
                 type="submit"
-                disabled={isSubmitted || isSubmitting}
-                className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden disabled:opacity-70"
-                data-cursor="Send"
+                disabled={isSubmitted || isSubmitting || (!!siteKey && !captchaToken)}
+                className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed"
+                data-cursor={isSubmitted || isSubmitting || (!!siteKey && !captchaToken) ? undefined : "Send"}
               >
                 <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 {isSubmitted ? (

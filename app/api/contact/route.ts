@@ -4,7 +4,7 @@ export const runtime = "edge"
 
 export async function POST(request: Request) {
   try {
-    const { name, email, message } = await request.json()
+    const { name, email, message, captchaToken } = await request.json()
 
     // Validation
     if (!name || !email || !message) {
@@ -12,6 +12,54 @@ export async function POST(request: Request) {
         { error: "Name, email, and message are required." },
         { status: 400 }
       )
+    }
+
+    // Server-side Turnstile verification
+    const secretKey = process.env.TURNSTILE_SECRET_KEY
+    if (secretKey) {
+      if (!captchaToken) {
+        return NextResponse.json(
+          { error: "Captcha verification token is missing." },
+          { status: 400 }
+        )
+      }
+
+      try {
+        const formData = new URLSearchParams()
+        formData.append("secret", secretKey)
+        formData.append("response", captchaToken)
+
+        const ip = request.headers.get("cf-connecting-ip")
+        if (ip) {
+          formData.append("remoteip", ip)
+        }
+
+        const turnstileResponse = await fetch(
+          "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+          {
+            method: "POST",
+            body: formData,
+          }
+        )
+
+        const turnstileData = await turnstileResponse.json()
+
+        if (!turnstileData.success) {
+          console.error("Turnstile verification failed:", turnstileData)
+          return NextResponse.json(
+            { error: "Captcha verification failed. Please try again." },
+            { status: 400 }
+          )
+        }
+      } catch (err) {
+        console.error("Error verifying Turnstile captcha:", err)
+        return NextResponse.json(
+          { error: "Failed to verify captcha. Please try again." },
+          { status: 500 }
+        )
+      }
+    } else {
+      console.warn("TURNSTILE_SECRET_KEY is not configured. Skipping server-side captcha verification.")
     }
 
     const apiKey = process.env.RESEND_API_KEY
