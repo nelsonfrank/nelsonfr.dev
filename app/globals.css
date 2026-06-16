@@ -124,6 +124,7 @@
   html {
     scroll-behavior: smooth;
     cursor: none;
+    overflow-x: hidden;
   }
   body {
     @apply bg-background text-foreground;
@@ -147,6 +148,7 @@
 .smooth-wrapper {
   position: relative;
   width: 100%;
+  overflow-x: hidden;
 }
 
 
