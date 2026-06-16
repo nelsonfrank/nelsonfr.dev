@@ -65,6 +65,7 @@ export async function POST(request: Request) {
     const apiKey = process.env.RESEND_API_KEY
     const toEmail = process.env.CONTACT_EMAIL || "nelsonfrank741@gmail.com"
 
+    console.log({ apiKey, toEmail })
     if (!apiKey) {
       console.log("========================================")
       console.log("CONTACT FORM SUBMISSION (No API Key Configured):")
@@ -85,7 +86,7 @@ export async function POST(request: Request) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: "Contact Form <onboarding@resend.dev>",
+        from: `Contact Form <${process.env.FROM_EMAIL || "contact@contact.nelsonfrank.dev"}>`,
         to: toEmail,
         subject: `Portfolio Contact: Message from ${name}`,
         html: `
