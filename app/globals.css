@@ -222,7 +222,18 @@
 .text-gradient {
   background-clip: text;
   -webkit-background-clip: text;
-  color: white;
+  color: var(--primary);
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, var(--primary), var(--accent), var(--primary));
+  background-size: 200% auto;
+  animation: gradient-shift 3s ease infinite;
+}
+
+.text-gradient span {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: var(--primary);
+  -webkit-text-fill-color: transparent;
   background-image: linear-gradient(to right, var(--primary), var(--accent), var(--primary));
   background-size: 200% auto;
   animation: gradient-shift 3s ease infinite;

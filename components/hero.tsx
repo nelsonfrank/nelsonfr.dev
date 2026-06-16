@@ -222,7 +222,7 @@ export function Hero() {
                 {techStack.map((tech) => (
                   <span 
                     key={tech} 
-                    className="px-3 py-1 rounded-md text-xs font-medium glass-dark text-muted-foreground opacity-0 hover:text-primary hover:border-primary/50 transition-colors cursor-default"
+                    className="px-3 py-1 rounded-md text-xs font-medium glass text-muted-foreground opacity-0 hover:text-primary hover:border-primary/50 transition-colors cursor-default"
                   >
                     {tech}
                   </span>
