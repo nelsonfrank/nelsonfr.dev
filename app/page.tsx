@@ -5,6 +5,7 @@ import { Hero } from "@/components/hero"
 import { Footer } from "@/components/footer"
 import { Preloader } from "@/components/preloader"
 import { SmoothScroll } from "@/components/smooth-scroll"
+import { getAllPosts } from "@/lib/posts"
 
 // Dynamic imports with ssr: true to preserve SEO HTML indexing
 const Projects = dynamic(() => import("@/components/projects").then((mod) => mod.Projects), {
@@ -48,6 +49,10 @@ const jsonLd = {
 }
 
 export default function Page() {
+  const posts = getAllPosts()
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .slice(0, 3)
+
   return (
     <>
       <script
@@ -61,7 +66,7 @@ export default function Page() {
         <main>
           <Hero />
           <Projects />
-          <Writing />
+          <Writing posts={posts} />
           <Contact />
         </main>
         <Footer />
