@@ -46,7 +46,7 @@ WebAuthn shifts the burden of credential verification from shared secrets to asy
 
 To support passkeys, you must model credentials in your database to associate multiple authenticators with a single user account. Each record must store the credential ID, the public key, transport details, and an authentication counter.
 
-In this implementation using TypeORM in [passkey-credential.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/passkey-credential.entity.ts), the database schema explicitly maps these fields:
+In this implementation using TypeORM in [passkey-credential.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/passkey-credential.entity.ts), the database schema explicitly maps these fields, using timezone-aware column types to avoid synchronization issues:
 
 ```typescript
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn } from 'typeorm';
@@ -72,19 +72,55 @@ export class PasskeyCredential {
   @ManyToOne(() => User, (user) => user.credentials)
   user: User;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 }
 ```
 
-The user entity in [user.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/user.entity.ts) maintains a one-to-many relationship with this credential table and preserves a temporary challenge column to track active login handshakes:
+To support user-nameless flows where we must track active sessions before identifying the user, we also persist generated cryptographic challenges in a dedicated table represented by [challenge.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/challenge.entity.ts):
 
 ```typescript
-@Column({ nullable: true, type: 'varchar' })
-currentChallenge?: string | null;
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 
-@OneToMany(() => PasskeyCredential, (credential) => credential.user)
-credentials: PasskeyCredential[];
+@Entity('challenges')
+export class Challenge {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ unique: true })
+  challenge: string;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+}
+```
+
+The user entity in [user.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/user.entity.ts) maintains a one-to-many relationship with this credential table and preserves a temporary challenge column, as well as audit timestamps:
+
+```typescript
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { PasskeyCredential } from './passkey-credential.entity';
+
+@Entity('users')
+export class User {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column({ nullable: true, type: 'varchar' })
+  currentChallenge?: string | null;
+
+  @OneToMany(() => PasskeyCredential, (credential) => credential.user)
+  credentials: PasskeyCredential[];
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
+}
 ```
 
 ## Backend Challenge Generation and Registration Flow
@@ -219,19 +255,70 @@ During subsequent authentication, you verify the assertion against the stored pu
 
 ```typescript
 import { verifyAuthenticationResponse } from '@simplewebauthn/server';
+import { isoBase64URL } from '@simplewebauthn/server/helpers';
 
 async function verifyAuthentication(body: AuthenticationResponseJSON) {
+  // 1. Look up the credential directly by its ID to find the associated user
   const dbCredential = await this.credentialRepository.findOne({
     where: { credentialID: body.id },
     relations: ['user'],
   });
 
-  if (!dbCredential) throw new BadRequestException('Credential not found');
-  const user = dbCredential.user;
+  if (!dbCredential) {
+    throw new BadRequestException('Credential not found');
+  }
 
+  const user = dbCredential.user;
+  if (!user) {
+    throw new BadRequestException('User not found');
+  }
+
+  let expectedChallenge: string | null = null;
+
+  // 2. Decode the challenge from clientDataJSON to check the global challenges table first (for user-nameless flow)
+  try {
+    const clientDataBuffer = isoBase64URL.toBuffer(body.response.clientDataJSON);
+    const clientData = JSON.parse(Buffer.from(clientDataBuffer).toString('utf-8')) as { challenge?: string };
+    const challenge = clientData.challenge;
+
+    if (challenge) {
+      const dbChallenge = await this.challengeRepository.findOne({
+        where: { challenge },
+      });
+
+      if (dbChallenge) {
+        // Enforce challenge expiration (5 minutes)
+        const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+        if (dbChallenge.createdAt.getTime() < fiveMinutesAgo) {
+          await this.challengeRepository.remove(dbChallenge);
+          throw new BadRequestException('Challenge expired');
+        }
+        expectedChallenge = dbChallenge.challenge;
+        await this.challengeRepository.remove(dbChallenge);
+      }
+    }
+  } catch (err) {
+    if (err instanceof BadRequestException) throw err;
+    throw new BadRequestException('Invalid authentication data or challenge expired');
+  }
+
+  // 3. Fallback to user's currentChallenge if not found in the global challenges table
+  if (!expectedChallenge) {
+    expectedChallenge = user.currentChallenge ?? null;
+    if (expectedChallenge) {
+      user.currentChallenge = null;
+      await this.userRepository.save(user);
+    }
+  }
+
+  if (!expectedChallenge) {
+    throw new BadRequestException('Challenge not found or invalid');
+  }
+
+  // 4. Verify assertion signature using WebAuthn helper
   const verification = await verifyAuthenticationResponse({
     response: body,
-    expectedChallenge: user.currentChallenge,
+    expectedChallenge,
     expectedOrigin: this.origin,
     expectedRPID: this.rpID,
     credential: {
@@ -246,12 +333,11 @@ async function verifyAuthentication(body: AuthenticationResponseJSON) {
     // Save the incremented counter to prevent cloned authenticator replays
     dbCredential.counter = verification.authenticationInfo.newCounter;
     await this.credentialRepository.save(dbCredential);
-    user.currentChallenge = null;
-    await this.userRepository.save(user);
 
     return { verified: true };
   }
-  throw new BadRequestException('Authentication failed');
+
+  throw new BadRequestException('Authentication verification failed');
 }
 ```
 
@@ -268,6 +354,11 @@ Integrating passkeys introduces specific operational edge cases that differ from
     TypeError: Cannot read properties of undefined (reading 'create')
     ```
 *   **Synced Passkey Counter Logic**: Cloud-backed passkeys (like Apple iCloud Keychain or Google Password Manager) sync across multiple client devices. Because these providers distribute copies of the credential, the signature counter does not always increment sequentially between devices. If you enforce strict counter checks (`newCounter <= oldCounter`) on synced passkeys, you will cause false-positive authentication blocks. Restrict strict counter checks to hardware-bound security keys (like YubiKeys) by inspecting the credential's AAGUID or transport types.
+*   **PostgreSQL Timezone Discrepancies and Challenge Expiration**: When checking if a challenge has expired (e.g., `dbChallenge.createdAt.getTime() < Date.now() - 5 * 60 * 1000`), the column type must be timezone-aware. In TypeORM with PostgreSQL, `@CreateDateColumn()` defaults to `timestamp without time zone` columns. When the pg driver queries the database, it parses the timezone-naive string using the Node.js application server's local timezone. If the server runs in a local timezone (e.g., `UTC+3`), the parsed Date object is shifted 3 hours into the past, causing the challenge to immediately trigger expiration exceptions. To prevent this, always specify `type: 'timestamptz'` (timestamp with time zone) in your date-time columns:
+    ```typescript
+    @CreateDateColumn({ type: 'timestamptz' })
+    createdAt: Date;
+    ```
 
 ## An End-to-End Walkthrough of a Passkey MFA Flow
 
