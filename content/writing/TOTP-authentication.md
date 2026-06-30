@@ -234,7 +234,11 @@ The `pendingToken` is stored in React component state, not `localStorage`. This 
 
 ---
 
-## 8. How This Repo Implements It
+## 8. Implementation Details
+
+This section dives into the technical decisions that shape the implementation. 
+
+Follow along with the [GitHub repository - nelsonfrank/mfa](https://github.com/nelsonfrank/mfa).
 
 ### 8.1 Secret Generation and Encryption
 
