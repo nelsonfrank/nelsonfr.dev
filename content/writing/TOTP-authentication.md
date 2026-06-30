@@ -1,5 +1,5 @@
 ---
-title: "TOTP Authentication: How It Works and How We Built It"
+title: "TOTP Authentication: How It Works and How It's Built"
 excerpt: "A ground-up explanation of OTP, HOTP, and TOTP — with a full walkthrough of a production NestJS + React implementation."
 date: "June 30, 2026"
 readTime: "14 min read"
