@@ -366,16 +366,65 @@
   font-weight: 500;
 }
 
-/* Inline code */
-.prose :not(pre) > code {
-  font-family: var(--font-mono);
-  font-size: 0.875em;
-  background: var(--secondary);
-  color: var(--primary);
-  padding: 0.15em 0.4em;
-  border-radius: 0.3rem;
-  border: 1px solid var(--border);
+/* Tables */
+.prose table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: left;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
+
+.prose th {
+  font-weight: 600;
+  color: var(--foreground);
+  border-bottom: 2px solid var(--border);
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  transition: color 0.2s;
+}
+
+.prose tr {
+  transition: background-color 0.2s;
+}
+
+.prose tr:nth-child(even) {
+  background-color: color-mix(in srgb, var(--secondary) 25%, transparent);
+}
+
+.prose tr:hover td {
+  color: var(--foreground);
+}
+
+/* Inline code */
+
+.prose :not(pre) > code {
+  font-family: var(--font-mono) !important;
+  font-size: 0.85em !important;
+  background: color-mix(in srgb, var(--primary) 6%, var(--secondary)) !important;
+  color: var(--primary) !important;
+  padding: 0.12em 0.3em !important;
+  margin: 0 0.1em !important;
+  border-radius: 0.25rem !important;
+  border: 1px solid color-mix(in srgb, var(--primary) 10%, var(--border)) !important;
+  font-weight: 500 !important;
+  word-break: break-word !important;
+}
+
+
+
+
 
 /* Blockquote (used for Tip/Warning/Note callouts via > **Label:** text) */
 .prose blockquote {
@@ -402,7 +451,7 @@
 
 /* ─── rehype-pretty-code styles ──────────────────────────────────────────── */
 
-.prose [data-rehype-pretty-code-figure] {
+.prose figure[data-rehype-pretty-code-figure] {
   margin: 1.75rem 0;
   border-radius: 0.875rem;
   overflow: hidden;
@@ -410,7 +459,7 @@
   position: relative;
 }
 
-.prose [data-rehype-pretty-code-figure] pre {
+.prose figure[data-rehype-pretty-code-figure] pre {
   overflow-x: auto;
   padding: 1.375rem 1.5rem;
   margin: 0;
@@ -421,7 +470,7 @@
   scrollbar-color: oklch(0.28 0.01 240) transparent;
 }
 
-.prose [data-rehype-pretty-code-figure] code {
+.prose figure[data-rehype-pretty-code-figure] code {
   font-family: inherit;
   font-size: inherit;
   background: none;
@@ -433,11 +482,11 @@
 }
 
 /* Language badge */
-.prose [data-rehype-pretty-code-figure]::before {
+.prose figure[data-rehype-pretty-code-figure]::before {
   content: attr(data-language);
 }
 
-[data-rehype-pretty-code-figure] [data-language] {
+figure[data-rehype-pretty-code-figure] [data-language] {
   position: relative;
 }
 
@@ -479,7 +528,7 @@
 }
 
 /* Highlighted lines */
-.prose [data-rehype-pretty-code-figure] .highlighted {
+.prose figure[data-rehype-pretty-code-figure] .highlighted {
   background: oklch(0.75 0.15 180 / 0.08);
   border-left: 2px solid oklch(0.75 0.15 180 / 0.6);
   margin-left: -1.5rem;
