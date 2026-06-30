@@ -6,7 +6,7 @@ readTime: "14 min read"
 tags: ["TOTP", "MFA", "Security", "NestJS", "React"]
 ---
 
-# TOTP Authentication: How It Works and How We Built It
+# TOTP Authentication: How It Works and How It's Built
 
 *A ground-up explanation of OTP, HOTP, and TOTP — with a full walkthrough of a production NestJS + React implementation.*
 
