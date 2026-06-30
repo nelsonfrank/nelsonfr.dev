@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import { useEffect, useRef, useState, useCallback, memo } from "react"
 import Link from "next/link"
 import { ArrowLeft, Clock, Calendar, ArrowUpRight } from "lucide-react"
 import gsap from "gsap"
@@ -228,6 +228,28 @@ function TableOfContents({ headings }: { headings: TocHeading[] }) {
   )
 }
 
+// ─── Memoized Blog Post HTML Component ────────────────────────────────────────
+
+const BlogPostHtml = memo(({
+  htmlContent,
+  onDiagramClick
+}: {
+  htmlContent: string
+  onDiagramClick: (svgHtml: string) => void
+}) => {
+  const bodyRef = useRef<HTMLDivElement>(null)
+  useMermaid(bodyRef, htmlContent, onDiagramClick)
+
+  return (
+    <article
+      ref={bodyRef}
+      className="prose"
+      dangerouslySetInnerHTML={{ __html: htmlContent }}
+    />
+  )
+})
+BlogPostHtml.displayName = "BlogPostHtml"
+
 // ─── Post Client ──────────────────────────────────────────────────────────────
 
 interface PostClientProps {
@@ -241,13 +263,9 @@ interface PostClientProps {
 export default function PostClient({ post, htmlContent, headings, prevPost, nextPost }: PostClientProps) {
   const headerRef = useRef<HTMLElement>(null)
   const heroRef   = useRef<HTMLDivElement>(null)
-  const bodyRef   = useRef<HTMLDivElement>(null)
   const backRef   = useMagnetic<HTMLAnchorElement>(0.3)
 
   const [modalSvg, setModalSvg] = useState<string | null>(null)
-
-  // Render mermaid diagrams whenever the post body changes
-  useMermaid(bodyRef, htmlContent, setModalSvg)
 
   useEffect(() => {
     if (!modalSvg) return
@@ -271,14 +289,6 @@ export default function PostClient({ post, htmlContent, headings, prevPost, next
           Array.from(heroRef.current.children),
           { y: 50, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.9, stagger: 0.12, delay: 0.1, ease: "power3.out" }
-        )
-      }
-
-      if (bodyRef.current) {
-        gsap.fromTo(
-          bodyRef.current,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 0.9, delay: 0.5, ease: "power3.out" }
         )
       }
     })
@@ -353,12 +363,8 @@ export default function PostClient({ post, htmlContent, headings, prevPost, next
                 <div className="mt-10 h-px bg-gradient-to-r from-primary/40 via-border to-transparent" />
               </div>
 
-              {/* Rendered markdown body */}
-              <article
-                ref={bodyRef}
-                className="prose"
-                dangerouslySetInnerHTML={{ __html: htmlContent }}
-              />
+              {/* Rendered memoized markdown body */}
+              <BlogPostHtml htmlContent={htmlContent} onDiagramClick={setModalSvg} />
 
               <div className="mt-16 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
@@ -419,14 +425,14 @@ export default function PostClient({ post, htmlContent, headings, prevPost, next
       {/* Modal overlay for enlarged diagrams */}
       {modalSvg && (
         <div
-          className="fixed inset-0 z-70 bg-background/80 backdrop-blur-md flex items-center justify-center p-6 cursor-zoom-out"
+          className="fixed inset-0 z-70 bg-black/90 backdrop-blur-md flex items-center justify-center p-6 cursor-zoom-out"
           onClick={() => setModalSvg(null)}
           style={{ animation: "fade-in 0.2s ease-out forwards" }}
         >
-          {/* Close button */}
+          {/* Close button (forced dark style for high contrast) */}
           <button
             onClick={() => setModalSvg(null)}
-            className="absolute top-6 right-6 p-2.5 rounded-full border border-border bg-card hover:bg-secondary/80 transition-colors text-muted-foreground hover:text-foreground cursor-pointer z-80"
+            className="absolute top-6 right-6 p-2.5 rounded-full border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 transition-colors text-zinc-400 hover:text-zinc-100 cursor-pointer z-80"
             aria-label="Close diagram"
           >
             <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -434,8 +440,9 @@ export default function PostClient({ post, htmlContent, headings, prevPost, next
             </svg>
           </button>
           
+          {/* Main content container (forced dark bg for SVG contrast) */}
           <div
-            className="bg-card border border-border p-6 md:p-10 rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-auto flex items-center justify-center shadow-2xl relative cursor-default"
+            className="bg-zinc-950 border border-zinc-800 p-6 md:p-10 rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-auto flex items-center justify-center shadow-2xl relative cursor-default"
             onClick={(e) => e.stopPropagation()}
             data-mermaid-modal
             style={{ animation: "scale-up 0.2s ease-out forwards" }}
