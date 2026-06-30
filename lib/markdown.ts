@@ -96,12 +96,71 @@ function rehypeExternalLinks() {
   }
 }
 
+/**
+ * Rehype plugin: converts `<pre><code class="language-mermaid">…</code></pre>`
+ * into `<div class="mermaid-block"><script type="application/mermaid">…</script></div>`.
+ *
+ * WHY NOT data-mermaid? HTML parsers normalize newlines in attribute values to
+ * spaces, which completely breaks multi-line mermaid definitions. Storing the
+ * definition as the textContent of a <script> element avoids that problem —
+ * script content is never parsed as HTML.
+ *
+ * Must run BEFORE rehype-pretty-code so mermaid blocks are never highlighted.
+ */
+function rehypeMermaid() {
+  return (tree: any) => {
+    const visit = (node: any, parent: any, index: number) => {
+      if (
+        node.type === "element" &&
+        node.tagName === "pre" &&
+        Array.isArray(node.children)
+      ) {
+        const code = node.children.find(
+          (c: any) =>
+            c.type === "element" &&
+            c.tagName === "code" &&
+            (c.properties?.className ?? []).includes("language-mermaid")
+        )
+        if (code) {
+          // Extract raw text — this is the unescaped mermaid definition
+          const raw = code.children
+            .filter((c: any) => c.type === "text")
+            .map((c: any) => c.value)
+            .join("")
+
+          // Wrap in <div class="mermaid-block"> with a <script> child.
+          // The script textContent is never HTML-parsed, so newlines and
+          // special characters are preserved exactly.
+          parent.children[index] = {
+            type: "element",
+            tagName: "div",
+            properties: { className: ["mermaid-block"] },
+            children: [
+              {
+                type: "element",
+                tagName: "script",
+                properties: { type: "application/mermaid" },
+                children: [{ type: "text", value: raw }],
+              },
+            ],
+          }
+        }
+      }
+      if (node.children) {
+        node.children.forEach((child: any, i: number) => visit(child, node, i))
+      }
+    }
+    visit(tree, null, 0)
+  }
+}
+
 export async function markdownToHtml(markdown: string): Promise<string> {
   const result = await unified()
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeSlug)
+    .use(rehypeMermaid)
     .use(rehypePrettyCode, prettyCodeOptions)
     .use(rehypeExternalLinks)
     .use(rehypeStringify, { allowDangerousHtml: true })

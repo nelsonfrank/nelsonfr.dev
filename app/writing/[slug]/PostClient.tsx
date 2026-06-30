@@ -15,6 +15,91 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
 }
 
+// ─── Mermaid renderer ─────────────────────────────────────────────────────────
+
+let mermaidInitialized = false
+
+/**
+ * After the article HTML is injected, find every div.mermaid-block containing a
+ * <script type="application/mermaid"> and render it into an SVG.
+ *
+ * We read the definition from the script's textContent, NOT from a data
+ * attribute — HTML parsers normalize newlines in attribute values to spaces,
+ * which breaks multi-line mermaid syntax completely.
+ */
+function useMermaid(containerRef: React.RefObject<HTMLDivElement | null>, htmlContent: string) {
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const blocks = Array.from(
+      container.querySelectorAll<HTMLDivElement>("div.mermaid-block")
+    )
+    if (blocks.length === 0) return
+
+    let cancelled = false
+
+    async function render() {
+      const mermaid = (await import("mermaid")).default
+
+      if (!mermaidInitialized) {
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: "dark",
+          themeVariables: {
+            darkMode: true,
+            background: "transparent",
+            primaryColor: "hsl(142 71% 45%)",
+            primaryTextColor: "hsl(0 0% 95%)",
+            primaryBorderColor: "hsl(142 71% 35%)",
+            lineColor: "hsl(0 0% 50%)",
+            secondaryColor: "hsl(0 0% 12%)",
+            tertiaryColor: "hsl(0 0% 9%)",
+            edgeLabelBackground: "hsl(0 0% 9%)",
+            clusterBkg: "hsl(0 0% 10%)",
+            titleColor: "hsl(0 0% 90%)",
+            nodeTextColor: "hsl(0 0% 90%)",
+            fontFamily: "'Geist', 'Inter', sans-serif",
+            fontSize: "14px",
+          },
+          flowchart: { htmlLabels: true, curve: "basis" },
+          sequence: { useMaxWidth: true },
+        })
+        mermaidInitialized = true
+      }
+
+      for (let i = 0; i < blocks.length; i++) {
+        if (cancelled) break
+        const block = blocks[i]
+
+        // Read definition from the <script type="application/mermaid"> child.
+        // textContent is never HTML-parsed, so newlines are preserved as-is.
+        const scriptEl = block.querySelector<HTMLScriptElement>(
+          "script[type='application/mermaid']"
+        )
+        const definition = scriptEl?.textContent ?? ""
+        if (!definition.trim()) continue
+
+        try {
+          const id = `mermaid-svg-${Date.now()}-${i}`
+          const { svg } = await mermaid.render(id, definition)
+          if (cancelled) break
+          block.innerHTML = svg
+        } catch (err) {
+          console.error("Mermaid render error:", err)
+          block.innerHTML =
+            `<pre style="color:hsl(0 80% 60%);font-size:0.75rem;white-space:pre-wrap;text-align:left">${String(err)}</pre>`
+        }
+      }
+    }
+
+    render()
+    return () => { cancelled = true }
+  // htmlContent changing means a new post was loaded — re-run
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [htmlContent])
+}
+
 // ─── Reading Progress Bar ─────────────────────────────────────────────────────
 
 function ReadingProgress() {
@@ -135,6 +220,9 @@ export default function PostClient({ post, htmlContent, headings, prevPost, next
   const heroRef   = useRef<HTMLDivElement>(null)
   const bodyRef   = useRef<HTMLDivElement>(null)
   const backRef   = useMagnetic<HTMLAnchorElement>(0.3)
+
+  // Render mermaid diagrams whenever the post body changes
+  useMermaid(bodyRef, htmlContent)
 
   useEffect(() => {
     const ctx = gsap.context(() => {

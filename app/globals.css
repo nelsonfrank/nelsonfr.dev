@@ -496,3 +496,39 @@
   margin: 2.5rem 0;
 }
 
+/* ─── Mermaid diagrams ────────────────────────────────────────────────────── */
+
+.prose .mermaid-block {
+  margin: 2rem 0;
+  padding: 1.5rem 1rem;
+  background: oklch(0.11 0.01 240);
+  border: 1px solid oklch(0.28 0.01 240);
+  border-radius: 0.875rem;
+  overflow-x: auto;
+  text-align: center;
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.28 0.01 240) transparent;
+}
+
+.prose .mermaid-block svg {
+  max-width: 100%;
+  height: auto;
+  display: inline-block;
+  font-family: var(--font-sans), sans-serif;
+}
+
+/* Loading placeholder while mermaid JS renders */
+.prose .mermaid-block > script {
+  display: none;
+}
+
+/* Show a placeholder until the SVG is injected */
+.prose .mermaid-block:not(:has(svg))::after {
+  content: "Loading diagram…";
+  display: block;
+  color: oklch(0.55 0.01 240);
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  padding: 1rem 0;
+}
