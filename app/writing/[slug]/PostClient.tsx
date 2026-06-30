@@ -27,7 +27,11 @@ let mermaidInitialized = false
  * attribute — HTML parsers normalize newlines in attribute values to spaces,
  * which breaks multi-line mermaid syntax completely.
  */
-function useMermaid(containerRef: React.RefObject<HTMLDivElement | null>, htmlContent: string) {
+function useMermaid(
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  htmlContent: string,
+  onDiagramClick: (svgHtml: string) => void
+) {
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
@@ -85,6 +89,10 @@ function useMermaid(containerRef: React.RefObject<HTMLDivElement | null>, htmlCo
           const { svg } = await mermaid.render(id, definition)
           if (cancelled) break
           block.innerHTML = svg
+          block.style.cursor = "zoom-in"
+          block.onclick = () => {
+            onDiagramClick(block.innerHTML)
+          }
         } catch (err) {
           console.error("Mermaid render error:", err)
           block.innerHTML =
@@ -236,8 +244,19 @@ export default function PostClient({ post, htmlContent, headings, prevPost, next
   const bodyRef   = useRef<HTMLDivElement>(null)
   const backRef   = useMagnetic<HTMLAnchorElement>(0.3)
 
+  const [modalSvg, setModalSvg] = useState<string | null>(null)
+
   // Render mermaid diagrams whenever the post body changes
-  useMermaid(bodyRef, htmlContent)
+  useMermaid(bodyRef, htmlContent, setModalSvg)
+
+  useEffect(() => {
+    if (!modalSvg) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setModalSvg(null)
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [modalSvg])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -396,6 +415,34 @@ export default function PostClient({ post, htmlContent, headings, prevPost, next
           </div>
         </footer>
       </SmoothScroll>
+
+      {/* Modal overlay for enlarged diagrams */}
+      {modalSvg && (
+        <div
+          className="fixed inset-0 z-70 bg-background/80 backdrop-blur-md flex items-center justify-center p-6 cursor-zoom-out"
+          onClick={() => setModalSvg(null)}
+          style={{ animation: "fade-in 0.2s ease-out forwards" }}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setModalSvg(null)}
+            className="absolute top-6 right-6 p-2.5 rounded-full border border-border bg-card hover:bg-secondary/80 transition-colors text-muted-foreground hover:text-foreground cursor-pointer z-80"
+            aria-label="Close diagram"
+          >
+            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          <div
+            className="bg-card border border-border p-6 md:p-10 rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-auto flex items-center justify-center shadow-2xl relative cursor-default"
+            onClick={(e) => e.stopPropagation()}
+            data-mermaid-modal
+            style={{ animation: "scale-up 0.2s ease-out forwards" }}
+            dangerouslySetInnerHTML={{ __html: modalSvg }}
+          />
+        </div>
+      )}
     </>
   )
 }

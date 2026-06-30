@@ -582,3 +582,17 @@ figure[data-rehype-pretty-code-figure] [data-language] {
   letter-spacing: 0.04em;
   padding: 1rem 0;
 }
+
+@keyframes scale-up {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Modal lightbox SVG responsiveness */
+[data-mermaid-modal] svg {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 70vh !important;
+  display: block;
+}
+
