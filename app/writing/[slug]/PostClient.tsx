@@ -182,13 +182,14 @@ function TableOfContents({ headings }: { headings: TocHeading[] }) {
         {headings.map((heading) => {
           const isActive = activeId === heading.id
           return (
-            <li key={heading.id} style={{ paddingLeft: heading.level === 3 ? "1.25rem" : "0.75rem" }}>
+            <li key={heading.id}>
               <a
                 href={`#${heading.id}`}
                 onClick={(e) => handleClick(e, heading.id)}
                 className={[
-                  "block text-xs leading-relaxed py-0.5 transition-all duration-200 truncate",
-                  "border-l-2 -ml-px pl-3",
+                  "block text-xs leading-relaxed py-1.5 transition-all duration-200 truncate",
+                  "border-l-2 -ml-px",
+                  heading.level === 3 ? "pl-7" : "pl-4",
                   isActive
                     ? "border-primary text-primary font-medium"
                     : "border-transparent text-muted-foreground hover:text-foreground hover:border-border",

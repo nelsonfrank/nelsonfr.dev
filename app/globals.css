@@ -328,15 +328,15 @@
   list-style: none;
 }
 
-.prose ul li,
-.prose ol li {
+.prose ul > li,
+.prose ol > li {
   position: relative;
   padding-left: 1.5rem;
   margin-bottom: 0.625rem;
   color: var(--muted-foreground);
 }
 
-.prose ul li::before {
+.prose ul > li::before {
   content: "";
   position: absolute;
   left: 0;
@@ -351,11 +351,11 @@
   counter-reset: list-counter;
 }
 
-.prose ol li {
+.prose ol > li {
   counter-increment: list-counter;
 }
 
-.prose ol li::before {
+.prose ol > li::before {
   content: counter(list-counter) ".";
   position: absolute;
   left: 0;
@@ -365,6 +365,7 @@
   color: color-mix(in srgb, var(--primary) 70%, transparent);
   font-weight: 500;
 }
+
 
 /* Tables */
 .prose table {

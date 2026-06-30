@@ -22,16 +22,16 @@ tags: ["TOTP", "MFA", "Security", "NestJS", "React"]
 6. [The Setup Flow](#6-the-setup-flow)
 7. [The Login Flow](#7-the-login-flow)
 8. [How This Repo Implements It](#8-how-this-repo-implements-it)
-   - [Secret Generation and Encryption](#81-secret-generation-and-encryption)
-   - [QR Code Delivery](#82-qr-code-delivery)
-   - [Verification](#83-verification)
-   - [Replay Prevention](#84-replay-prevention)
-   - [Backup Codes](#85-backup-codes)
-   - [Rate Limiting](#86-rate-limiting)
-   - [The Two JWT States](#87-the-two-jwt-states)
+    - [Secret Generation and Encryption](#81-secret-generation-and-encryption)
+    - [QR Code Delivery](#82-qr-code-delivery)
+    - [Verification](#83-verification)
+    - [Replay Prevention](#84-replay-prevention)
+    - [Backup Codes](#85-backup-codes)
+    - [Rate Limiting](#86-rate-limiting)
+    - [The Two JWT States](#87-the-two-jwt-states)
 9. [Security Considerations](#9-security-considerations)
 10. [Tradeoffs and What to Watch Out For](#10-tradeoffs-and-what-to-watch-out-for)
-11. [Implementation Reference](#implementation-reference)
+11. [Implementation Reference](#11-implementation-reference)
 
 ---
 
@@ -523,7 +523,7 @@ TOTP shifts the clock synchronization burden to the client device. For most user
 
 ---
 
-## Implementation Reference
+## 11. Implementation Reference
 
 For readers who want to explore the source directly:
 
