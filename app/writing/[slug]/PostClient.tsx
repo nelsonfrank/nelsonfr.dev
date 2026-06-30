@@ -136,14 +136,34 @@ function ReadingProgress() {
 
 function TableOfContents({ headings }: { headings: TocHeading[] }) {
   const [activeId, setActiveId] = useState<string>("")
+  const isScrollingRef = useRef(false)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault()
     const el = document.getElementById(id)
     if (!el) return
+
+    // Immediately highlight the clicked item
+    setActiveId(id)
+    isScrollingRef.current = true
+
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
+
     // Offset for the fixed header (~68px)
     const top = el.getBoundingClientRect().top + window.scrollY - 80
     window.scrollTo({ top, behavior: "smooth" })
+
+    // Re-enable observer updates after smooth scroll completes (typically 800ms)
+    scrollTimeoutRef.current = setTimeout(() => {
+      isScrollingRef.current = false
+    }, 800)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
+    }
   }, [])
 
   useEffect(() => {
@@ -158,6 +178,9 @@ function TableOfContents({ headings }: { headings: TocHeading[] }) {
 
       const observer = new IntersectionObserver(
         ([entry]) => {
+          // If actively scrolling from a click, ignore observer updates
+          if (isScrollingRef.current) return
+
           if (entry.isIntersecting) {
             visibleIds.add(id)
           } else {
@@ -196,30 +219,34 @@ function TableOfContents({ headings }: { headings: TocHeading[] }) {
                 {heading.text}
               </span>
 
-              {/* Full Title for large screens (xl+) */}
-              <span
-                className={[
-                  "hidden xl:inline text-[11px] font-medium uppercase tracking-wider mr-3.5 transition-colors duration-300 truncate max-w-[200px] text-right font-sans",
-                  isActive ? "text-primary font-semibold" : "text-muted-foreground group-hover:text-foreground",
-                ].join(" ")}
-              >
-                {heading.text}
-              </span>
-
-              {/* Interactive pill indicator */}
+              {/* Clickable link wrapping both the title and the indicator pill */}
               <a
                 href={`#${heading.id}`}
                 onClick={(e) => handleClick(e, heading.id)}
-                className={[
-                  "h-1 rounded-full transition-all duration-300",
-                  // Sub-headings are shorter/transparent; active headings extend into a wider pill
-                  heading.level === 3 ? "w-2 opacity-50 group-hover:opacity-100" : "w-4",
-                  isActive
-                    ? "bg-primary w-6 opacity-100"
-                    : "bg-muted-foreground/30 group-hover:bg-muted-foreground/70",
-                ].join(" ")}
-                title={heading.text}
-              />
+                className="flex items-center justify-end w-full cursor-pointer group/link"
+              >
+                {/* Full Title for large screens (xl+) */}
+                <span
+                  className={[
+                    "hidden xl:inline text-[11px] font-medium uppercase tracking-wider mr-3.5 transition-colors duration-300 truncate max-w-[200px] text-right font-sans",
+                    isActive ? "text-primary font-semibold" : "text-muted-foreground group-hover/link:text-foreground",
+                  ].join(" ")}
+                >
+                  {heading.text}
+                </span>
+
+                {/* Interactive pill indicator */}
+                <span
+                  className={[
+                    "h-1 rounded-full transition-all duration-300",
+                    // Sub-headings are shorter/transparent; active headings extend into a wider pill
+                    heading.level === 3 ? "w-2 opacity-50 group-hover/link:opacity-100" : "w-4",
+                    isActive
+                      ? "bg-primary w-6 opacity-100"
+                      : "bg-muted-foreground/30 group-hover/link:bg-muted-foreground/70",
+                  ].join(" ")}
+                />
+              </a>
             </li>
           )
         })}
