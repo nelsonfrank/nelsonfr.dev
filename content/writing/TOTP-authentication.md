@@ -529,18 +529,18 @@ For readers who want to explore the source directly:
 
 | File | Purpose |
 |---|---|
-| `backend/src/auth/totp.service.ts` | Secret generation, QR code creation, token verification, backup code generation |
-| `backend/src/auth/auth.service.ts` | All TOTP-related business logic: setup, confirm, login step 2, disable, backup code verification, cron cleanup |
-| `backend/src/auth/auth.controller.ts` | HTTP endpoints, guard wiring, and throttler annotations |
-| `backend/src/auth/guards/jwt-auth.guard.ts` | Rejects pending-MFA tokens from fully authenticated routes |
-| `backend/src/auth/guards/pending-mfa.guard.ts` | Accepts only pending-MFA tokens on TOTP verification routes |
-| `backend/src/common/utils/encrypt.ts` | AES-256-CBC encrypt/decrypt utilities |
-| `backend/src/database/schema.ts` | `users`, `used_totp_codes`, and `backup_codes` table definitions (Drizzle ORM) |
-| `backend/src/auth/auth.module.ts` | NestJS module configuration, JWT settings, throttler profiles |
-| `backend/src/auth/dto/totp.dto.ts` | Input validation — 6-digit numeric TOTP codes, 8-character backup codes |
-| `client/src/routes/security.tsx` | TOTP setup UI: QR display, manual secret, confirmation, backup code reveal |
-| `client/src/routes/login.tsx` | Two-step login UI: credentials → TOTP challenge → backup code fallback |
-| `client/src/lib/api.ts` | Client-side API functions for all TOTP endpoints |
+| [backend/src/auth/totp.service.ts](https://github.com/nelsonfrank/mfa/blob/main/backend/src/auth/totp.service.ts) | Secret generation, QR code creation, token verification, backup code generation |
+| [backend/src/auth/auth.service.ts](https://github.com/nelsonfrank/mfa/blob/main/backend/src/auth/auth.service.ts) | All TOTP-related business logic: setup, confirm, login step 2, disable, backup code verification, cron cleanup |
+| [backend/src/auth/auth.controller.ts](https://github.com/nelsonfrank/mfa/blob/main/backend/src/auth/auth.controller.ts) | HTTP endpoints, guard wiring, and throttler annotations |
+| [backend/src/auth/guards/jwt-auth.guard.ts](https://github.com/nelsonfrank/mfa/blob/main/backend/src/auth/guards/jwt-auth.guard.ts) | Rejects pending-MFA tokens from fully authenticated routes |
+| [backend/src/auth/guards/pending-mfa.guard.ts](https://github.com/nelsonfrank/mfa/blob/main/backend/src/auth/guards/pending-mfa.guard.ts) | Accepts only pending-MFA tokens on TOTP verification routes |
+| [backend/src/common/utils/encrypt.ts](https://github.com/nelsonfrank/mfa/blob/main/backend/src/common/utils/encrypt.ts) | AES-256-CBC encrypt/decrypt utilities |
+| [backend/src/database/schema.ts](https://github.com/nelsonfrank/mfa/blob/main/backend/src/database/schema.ts) | `users`, `used_totp_codes`, and `backup_codes` table definitions (Drizzle ORM) |
+| [backend/src/auth/auth.module.ts](https://github.com/nelsonfrank/mfa/blob/main/backend/src/auth/auth.module.ts) | NestJS module configuration, JWT settings, throttler profiles |
+| [backend/src/auth/dto/totp.dto.ts](https://github.com/nelsonfrank/mfa/blob/main/backend/src/auth/dto/totp.dto.ts) | Input validation — 6-digit numeric TOTP codes, 8-character backup codes |
+| [client/src/routes/security.tsx](https://github.com/nelsonfrank/mfa/blob/main/client/src/routes/security.tsx) | TOTP setup UI: QR display, manual secret, confirmation, backup code reveal |
+| [client/src/routes/login.tsx](https://github.com/nelsonfrank/mfa/blob/main/client/src/routes/login.tsx) | Two-step login UI: credentials → TOTP challenge → backup code fallback |
+| [client/src/lib/api.ts](https://github.com/nelsonfrank/mfa/blob/main/client/src/lib/api.ts) | Client-side API functions for all TOTP endpoints |
 
 **Key dependencies:**
 
