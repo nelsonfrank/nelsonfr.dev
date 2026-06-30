@@ -174,30 +174,44 @@ function TableOfContents({ headings }: { headings: TocHeading[] }) {
   if (headings.length === 0) return null
 
   return (
-    <nav aria-label="Table of contents" className="hidden xl:block sticky top-28 self-start w-56 shrink-0">
-      <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
-        On this page
-      </p>
-      <ul className="space-y-1 border-l border-border/60">
+    <nav
+      aria-label="Table of contents"
+      className="fixed right-6 lg:right-10 top-1/2 -translate-y-1/2 z-40 hidden md:block"
+    >
+      <ul className="flex flex-col gap-3.5 items-end">
         {headings.map((heading) => {
           const isActive = activeId === heading.id
           return (
-            <li key={heading.id}>
+            <li key={heading.id} className="group relative flex items-center justify-end">
+              {/* Tooltip for smaller screens (revealed on hover) */}
+              <span className="absolute right-full mr-3.5 px-2.5 py-1 rounded-md text-[11px] font-medium font-sans whitespace-nowrap bg-card text-card-foreground border border-border shadow-sm opacity-0 translate-x-2 pointer-events-none group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 xl:hidden">
+                {heading.text}
+              </span>
+
+              {/* Full Title for large screens (xl+) */}
+              <span
+                className={[
+                  "hidden xl:inline text-[11px] font-medium uppercase tracking-wider mr-3.5 transition-colors duration-300 truncate max-w-[200px] text-right font-sans",
+                  isActive ? "text-primary font-semibold" : "text-muted-foreground group-hover:text-foreground",
+                ].join(" ")}
+              >
+                {heading.text}
+              </span>
+
+              {/* Interactive pill indicator */}
               <a
                 href={`#${heading.id}`}
                 onClick={(e) => handleClick(e, heading.id)}
                 className={[
-                  "block text-xs leading-relaxed py-1.5 transition-all duration-200 truncate",
-                  "border-l-2 -ml-px",
-                  heading.level === 3 ? "pl-7" : "pl-4",
+                  "h-1 rounded-full transition-all duration-300",
+                  // Sub-headings are shorter/transparent; active headings extend into a wider pill
+                  heading.level === 3 ? "w-2 opacity-50 group-hover:opacity-100" : "w-4",
                   isActive
-                    ? "border-primary text-primary font-medium"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-border",
+                    ? "bg-primary w-6 opacity-100"
+                    : "bg-muted-foreground/30 group-hover:bg-muted-foreground/70",
                 ].join(" ")}
                 title={heading.text}
-              >
-                {heading.text}
-              </a>
+              />
             </li>
           )
         })}
@@ -283,11 +297,10 @@ export default function PostClient({ post, htmlContent, headings, prevPost, next
         </header>
 
         <main className="pt-28 pb-24 px-6 min-h-screen">
-          {/* Outer wrapper: prose column + TOC sidebar */}
-          <div className="mx-auto max-w-6xl flex gap-16 items-start">
+          {/* Centered post column */}
+          <div className="mx-auto max-w-3xl relative">
+            <div className="w-full min-w-0">
 
-            {/* Main content column (max-w-3xl, centred when no sidebar) */}
-            <div className="w-full min-w-0 max-w-3xl mx-auto xl:mx-0">
 
               {/* Hero */}
               <div ref={heroRef} className="mb-14">
