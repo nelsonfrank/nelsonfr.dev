@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getPost, getAllPosts } from "@/lib/posts"
-import { markdownToHtml } from "@/lib/markdown"
+import { markdownToHtml, extractHeadings } from "@/lib/markdown"
 import PostClient from "./PostClient"
 
 export async function generateMetadata({
@@ -49,6 +49,7 @@ export default async function PostPage({
   if (!post) notFound()
 
   const htmlContent = await markdownToHtml(post.content)
+  const headings = await extractHeadings(post.content)
 
   const allPosts = getAllPosts()
   const idx = allPosts.findIndex((p) => p.slug === slug)
@@ -111,6 +112,7 @@ export default async function PostPage({
       <PostClient
         post={post}
         htmlContent={htmlContent}
+        headings={headings}
         prevPost={prevPost}
         nextPost={nextPost}
       />
