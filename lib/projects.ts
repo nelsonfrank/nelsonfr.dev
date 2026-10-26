@@ -23,5 +23,14 @@ export const projects: Project[] = [
     featured: true,
     category: "Web App",
   },
-
+  {
+    slug: "necta-explorer",
+    title: "NECTA Explorer",
+    description: "A high-performance asynchronous data crawler and interactive web dashboard for Tanzania NECTA examination results.",
+    image: "/projects/necta-explorer.png",
+    technologies: ["Python", "httpx", "Next.js", "TypeScript", "Prisma", "PostgreSQL", "TailwindCSS"],
+    githubUrl: "https://github.com/nelsonfrank/necta-explorer",
+    featured: true,
+    category: "Web App",
+  },
 ]
