@@ -14,6 +14,14 @@ Nelson Frank is a fullstack software developer interested in tech and building r
 - [Projects](https://nelsonfrank.dev/projects) — Detailed showcase of built web platforms and open-source contributions.
 - [Writing / Blog](https://nelsonfrank.dev/writing) — List of technical articles, deep dives, and tutorials.
 
+## Featured Projects
+
+- [City Connector Backend](https://nelsonfrank.dev/projects/city-connector-backend) — High-performance transit routing (RAPTOR) and real-time GTFS engine built with Go, Python, Kong Gateway, and Kubernetes.
+- [i18n Automation CLI](https://nelsonfrank.dev/projects/i8n-automation-cli) — AI-native AST parsing and localization pipeline for React & TypeScript with multi-provider LLM verification.
+- [Homelab & Kubernetes Architecture](https://nelsonfrank.dev/projects/homelab) — Self-hosted private cloud infrastructure with Portainer and 3-level progressive Kubernetes migration via Argo CD GitOps.
+- [Passkey Authentication Engine](https://nelsonfrank.dev/projects/passkey-auth) — Biometric passwordless authentication using WebAuthn, NestJS, and PostgreSQL.
+- [NECTA Explorer](https://nelsonfrank.dev/projects/necta-explorer) — Asynchronous Python web crawler and interactive Next.js analytics dashboard for national examination results.
+
 ## Articles & Deep Dives
 
 - [Understanding Next.js App Router](https://nelsonfrank.dev/writing/nextjs-app-router) — Layouts, loading states, error boundaries, and server components explained.

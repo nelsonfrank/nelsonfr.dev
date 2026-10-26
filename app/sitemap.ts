@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getAllPosts } from '@/lib/posts'
+import { projects } from '@/lib/projects'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://nelsonfrank.dev'
@@ -10,6 +11,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: route === '' ? 1.0 : 0.8,
+  }))
+
+  // Dynamic project routes
+  const projectRoutes = projects.map((project) => ({
+    url: `${baseUrl}/projects/${project.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
   }))
 
   // Dynamic blog post routes from Markdown posts
@@ -29,5 +38,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   })
 
-  return [...routes, ...posts]
+  return [...routes, ...projectRoutes, ...posts]
 }
