@@ -2,7 +2,8 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { projects } from "@/lib/projects"
 import { getProject } from "@/lib/projects-server"
-import { markdownToHtml } from "@/lib/markdown"
+import { getAllPosts } from "@/lib/posts"
+import { markdownToHtml, extractHeadings } from "@/lib/markdown"
 import ProjectDetailsClient from "./ProjectDetailsClient"
 
 interface RouteParams {
@@ -50,10 +51,18 @@ export default async function ProjectDetailsPage({ params }: RouteParams) {
   if (!project) notFound()
 
   const htmlContent = project.content ? await markdownToHtml(project.content) : ""
+  const headings = project.content ? await extractHeadings(project.content) : []
 
-  // Find next project to display as a teaser at the bottom of the page
+  const allPosts = getAllPosts()
+  const relatedArticles = (project.relatedPosts ?? [])
+    .map((postSlug) => allPosts.find((p) => p.slug === postSlug))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p))
+
   const idx = projects.findIndex((p) => p.slug === slug)
-  const nextProject = projects[(idx + 1) % projects.length]
+  const explicitNext = project.nextProject
+    ? projects.find((p) => p.slug === project.nextProject)
+    : undefined
+  const nextProject = explicitNext ?? projects[(idx + 1) % projects.length]
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -80,13 +89,42 @@ export default async function ProjectDetailsPage({ params }: RouteParams) {
     ]
   }
 
+  const hasValidGithubUrl = Boolean(project.githubUrl && project.githubUrl !== "#")
+  const softwareSourceCodeJsonLd = hasValidGithubUrl
+    ? {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        "name": project.title,
+        "description": project.description,
+        "codeRepository": project.githubUrl,
+        "programmingLanguage": project.technologies,
+        "author": {
+          "@type": "Person",
+          "name": "Nelson Frank",
+          "url": "https://nelsonfrank.dev",
+        },
+      }
+    : null
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <ProjectDetailsClient project={project} htmlContent={htmlContent} nextProject={nextProject} />
+      {softwareSourceCodeJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSourceCodeJsonLd) }}
+        />
+      )}
+      <ProjectDetailsClient
+        project={project}
+        htmlContent={htmlContent}
+        headings={headings}
+        relatedArticles={relatedArticles}
+        nextProject={nextProject}
+      />
     </>
   )
 }

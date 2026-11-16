@@ -4,6 +4,14 @@ description: "Enterprise-grade self-hosted infrastructure with Docker Compose, P
 technologies: ["Kubernetes", "Docker", "Portainer", "Kustomize", "Argo CD", "cert-manager", "Linux", "Networking"]
 githubUrl: "https://github.com/nelsonfrank/homelab"
 category: "DevOps & Cloud"
+# TODO(content): Fill in case-study metadata and TL;DR fields
+role: ""
+year: ""
+problem: ""
+result: ""
+myPart: ""
+relatedPosts: []
+nextProject: "passkey-auth"
 ---
 
 ### Project Overview

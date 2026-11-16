@@ -4,6 +4,14 @@ description: "A high-performance asynchronous data crawler and interactive web d
 technologies: ["Python", "httpx", "BeautifulSoup4", "Next.js 15", "React 19", "Prisma ORM", "PostgreSQL", "TailwindCSS", "Recharts", "Docker"]
 githubUrl: "https://github.com/nelsonfrank/necta-explorer"
 category: "Web App"
+# TODO(content): Fill in case-study metadata and TL;DR fields
+role: ""
+year: ""
+problem: ""
+result: ""
+myPart: ""
+relatedPosts: []
+nextProject: "i8n-automation-cli"
 ---
 
 ### Project Overview

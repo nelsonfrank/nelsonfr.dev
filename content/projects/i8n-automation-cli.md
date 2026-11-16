@@ -4,6 +4,14 @@ description: "An AI-native CLI pipeline that safely internationalizes React & Ty
 technologies: ["TypeScript", "Node.js", "Babel AST", "Gemini 3.8", "OpenAI", "react-i18next", "Vitest", "CLI"]
 githubUrl: "https://github.com/nelsonfrank/i8n-automation-cli"
 category: "Developer Tools"
+# TODO(content): Fill in case-study metadata and TL;DR fields
+role: ""
+year: ""
+problem: ""
+result: ""
+myPart: ""
+relatedPosts: ["typescript-generics"]
+nextProject: "homelab"
 ---
 
 ### Project Overview

@@ -5,6 +5,14 @@ technologies: ["TypeScript", "NestJS", "React", "TypeORM", "PostgreSQL", "WebAut
 liveUrl: "#"
 githubUrl: "https://github.com/nelsonfrank/passkey-auth-demo"
 category: "Web App"
+# TODO(content): Fill in case-study metadata and TL;DR fields
+role: ""
+year: ""
+problem: ""
+result: ""
+myPart: ""
+relatedPosts: ["passkey-auth-as-multi-factor-auth-option"]
+nextProject: "city-connector-backend"
 ---
 
 ### Project Overview

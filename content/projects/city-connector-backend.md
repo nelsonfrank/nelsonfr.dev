@@ -4,6 +4,14 @@ description: "High-performance microservices platform for public transport journ
 technologies: ["Go", "Python", "RAPTOR", "GTFS", "GTFS-RT", "Kong Gateway", "PostgreSQL", "Redis", "Docker", "Kubernetes", "Tilt"]
 githubUrl: "https://github.com/nelsonfrank/city-connector-backend"
 category: "Distributed Systems"
+# TODO(content): Fill in case-study metadata and TL;DR fields
+role: ""
+year: ""
+problem: ""
+result: ""
+myPart: ""
+relatedPosts: []
+nextProject: "necta-explorer"
 ---
 
 ### Project Overview
