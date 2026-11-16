@@ -1,163 +1,46 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
-import gsap from "gsap"
-import { useMagnetic } from "@/hooks/use-gsap"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 const navLinks = [
-  { href: "#about", label: "About" },
-  { href: "/experience", label: "Experience" },
-  { href: "#projects", label: "Projects" },
-  { href: "#writing", label: "Writing" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#work", label: "Work" },
+  { href: "/#writing", label: "Writing" },
+  { href: "/#about", label: "About" },
+  { href: "/#contact", label: "Contact" },
 ]
-
-function MagneticLink({ href, label, onClick }: { href: string; label: string; onClick?: () => void }) {
-  const magneticRef = useMagnetic<HTMLAnchorElement>(0.3)
-  
-  return (
-    <Link
-      ref={magneticRef}
-      href={href}
-      onClick={onClick}
-      className="relative text-sm text-muted-foreground hover:text-primary transition-colors group"
-    >
-      <span className="relative z-10">{label}</span>
-      <span className="absolute bottom-0 left-0 w-0 h-px bg-primary group-hover:w-full transition-all duration-300" />
-    </Link>
-  )
-}
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const headerRef = useRef<HTMLElement>(null)
-  const logoRef = useMagnetic<HTMLAnchorElement>(0.2)
-  const mobileMenuRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const header = headerRef.current
-    if (!header) return
-
-    const preloaderShown = typeof window !== "undefined" && sessionStorage.getItem("preloader-shown") === "true"
-    const startDelay = preloaderShown ? 0.2 : 2.8
-
-    // Initial animation
-    gsap.fromTo(
-      header,
-      { y: -100, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, delay: startDelay, ease: "power3.out" }
-    )
-
-    // Scroll listener for header background
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  // Mobile menu animation
-  useEffect(() => {
-    if (!mobileMenuRef.current) return
-
-    if (isOpen) {
-      gsap.fromTo(
-        mobileMenuRef.current,
-        { height: 0, opacity: 0 },
-        { height: "auto", opacity: 1, duration: 0.4, ease: "power3.out" }
-      )
-      gsap.fromTo(
-        mobileMenuRef.current.querySelectorAll("a"),
-        { x: -20, opacity: 0 },
-        { x: 0, opacity: 1, stagger: 0.05, duration: 0.3, delay: 0.1, ease: "power2.out" }
-      )
-    }
-  }, [isOpen])
 
   return (
-    <header
-      ref={headerRef}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-background/90 backdrop-blur-md border-b border-border py-3"
-          : "bg-transparent py-5"
-      }`}
-    >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6">
+    <header className="border-b border-border bg-background">
+      <nav
+        aria-label="Primary"
+        className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-4 px-5 py-4 md:px-8"
+      >
         <Link
-          ref={logoRef}
           href="/"
-          className="text-xl font-semibold text-foreground relative overflow-hidden group"
+          className="text-base font-semibold tracking-tight text-foreground hover:text-primary transition-colors min-h-[44px] inline-flex items-center"
         >
-          <span className="relative z-10">Nelson Frank</span>
-          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+          Nelson Frank
         </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="flex flex-wrap items-center gap-1 sm:gap-2">
           {navLinks.map((link) => (
-            <MagneticLink key={link.href} href={link.href} label={link.label} />
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setIsOpen(false)}
+              className="inline-flex items-center min-h-[44px] px-2.5 text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
+              {link.label}
+            </Link>
           ))}
-        </div>
-
-        {/* Mobile Controls */}
-        <div className="flex md:hidden items-center gap-2">
-          <Link
-            href="/#contact"
-            className="px-3.5 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary hover:text-background transition-all duration-300 active:scale-95 shadow-sm shadow-primary/10"
-          >
-            Contact
-          </Link>
-
-          <button
-            className="text-foreground relative z-50 p-2"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            <div className="relative w-6 h-6 flex items-center justify-center">
-              <span
-                className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
-                  isOpen ? "rotate-45" : "-translate-y-1.5"
-                }`}
-              />
-              <span
-                className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
-                  isOpen ? "opacity-0" : "opacity-100"
-                }`}
-              />
-              <span
-                className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
-                  isOpen ? "-rotate-45" : "translate-y-1.5"
-                }`}
-              />
-            </div>
-          </button>
+          <ThemeToggle />
         </div>
       </nav>
-
-      {/* Mobile Navigation */}
-      {isOpen && (
-        <div
-          ref={mobileMenuRef}
-          className="md:hidden bg-background/95 backdrop-blur-md border-b border-border overflow-hidden"
-        >
-          <div className="flex flex-col px-6 py-6 gap-5">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-lg text-muted-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
     </header>
   )
 }

@@ -15,7 +15,6 @@ export interface TurnstileRef {
   reset: () => void
 }
 
-// Global window Turnstile type definition
 declare global {
   interface Window {
     turnstile?: {
@@ -38,11 +37,12 @@ declare global {
 
 export const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(
   ({ siteKey, onVerify, onExpire, onError, theme = "dark" }, ref) => {
+    const wrapperRef = useRef<HTMLDivElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
     const widgetIdRef = useRef<string | null>(null)
+    const [shouldLoadScript, setShouldLoadScript] = useState(false)
     const [scriptLoaded, setScriptLoaded] = useState(false)
 
-    // Expose the reset function to parent components
     useImperativeHandle(ref, () => ({
       reset: () => {
         if (widgetIdRef.current && window.turnstile) {
@@ -55,10 +55,50 @@ export const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(
       },
     }))
 
-    // Check if the script is already loaded on mount
+    // Load script only when near viewport or when user focuses inside form
     useEffect(() => {
-      if (typeof window !== "undefined" && window.turnstile) {
+      if (typeof window === "undefined") return
+      if (window.turnstile) {
+        setShouldLoadScript(true)
         setScriptLoaded(true)
+        return
+      }
+
+      const el = wrapperRef.current
+      if (!el) return
+
+      const triggerLoad = () => {
+        setShouldLoadScript(true)
+      }
+
+      const form = el.closest("form")
+      if (form) {
+        form.addEventListener("focusin", triggerLoad, { once: true })
+        form.addEventListener("pointerdown", triggerLoad, { once: true, passive: true })
+      }
+
+      let observer: IntersectionObserver | null = null
+      if ("IntersectionObserver" in window) {
+        observer = new IntersectionObserver(
+          (entries) => {
+            if (entries.some((entry) => entry.isIntersecting)) {
+              triggerLoad()
+              observer?.disconnect()
+            }
+          },
+          { rootMargin: "250px 0px" }
+        )
+        observer.observe(el)
+      } else {
+        triggerLoad()
+      }
+
+      return () => {
+        observer?.disconnect()
+        if (form) {
+          form.removeEventListener("focusin", triggerLoad)
+          form.removeEventListener("pointerdown", triggerLoad)
+        }
       }
     }, [])
 
@@ -69,7 +109,6 @@ export const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(
 
       try {
         if (window.turnstile) {
-          // If there is an existing widget, clean it up first
           if (widgetIdRef.current) {
             window.turnstile.remove(widgetIdRef.current)
             widgetIdRef.current = null
@@ -97,7 +136,7 @@ export const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(
         if (widgetIdRef.current && window.turnstile) {
           try {
             window.turnstile.remove(widgetIdRef.current)
-          } catch (err) {
+          } catch {
             // ignore
           }
           widgetIdRef.current = null
@@ -106,14 +145,16 @@ export const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(
     }, [siteKey, onVerify, onExpire, onError, theme, scriptLoaded])
 
     return (
-      <>
-        <Script
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-          strategy="afterInteractive"
-          onLoad={() => setScriptLoaded(true)}
-        />
-        <div ref={containerRef} className="w-full flex px-2 py-2" />
-      </>
+      <div ref={wrapperRef} className="w-full min-h-[65px] flex items-center justify-center">
+        {shouldLoadScript && (
+          <Script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+            strategy="afterInteractive"
+            onLoad={() => setScriptLoaded(true)}
+          />
+        )}
+        <div ref={containerRef} className="w-full flex justify-center px-2 py-2" />
+      </div>
     )
   }
 )

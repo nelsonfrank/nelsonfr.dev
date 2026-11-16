@@ -121,34 +121,15 @@
   * {
     @apply border-border outline-ring/50;
   }
-  html {
-    scroll-behavior: smooth;
-    cursor: none;
-    overflow-x: hidden;
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;
   }
-  
-  @media (min-width: 768px) {
-    * {
-      cursor: none !important;
-    }
-  }
-  
-  @media (max-width: 767px) {
-    html,
-    * {
-      cursor: auto !important;
-    }
-  }
-}
-
-.smooth-wrapper {
-  position: relative;
-  width: 100%;
-  overflow-x: hidden;
 }
 
 

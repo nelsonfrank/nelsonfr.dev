@@ -1,58 +1,37 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
 import { Sun, Moon } from "lucide-react"
-import gsap from "gsap"
-import { useMagnetic } from "@/hooks/use-gsap"
-import posthog from "posthog-js"
+import { captureEvent } from "@/lib/analytics"
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
   const [mounted, setMounted] = useState(false)
   const { resolvedTheme, setTheme } = useTheme()
-  const buttonRef = useMagnetic<HTMLButtonElement>(0.4)
-  const iconRef = useRef<HTMLDivElement>(null)
 
-  // Avoid hydration mismatch by waiting for mount
   useEffect(() => {
     setMounted(true)
   }, [])
 
   const toggleTheme = () => {
     const nextTheme = resolvedTheme === "dark" ? "light" : "dark"
-    
-    // Quick rotation and scale bounce animation on click
-    if (iconRef.current) {
-      gsap.fromTo(
-        iconRef.current,
-        { rotate: 0, scale: 0.7 },
-        { rotate: 360, scale: 1, duration: 0.5, ease: "back.out(1.5)" }
-      )
-    }
-    
-    posthog.capture("theme_toggled", { theme: nextTheme })
+    captureEvent("theme_toggled", { theme: nextTheme })
     setTheme(nextTheme)
   }
 
-  if (!mounted) return null
-
-  const isDark = resolvedTheme === "dark"
+  const isDark = !mounted || resolvedTheme === "dark"
 
   return (
     <button
-      ref={buttonRef}
+      type="button"
       onClick={toggleTheme}
-      className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex items-center justify-center size-10 md:size-12 rounded-full glass text-foreground hover:text-primary transition-all duration-300 shadow-lg cursor-pointer select-none active:scale-95"
-      aria-label="Toggle theme"
-      data-cursor="Theme"
+      className={
+        className ??
+        "inline-flex items-center justify-center min-w-[44px] min-h-[44px] size-11 rounded-md border border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary transition-colors duration-200 cursor-pointer select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      }
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
     >
-      <div ref={iconRef} className="flex items-center justify-center">
-        {isDark ? (
-          <Sun className="size-4 md:size-5" />
-        ) : (
-          <Moon className="size-4 md:size-5" />
-        )}
-      </div>
+      {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
     </button>
   )
 }
