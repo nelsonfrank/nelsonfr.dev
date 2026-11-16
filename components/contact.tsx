@@ -9,22 +9,22 @@ import { captureEvent } from "@/lib/analytics"
 const ContactForm = dynamic(() => import("./contact-form"), {
   ssr: false,
   loading: () => (
-    <p className="mt-4 text-xs font-mono text-muted-foreground">Loading form…</p>
+    <p className="mt-4 meta-mono">Loading form…</p>
   ),
 })
 
-// TODO(content): Set NEXT_PUBLIC_CONTACT_EMAIL or replace placeholder with preferred contact email
-const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "[YOUR EMAIL]"
-// TODO(content): Replace response time placeholder (e.g. "24 hours")
-const RESPONSE_TIME_PLACEHOLDER = "[RESPONSE TIME]"
+// TODO(content): Set NEXT_PUBLIC_CONTACT_EMAIL or replace [YOUR EMAIL] with public contact email
+export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "[YOUR EMAIL]"
+// TODO(content): Replace [RESPONSE TIME] with real response SLA (e.g. "24 hours")
+export const RESPONSE_TIME_PLACEHOLDER = "[RESPONSE TIME]"
 
 export function Contact() {
   const [showForm, setShowForm] = useState(false)
 
   return (
-    <section id="contact" className="py-16 md:py-20 px-5 md:px-8 border-t border-border">
-      <div className="mx-auto max-w-[1080px]">
-        <div className="rounded-lg border border-border bg-card p-6 sm:p-8 md:p-10 space-y-6">
+    <section id="contact" className="py-16 md:py-20 border-t border-border">
+      <div className="page-container">
+        <div className="rounded-md border border-border bg-card p-6 sm:p-8 md:p-10 space-y-6">
           <div className="space-y-2 max-w-[680px]">
             <h2 className="text-[28px] font-semibold tracking-tight text-foreground">
               Let&apos;s build something.
@@ -43,9 +43,9 @@ export function Contact() {
                   href: `mailto:${CONTACT_EMAIL}`,
                 })
               }
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity duration-200"
+              className="inline-flex items-center justify-center gap-2 min-h-[44px] w-full sm:w-auto px-5 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity duration-200"
             >
-              <Mail className="size-4" />
+              <Mail className="size-4" aria-hidden="true" />
               <span>Email {CONTACT_EMAIL}</span>
             </a>
 
@@ -59,9 +59,9 @@ export function Contact() {
                   href: "https://github.com/nelsonfrank",
                 })
               }
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 rounded-md border border-border bg-background text-foreground text-sm font-medium hover:border-primary hover:text-primary transition-colors duration-200"
+              className="inline-flex items-center justify-center gap-2 min-h-[44px] w-full sm:w-auto px-4 py-2.5 rounded-md border border-border bg-background text-foreground text-sm font-medium hover:border-primary hover:text-primary transition-colors duration-200"
             >
-              <Github className="size-4" />
+              <Github className="size-4" aria-hidden="true" />
               <span>GitHub</span>
             </Link>
 
@@ -75,9 +75,9 @@ export function Contact() {
                   href: "https://www.linkedin.com/in/nelson-frank-munissy/",
                 })
               }
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 rounded-md border border-border bg-background text-foreground text-sm font-medium hover:border-primary hover:text-primary transition-colors duration-200"
+              className="inline-flex items-center justify-center gap-2 min-h-[44px] w-full sm:w-auto px-4 py-2.5 rounded-md border border-border bg-background text-foreground text-sm font-medium hover:border-primary hover:text-primary transition-colors duration-200"
             >
-              <Linkedin className="size-4" />
+              <Linkedin className="size-4" aria-hidden="true" />
               <span>LinkedIn</span>
             </Link>
           </div>
@@ -94,6 +94,7 @@ export function Contact() {
                 className={`size-4 transition-transform duration-200 ${
                   showForm ? "rotate-180" : ""
                 }`}
+                aria-hidden="true"
               />
             </button>
 

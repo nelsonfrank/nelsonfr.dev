@@ -13,10 +13,10 @@ export function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="border-t border-border py-8 px-5 md:px-8">
-      <div className="mx-auto max-w-[1080px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs font-mono text-muted-foreground">
+    <footer className="border-t border-border py-6">
+      <div className="page-container flex flex-wrap items-center justify-between gap-4 meta-mono">
         <p>© {currentYear} Nelson Frank</p>
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           {socialLinks.map((link) => (
             <Link
               key={link.label}
@@ -29,7 +29,7 @@ export function Footer() {
                   href: link.href,
                 })
               }
-              className="inline-flex items-center min-h-[44px] px-1 hover:text-primary transition-colors duration-200"
+              className="inline-flex items-center min-h-[44px] px-1.5 hover:text-primary transition-colors duration-200"
             >
               {link.label}
             </Link>

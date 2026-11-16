@@ -50,7 +50,7 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
   const [activeCategory, setActiveCategory] = useState("All")
 
   const categories = useMemo(() => {
-    const list = new Set(initialProjects.map((p) => p.category))
+    const list = new Set(initialProjects.map((p) => p.category).filter((c): c is string => Boolean(c)))
     return ["All", ...Array.from(list)]
   }, [initialProjects])
 

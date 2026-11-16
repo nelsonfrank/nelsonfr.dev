@@ -1,11 +1,14 @@
 import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
+import { ProofStrip } from "@/components/proof-strip"
 import { Projects } from "@/components/projects"
 import { Writing } from "@/components/writing"
+import { Experience } from "@/components/experience"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
 import { getAllPosts } from "@/lib/posts"
+import { getAllExperiences } from "@/lib/experience"
 
 export const metadata: Metadata = {
   title: "Nelson Frank — Portfolio",
@@ -36,6 +39,8 @@ export default function Page() {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3)
 
+  const experiences = getAllExperiences()
+
   return (
     <>
       <script
@@ -43,10 +48,12 @@ export default function Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
-      <main>
+      <main id="main-content">
         <Hero />
+        <ProofStrip />
         <Projects />
         <Writing posts={posts} />
+        <Experience experiences={experiences} />
         <Contact />
       </main>
       <Footer />

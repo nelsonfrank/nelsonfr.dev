@@ -1,3 +1,8 @@
+export interface ProjectDecision {
+  decision: string
+  tradeoff: string
+}
+
 export interface Project {
   slug: string
   title: string
@@ -7,15 +12,40 @@ export interface Project {
   liveUrl?: string
   githubUrl?: string
   featured: boolean
-  category: string
+  category?: string
+  outcome?: string
+  diagram?: {
+    nodes: [string, string, string]
+  }
+  role?: string
+  year?: string
+  problem?: string
+  result?: string
+  myPart?: string
+  decisions?: ProjectDecision[]
+  results?: string[]
+  relatedPosts?: string[]
+  nextProject?: string
   content?: string // Detailed Markdown content
 }
+
+export const SELECTED_WORK_SLUGS = [
+  "passkey-auth",
+  "city-connector-backend",
+  "necta-explorer",
+] as const
 
 export const projects: Project[] = [
   {
     slug: "passkey-auth",
     title: "Passkey Authentication Engine",
-    description: "A production-ready, biometric-driven authentication system designed to replace legacy password and OTP systems.",
+    description:
+      "A production-ready, biometric-driven authentication system designed to replace legacy password and OTP systems.",
+    // TODO(content): Replace [OUTCOME] with concrete metric or security outcome for Passkey Authentication Engine
+    outcome: "[OUTCOME]",
+    diagram: {
+      nodes: ["Browser", "NestJS API", "Postgres"],
+    },
     image: "/projects/passkey-auth.png",
     technologies: ["TypeScript", "NestJS", "React", "TypeORM", "PostgreSQL", "WebAuthn"],
     liveUrl: "#",
@@ -24,31 +54,72 @@ export const projects: Project[] = [
     category: "Web App",
   },
   {
-    slug: "necta-explorer",
-    title: "NECTA Explorer",
-    description: "A high-performance asynchronous data crawler and interactive web dashboard for Tanzania NECTA examination results.",
-    image: "/projects/necta-explorer.png",
-    technologies: ["Python", "httpx", "Next.js", "TypeScript", "Prisma", "PostgreSQL", "TailwindCSS"],
-    githubUrl: "https://github.com/nelsonfrank/necta-explorer",
-    featured: true,
-    category: "Web App",
-  },
-  {
     slug: "city-connector-backend",
     title: "City Connector Backend",
-    description: "High-performance microservices transit routing and real-time engine implementing the RAPTOR algorithm, GTFS ingestion, and Kong API gateway.",
+    description:
+      "High-performance microservices transit routing and real-time engine implementing the RAPTOR algorithm, GTFS ingestion, and Kong API gateway.",
+    // TODO(content): Replace [OUTCOME] with concrete latency/throughput outcome for City Connector Backend
+    outcome: "[OUTCOME]",
+    diagram: {
+      nodes: ["Kong", "Go RAPTOR", "Redis"],
+    },
     image: "/projects/city-connector-backend.png",
-    technologies: ["Go", "Python", "RAPTOR", "GTFS", "Kong Gateway", "PostgreSQL", "Redis", "Docker", "Kubernetes"],
+    technologies: [
+      "Go",
+      "Python",
+      "RAPTOR",
+      "GTFS",
+      "Kong Gateway",
+      "PostgreSQL",
+      "Redis",
+      "Docker",
+      "Kubernetes",
+    ],
     githubUrl: "https://github.com/nelsonfrank/city-connector-backend",
     featured: true,
     category: "Distributed Systems",
   },
   {
+    slug: "necta-explorer",
+    title: "NECTA Explorer",
+    description:
+      "A high-performance asynchronous data crawler and interactive web dashboard for Tanzania NECTA examination results.",
+    // TODO(content): Replace [OUTCOME] with concrete crawl speed or records processed outcome for NECTA Explorer
+    outcome: "[OUTCOME]",
+    diagram: {
+      nodes: ["Scraper", "Postgres", "Next.js"],
+    },
+    image: "/projects/necta-explorer.png",
+    technologies: [
+      "Python",
+      "httpx",
+      "Next.js",
+      "TypeScript",
+      "Prisma",
+      "PostgreSQL",
+      "TailwindCSS",
+    ],
+    githubUrl: "https://github.com/nelsonfrank/necta-explorer",
+    featured: true,
+    category: "Web App",
+  },
+  {
     slug: "i8n-automation-cli",
     title: "i18n Automation CLI",
-    description: "An AI-native internationalization pipeline for React and TypeScript codebases featuring AST transformation, multi-provider LLM translation, and strict verification gates.",
+    description:
+      "An AI-native internationalization pipeline for React and TypeScript codebases featuring AST transformation, multi-provider LLM translation, and strict verification gates.",
+    // TODO(content): Replace [OUTCOME] with concrete outcome if featured
+    outcome: "[OUTCOME]",
     image: "/projects/i8n-automation-cli.png",
-    technologies: ["TypeScript", "Node.js", "Babel AST", "Gemini 3.8", "OpenAI", "react-i18next", "Vitest"],
+    technologies: [
+      "TypeScript",
+      "Node.js",
+      "Babel AST",
+      "Gemini 3.8",
+      "OpenAI",
+      "react-i18next",
+      "Vitest",
+    ],
     githubUrl: "https://github.com/nelsonfrank/i8n-automation-cli",
     featured: true,
     category: "Developer Tools",
@@ -56,9 +127,20 @@ export const projects: Project[] = [
   {
     slug: "homelab",
     title: "Homelab & Kubernetes Architecture",
-    description: "Self-hosted personal cloud and media infrastructure with Portainer stacks and a 3-level progressive migration path to Kubernetes with GitOps and automated TLS.",
+    description:
+      "Self-hosted personal cloud and media infrastructure with Portainer stacks and a 3-level progressive migration path to Kubernetes with GitOps and automated TLS.",
+    // TODO(content): Replace [OUTCOME] with concrete outcome if featured
+    outcome: "[OUTCOME]",
     image: "/projects/homelab.png",
-    technologies: ["Kubernetes", "Docker", "Portainer", "Kustomize", "Argo CD", "cert-manager", "Linux"],
+    technologies: [
+      "Kubernetes",
+      "Docker",
+      "Portainer",
+      "Kustomize",
+      "Argo CD",
+      "cert-manager",
+      "Linux",
+    ],
     githubUrl: "https://github.com/nelsonfrank/homelab",
     featured: true,
     category: "DevOps & Cloud",

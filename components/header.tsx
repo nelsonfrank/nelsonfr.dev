@@ -1,46 +1,54 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
 
-const navLinks = [
-  { href: "/#work", label: "Work" },
-  { href: "/#writing", label: "Writing" },
-  { href: "/#about", label: "About" },
-  { href: "/#contact", label: "Contact" },
-]
-
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const isHome = pathname === "/"
+
+  const navLinks = [
+    { href: isHome ? "#work" : "/projects", label: "Work" },
+    { href: isHome ? "#writing" : "/writing", label: "Writing" },
+    { href: isHome ? "#about" : "/experience", label: "About" },
+    { href: isHome ? "#contact" : "/#contact", label: "Contact" },
+  ]
 
   return (
     <header className="border-b border-border bg-background">
-      <nav
-        aria-label="Primary"
-        className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-4 px-5 py-4 md:px-8"
-      >
+      <div className="page-container flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3.5">
         <Link
           href="/"
-          className="text-base font-semibold tracking-tight text-foreground hover:text-primary transition-colors min-h-[44px] inline-flex items-center"
+          className="text-base font-semibold tracking-tight text-foreground hover:text-primary transition-colors duration-200 min-h-[44px] inline-flex items-center"
         >
           Nelson Frank
         </Link>
 
-        <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className="inline-flex items-center min-h-[44px] px-2.5 text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <div className="flex flex-wrap items-center gap-x-1 gap-y-1 sm:gap-x-2">
+          <nav aria-label="Primary" className="flex flex-wrap items-center">
+            {navLinks.map((link, index) => (
+              <span key={link.label} className="inline-flex items-center">
+                {index > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="text-muted-foreground/50 select-none px-1"
+                  >
+                    ·
+                  </span>
+                )}
+                <Link
+                  href={link.href}
+                  className="inline-flex items-center min-h-[44px] px-2 text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
+                  {link.label}
+                </Link>
+              </span>
+            ))}
+          </nav>
           <ThemeToggle />
         </div>
-      </nav>
+      </div>
     </header>
   )
 }
