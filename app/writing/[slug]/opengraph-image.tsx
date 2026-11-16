@@ -8,7 +8,6 @@ export const size = {
 }
 export const contentType = 'image/png'
 
-// Module-level caching for loaded font arrays
 let fontRegularPromise: Promise<ArrayBuffer> | null = null
 let fontBoldPromise: Promise<ArrayBuffer> | null = null
 
@@ -40,7 +39,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const { slug } = await params
   const post = getPost(slug)
 
-  let fonts: any[] = []
+  let fonts: { name: string; data: ArrayBuffer; weight: 400 | 700; style: 'normal' }[] = []
   try {
     const [regularData, boldData] = await Promise.all([
       getFontRegular(),
@@ -65,75 +64,49 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   }
 
   const title = post?.title || 'Blog Post'
-  const excerpt = post?.excerpt || 'Read the full article on Nelson Frank\'s personal blog.'
+  const excerpt = post?.excerpt || 'Read the full article on Nelson Frank\'s engineering blog.'
   const date = post?.date || ''
   const readTime = post?.readTime || ''
 
   return new ImageResponse(
     (
       <div
-        tw="flex flex-col w-full h-full p-10 text-white items-stretch justify-between relative"
+        tw="flex flex-col w-full h-full p-12 justify-between"
         style={{
           fontFamily: 'Geist, sans-serif',
-          backgroundImage: 'radial-gradient(circle at 95% 5%, rgba(139, 92, 246, 0.12) 0%, rgba(3, 3, 3, 0) 50%), radial-gradient(circle at 5% 95%, rgba(20, 184, 166, 0.15) 0%, rgba(3, 3, 3, 0) 50%), linear-gradient(135deg, #030303 0%, #0a0d14 100%)',
+          backgroundColor: '#0b0f14',
+          color: '#e6edf3',
         }}
       >
-        {/* Soft glowing ambient circle top-right */}
         <div
+          tw="flex flex-col w-full h-full rounded-[12px] p-12 justify-between"
           style={{
-            position: 'absolute',
-            top: '-10%',
-            right: '-10%',
-            width: '600px',
-            height: '600px',
-            borderRadius: '50%',
-            backgroundImage: 'radial-gradient(circle, rgba(20, 184, 166, 0.08) 0%, rgba(20, 184, 166, 0) 70%)',
-          }}
-        />
-
-        {/* Dynamic Card Container with border glow */}
-        <div
-          tw="flex flex-col w-full h-full rounded-[24px] p-12 justify-between relative"
-          style={{
-            backgroundColor: 'rgba(10, 13, 20, 0.4)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            backgroundColor: '#0f151c',
+            border: '1px solid #1f2933',
           }}
         >
-          {/* Top Row / Branding */}
+          {/* Top Row */}
           <div tw="flex flex-row justify-between items-center w-full">
-            <div tw="flex flex-row items-center">
-              <div
-                tw="w-10 h-10 rounded-full flex items-center justify-center font-bold mr-3"
-                style={{
-                  backgroundColor: 'rgba(20, 184, 166, 0.12)',
-                  border: '1px solid rgba(20, 184, 166, 0.3)',
-                  color: '#2dd4bf',
-                  fontSize: '16px',
-                }}
-              >
-                NF
-              </div>
-              <span tw="text-xl font-bold tracking-tight text-white">Nelson Frank</span>
-            </div>
-            <span
-              tw="text-lg font-semibold"
-              style={{ color: '#2dd4bf' }}
-            >
+            <span tw="text-xl font-bold tracking-tight" style={{ color: '#e6edf3' }}>
+              Nelson Frank
+            </span>
+            <span tw="text-lg font-bold" style={{ color: '#3ddbc8' }}>
               nelsonfrank.dev
             </span>
           </div>
 
           {/* Middle Content */}
-          <div tw="flex flex-col justify-center items-start flex-grow mt-6">
+          <div tw="flex flex-col justify-center items-start">
             <span
               tw="text-xs font-bold uppercase mb-4"
-              style={{ color: 'rgba(45, 212, 191, 0.8)', letterSpacing: '0.2em' }}
+              style={{ color: '#3ddbc8', letterSpacing: '0.08em' }}
             >
-              ARTICLE / WRITING
+              WRITING
             </span>
-            <h1 
-              tw="text-5xl font-bold text-white tracking-tight leading-snug mb-4"
+            <h1
+              tw="text-5xl font-bold tracking-tight leading-snug mb-4"
               style={{
+                color: '#e6edf3',
                 display: '-webkit-box',
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical',
@@ -142,9 +115,10 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             >
               {title}
             </h1>
-            <p 
-              tw="text-xl font-light text-slate-300 leading-relaxed max-w-[950px]"
+            <p
+              tw="text-xl leading-relaxed max-w-[950px]"
               style={{
+                color: '#9aa7b4',
                 display: '-webkit-box',
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical',
@@ -155,20 +129,24 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             </p>
           </div>
 
-          {/* Bottom Row / Date & Read Time */}
+          {/* Bottom Row */}
           <div
-            tw="flex flex-row items-center justify-between w-full pt-8"
-            style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}
+            tw="flex flex-row items-center justify-between w-full pt-6"
+            style={{ borderTop: '1px solid #1f2933' }}
           >
-            <div tw="flex flex-row items-center text-slate-400 text-sm font-medium">
+            <div tw="flex flex-row items-center text-sm" style={{ color: '#9aa7b4' }}>
               {date && <span>{date}</span>}
-              {date && readTime && <span tw="mx-2.5">•</span>}
+              {date && readTime && <span tw="mx-2.5">·</span>}
               {readTime && <span>{readTime}</span>}
             </div>
 
             <div tw="flex flex-row items-center">
-              <span tw="text-sm font-semibold text-slate-300 mr-2">Read article at</span>
-              <span tw="text-sm font-semibold" style={{ color: '#2dd4bf' }}>nelsonfrank.dev</span>
+              <span tw="text-sm mr-2" style={{ color: '#9aa7b4' }}>
+                Read article at
+              </span>
+              <span tw="text-sm font-bold" style={{ color: '#3ddbc8' }}>
+                nelsonfrank.dev
+              </span>
             </div>
           </div>
         </div>

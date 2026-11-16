@@ -6,6 +6,7 @@ import { ArrowLeft, Clock, Calendar, ArrowUpRight } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import type { PostMeta } from "@/lib/posts"
+import type { Project } from "@/lib/projects"
 import type { TocHeading } from "@/lib/markdown"
 
 let mermaidInitialized = false
@@ -154,11 +155,12 @@ function TableOfContents({ headings }: { headings: TocHeading[] }) {
   if (headings.length === 0) return null
 
   return (
-    <aside aria-label="On this page" className="lg:sticky lg:top-8 lg:self-start">
-      <p className="text-xs font-mono uppercase tracking-[0.05em] text-primary mb-3">
-        On this page
-      </p>
-      <ul className="space-y-2 border-l border-border pl-3">
+    <aside
+      aria-label="On this page"
+      className="hidden lg:block lg:w-[200px] lg:sticky lg:top-8 lg:self-start shrink-0"
+    >
+      <p className="eyebrow mb-3">On this page</p>
+      <ul className="space-y-1.5 border-l border-border pl-3">
         {headings.map((heading) => {
           const isActive = activeId === heading.id
           return (
@@ -208,16 +210,16 @@ interface PostClientProps {
   post: PostMeta
   htmlContent: string
   headings: TocHeading[]
-  prevPost: PostMeta | null
-  nextPost: PostMeta | null
+  relatedProject: Project | null
+  relatedPosts: PostMeta[]
 }
 
 export default function PostClient({
   post,
   htmlContent,
   headings,
-  prevPost,
-  nextPost,
+  relatedProject,
+  relatedPosts,
 }: PostClientProps) {
   const [modalSvg, setModalSvg] = useState<string | null>(null)
 
@@ -234,86 +236,105 @@ export default function PostClient({
     <>
       <Header />
 
-      <main className="py-12 md:py-20 px-5 md:px-8 min-h-screen">
-        <div className="mx-auto max-w-[1080px]">
+      <main id="main-content" className="py-12 md:py-20 min-h-screen">
+        <div className="page-container">
           <div className="mb-10 pb-8 border-b border-border max-w-[720px]">
             <Link
               href="/writing"
               className="inline-flex items-center gap-2 min-h-[44px] text-xs font-mono uppercase tracking-[0.05em] text-muted-foreground hover:text-primary transition-colors mb-4"
             >
-              <ArrowLeft className="size-3.5" />
-              All articles
+              <ArrowLeft className="size-3.5" aria-hidden="true" />
+              <span>All articles</span>
             </Link>
 
             <div className="flex flex-wrap gap-2 mb-4">
               {post.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-0.5 text-xs font-mono text-primary border border-border rounded bg-card"
+                  className="px-2 py-0.5 meta-mono border border-border rounded bg-card"
                 >
                   {tag}
                 </span>
               ))}
             </div>
 
-            <h1 className="text-[32px] md:text-[48px] font-bold tracking-[-0.03em] text-foreground leading-[1.1] mb-4">
+            <h1 className="text-[36px] md:text-[48px] font-bold tracking-[-0.03em] text-foreground leading-[1.08] mb-4">
               {post.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-3 meta-mono">
               <span className="inline-flex items-center gap-1.5">
-                <Calendar className="size-3.5" />
+                <Calendar className="size-3.5" aria-hidden="true" />
                 {post.date}
               </span>
-              <span>·</span>
+              <span aria-hidden="true">·</span>
               <span className="inline-flex items-center gap-1.5">
-                <Clock className="size-3.5" />
+                <Clock className="size-3.5" aria-hidden="true" />
                 {post.readTime}
               </span>
             </div>
           </div>
 
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,720px)_200px] items-start">
-            <div className="min-w-0">
+          <div className="flex flex-col lg:flex-row lg:items-start gap-12">
+            <div className="w-full max-w-[720px] min-w-0">
               <BlogPostHtml htmlContent={htmlContent} onDiagramClick={setModalSvg} />
 
-              <div className="mt-14 pt-8 border-t border-border">
-                <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {prevPost ? (
+              <section
+                aria-label="Related content"
+                className="mt-14 pt-8 border-t border-border space-y-8"
+              >
+                {relatedProject && (
+                  <div className="space-y-3">
+                    <p className="eyebrow">Related project</p>
                     <Link
-                      href={`/writing/${prevPost.slug}`}
-                      className="group flex flex-col gap-1 p-4 rounded-lg border border-border bg-card hover:border-primary transition-colors duration-200"
+                      href={`/projects/${relatedProject.slug}`}
+                      className="group flex items-center justify-between gap-4 rounded-md border border-border bg-card p-5 hover:border-primary transition-colors duration-200 min-h-[44px]"
                     >
-                      <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
-                        <ArrowLeft className="size-3" />
-                        Previous
-                      </span>
-                      <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                        {prevPost.title}
-                      </span>
+                      <div className="space-y-1 min-w-0">
+                        <p className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                          {relatedProject.title}
+                        </p>
+                        <p className="text-sm text-muted-foreground line-clamp-1">
+                          {relatedProject.description}
+                        </p>
+                      </div>
+                      <ArrowUpRight
+                        className="size-5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors"
+                        aria-hidden="true"
+                      />
                     </Link>
-                  ) : (
-                    <div />
-                  )}
+                  </div>
+                )}
 
-                  {nextPost ? (
-                    <Link
-                      href={`/writing/${nextPost.slug}`}
-                      className="group flex flex-col items-end gap-1 p-4 rounded-lg border border-border bg-card hover:border-primary transition-colors duration-200"
-                    >
-                      <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
-                        Next
-                        <ArrowUpRight className="size-3" />
-                      </span>
-                      <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors text-right line-clamp-2">
-                        {nextPost.title}
-                      </span>
-                    </Link>
-                  ) : (
-                    <div />
-                  )}
-                </nav>
-              </div>
+                {relatedPosts.length > 0 && (
+                  <div className="space-y-3">
+                    <p className="eyebrow">Related articles</p>
+                    <div className="divide-y divide-border border-t border-b border-border">
+                      {relatedPosts.map((related) => (
+                        <Link
+                          key={related.slug}
+                          href={`/writing/${related.slug}`}
+                          className="group flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-6 py-4 min-h-[44px] transition-colors duration-200"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 min-w-0">
+                            <time className="meta-mono shrink-0 sm:w-36">
+                              {related.date}
+                            </time>
+                            <span className="text-[18px] font-medium text-foreground group-hover:text-primary transition-colors duration-200">
+                              {related.title}
+                            </span>
+                          </div>
+                          {related.tags[0] && (
+                            <span className="meta-mono shrink-0">
+                              {related.tags[0]}
+                            </span>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </section>
             </div>
 
             <TableOfContents headings={headings} />

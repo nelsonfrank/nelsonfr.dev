@@ -49,6 +49,7 @@ export async function extractHeadings(markdown: string): Promise<TocHeading[]> {
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype)
+    .use(rehypeDemoteH1)
     .use(rehypeSlug)
     .use(collectHeadings)
     .use(rehypeStringify)
@@ -154,11 +155,26 @@ function rehypeMermaid() {
   }
 }
 
+function rehypeDemoteH1() {
+  return (tree: any) => {
+    const visit = (node: any) => {
+      if (node.type === "element" && node.tagName === "h1") {
+        node.tagName = "h2"
+      }
+      if (node.children && Array.isArray(node.children)) {
+        node.children.forEach(visit)
+      }
+    }
+    visit(tree)
+  }
+}
+
 export async function markdownToHtml(markdown: string): Promise<string> {
   const result = await unified()
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeDemoteH1)
     .use(rehypeSlug)
     .use(rehypeMermaid)
     .use(rehypePrettyCode, prettyCodeOptions)

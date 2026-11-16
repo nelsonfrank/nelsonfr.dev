@@ -9,7 +9,6 @@ export const size = {
 }
 export const contentType = 'image/png'
 
-// Module-level caching for loaded font arrays
 let fontRegularPromise: Promise<ArrayBuffer> | null = null
 let fontBoldPromise: Promise<ArrayBuffer> | null = null
 
@@ -38,7 +37,7 @@ function getFontBold() {
 }
 
 export default async function Image() {
-  let fonts: any[] = []
+  let fonts: { name: string; data: ArrayBuffer; weight: 400 | 700; style: 'normal' }[] = []
   try {
     const [regularData, boldData] = await Promise.all([
       getFontRegular(),
@@ -65,103 +64,77 @@ export default async function Image() {
   return new ImageResponse(
     (
       <div
-        tw="flex flex-col w-full h-full p-10 text-white items-stretch justify-between relative"
+        tw="flex flex-col w-full h-full p-12 justify-between"
         style={{
           fontFamily: 'Geist, sans-serif',
-          backgroundImage: 'radial-gradient(circle at 95% 5%, rgba(115, 115, 115, 0.15) 0%, rgba(3, 3, 3, 0) 50%), radial-gradient(circle at 5% 95%, rgba(20, 184, 166, 0.15) 0%, rgba(3, 3, 3, 0) 50%), linear-gradient(135deg, #030303 0%, #0a0d14 100%)',
+          backgroundColor: '#0b0f14',
+          color: '#e6edf3',
         }}
       >
-        {/* Soft glowing ambient circle top-right */}
         <div
+          tw="flex flex-col w-full h-full rounded-[12px] p-12 justify-between"
           style={{
-            position: 'absolute',
-            top: '-10%',
-            right: '-10%',
-            width: '600px',
-            height: '600px',
-            borderRadius: '50%',
-            backgroundImage: 'radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0) 70%)',
-          }}
-        />
-
-        {/* Dynamic Card Container with border glow */}
-        <div
-          tw="flex flex-col w-full h-full rounded-[24px] p-12 justify-between relative"
-          style={{
-            backgroundColor: 'rgba(10, 13, 20, 0.4)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            backgroundColor: '#0f151c',
+            border: '1px solid #1f2933',
           }}
         >
-          {/* Top Row / Branding */}
+          {/* Top Row */}
           <div tw="flex flex-row justify-between items-center w-full">
-            <div tw="flex flex-row items-center">
-              <div
-                tw="w-10 h-10 rounded-full flex items-center justify-center font-bold mr-3"
-                style={{
-                  backgroundColor: 'rgba(20, 184, 166, 0.12)',
-                  border: '1px solid rgba(20, 184, 166, 0.3)',
-                  color: '#2dd4bf',
-                  fontSize: '16px',
-                }}
-              >
-                NF
-              </div>
-              <span tw="text-xl font-bold tracking-tight text-white">Nelson Frank</span>
-            </div>
-            <span
-              tw="text-lg font-semibold"
-              style={{ color: '#2dd4bf' }}
-            >
+            <span tw="text-xl font-bold tracking-tight" style={{ color: '#e6edf3' }}>
+              Nelson Frank
+            </span>
+            <span tw="text-lg font-bold" style={{ color: '#3ddbc8' }}>
               nelsonfrank.dev
             </span>
           </div>
 
           {/* Middle Content */}
-          <div tw="flex flex-col justify-center items-start flex-grow mt-6">
+          <div tw="flex flex-col justify-center items-start">
             <span
               tw="text-xs font-bold uppercase mb-4"
-              style={{ color: 'rgba(45, 212, 191, 0.8)', letterSpacing: '0.2em' }}
+              style={{ color: '#3ddbc8', letterSpacing: '0.08em' }}
             >
-              Portfolio & Engineering
+              FULLSTACK ENGINEER
             </span>
-            <h1 tw="text-6xl font-bold text-white tracking-tight leading-none mb-5">
-              Nelson Frank
+            <h1
+              tw="text-5xl font-bold tracking-tight leading-tight mb-4 max-w-[920px]"
+              style={{ color: '#e6edf3' }}
+            >
+              Building secure auth, transit backends and cloud infrastructure.
             </h1>
-            <p tw="text-2xl font-light text-slate-300 leading-relaxed max-w-[800px]">
-              Fullstack software developer interested in tech and building robust software using latest technology.
+            <p tw="text-2xl leading-relaxed max-w-[820px]" style={{ color: '#9aa7b4' }}>
+              TypeScript, Go and Python on Kubernetes. Based in Dar es Salaam, working with teams worldwide.
             </p>
           </div>
 
-          {/* Bottom Row / Stack & Availability */}
+          {/* Bottom Row */}
           <div
-            tw="flex flex-row items-center justify-between w-full pt-8"
-            style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}
+            tw="flex flex-row items-center justify-between w-full pt-6"
+            style={{ borderTop: '1px solid #1f2933' }}
           >
             <div tw="flex flex-row items-center">
-              {['React', 'Next.js', 'TypeScript', 'Node.js', 'PostgreSQL'].map((tech) => (
+              {['TypeScript', 'Go', 'Python', 'PostgreSQL', 'Kubernetes'].map((tech) => (
                 <div
                   key={tech}
-                  tw="px-4 py-2 rounded-lg text-sm font-medium mr-3"
+                  tw="px-3.5 py-1.5 rounded text-sm mr-3"
                   style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    color: '#e2e8f0',
+                    backgroundColor: '#0b0f14',
+                    border: '1px solid #1f2933',
+                    color: '#9aa7b4',
                   }}
                 >
                   {tech}
                 </div>
               ))}
             </div>
-
             <div tw="flex flex-row items-center">
-              <span tw="text-sm font-medium text-slate-400 mr-2.5">Available for new opportunities</span>
               <div
-                tw="w-2 h-2 rounded-full"
-                style={{
-                  backgroundColor: '#2dd4bf',
-                  boxShadow: '0 0 10px #2dd4bf',
-                }}
+                tw="w-2.5 h-2.5 rounded-full mr-2.5"
+                style={{ backgroundColor: '#3ddbc8' }}
               />
+              <span tw="text-sm" style={{ color: '#9aa7b4' }}>
+                nelsonfrank.dev
+              </span>
             </div>
           </div>
         </div>

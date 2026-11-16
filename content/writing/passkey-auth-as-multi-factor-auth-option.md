@@ -4,6 +4,7 @@ excerpt: "A deep dive into using passkeys for multi-factor authentication"
 date: "June 24, 2026"
 readTime: "6 min read"
 tags: ["WebAuthn", "Passkeys", "MFA"]
+project: "passkey-auth"
 ---
 
 Traditional multi-factor authentication (MFA) mechanisms like SMS and TOTP codes fail to protect users against modern, reverse-proxy phishing kits that capture session tokens in real-time. Passkeys, built on the WebAuthn standard, eliminate this vulnerability by binding public-key cryptography directly to the application's domain. By integrating passkeys as an MFA factor, you replace vulnerable out-of-band codes with phishing-resistant, biometric-triggered cryptographic assertions. This article explores WebAuthn, its benefits over traditional MFA, and how to implement it in your application.

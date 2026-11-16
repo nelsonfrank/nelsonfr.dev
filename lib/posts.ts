@@ -11,6 +11,7 @@ export interface PostMeta {
   date: string
   readTime: string
   tags: string[]
+  project?: string
 }
 
 export interface Post extends PostMeta {
@@ -25,18 +26,25 @@ function readMarkdownFile(slug: string): { data: Record<string, unknown>; conten
   return { data, content }
 }
 
+function parseProjectSlug(val: unknown): string | undefined {
+  if (typeof val !== "string") return undefined
+  const trimmed = val.trim()
+  return trimmed.length > 0 ? trimmed : undefined
+}
+
 export function getAllPosts(): PostMeta[] {
   if (!fs.existsSync(CONTENT_DIR)) return []
 
   return fs
     .readdirSync(CONTENT_DIR)
     .filter((f) => f.endsWith(".md"))
-    .map((filename) => {
+    .map((filename): PostMeta | null => {
       const slug = filename.replace(/\.md$/, "")
       const file = readMarkdownFile(slug)
       if (!file) return null
 
       const { data } = file
+      const project = parseProjectSlug(data.project)
       return {
         slug,
         title: String(data.title ?? ""),
@@ -44,9 +52,11 @@ export function getAllPosts(): PostMeta[] {
         date: String(data.date ?? ""),
         readTime: String(data.readTime ?? ""),
         tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
+        ...(project ? { project } : {}),
       }
     })
     .filter((p): p is PostMeta => p !== null)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 }
 
 export function getPost(slug: string): Post | undefined {
@@ -61,6 +71,7 @@ export function getPost(slug: string): Post | undefined {
     date: String(data.date ?? ""),
     readTime: String(data.readTime ?? ""),
     tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
+    project: parseProjectSlug(data.project),
     content,
   }
 }

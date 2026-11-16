@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description: "Articles, tutorials, and notes on software engineering, web development, and clean code.",
   alternates: {
     canonical: "./",
+    types: {
+      "application/rss+xml": "/feed.xml",
+    },
   },
 }
 

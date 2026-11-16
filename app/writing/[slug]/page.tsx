@@ -1,8 +1,15 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getPost, getAllPosts } from "@/lib/posts"
+import { projects } from "@/lib/projects"
 import { markdownToHtml, extractHeadings } from "@/lib/markdown"
 import PostClient from "./PostClient"
+
+export async function generateStaticParams() {
+  return getAllPosts().map((post) => ({
+    slug: post.slug,
+  }))
+}
 
 export async function generateMetadata({
   params,
@@ -22,6 +29,9 @@ export async function generateMetadata({
     description: post.excerpt || `Read ${post.title} by Nelson Frank`,
     alternates: {
       canonical: "./",
+      types: {
+        "application/rss+xml": "/feed.xml",
+      },
     },
     openGraph: {
       title: post.title,
@@ -52,9 +62,25 @@ export default async function PostPage({
   const headings = await extractHeadings(post.content)
 
   const allPosts = getAllPosts()
-  const idx = allPosts.findIndex((p) => p.slug === slug)
-  const prevPost = allPosts[idx - 1] ?? null
-  const nextPost = allPosts[idx + 1] ?? null
+  const relatedProject = post.project
+    ? projects.find((p) => p.slug === post.project) ?? null
+    : null
+
+  const postTagSet = new Set(post.tags.map((t) => t.toLowerCase()))
+  const relatedPosts = allPosts
+    .filter((p) => p.slug !== slug)
+    .map((candidate) => {
+      const sharedCount = candidate.tags.filter((t) =>
+        postTagSet.has(t.toLowerCase())
+      ).length
+      return { candidate, sharedCount }
+    })
+    .sort((a, b) => {
+      if (b.sharedCount !== a.sharedCount) return b.sharedCount - a.sharedCount
+      return new Date(b.candidate.date).getTime() - new Date(a.candidate.date).getTime()
+    })
+    .slice(0, 2)
+    .map((entry) => entry.candidate)
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -113,8 +139,8 @@ export default async function PostPage({
         post={post}
         htmlContent={htmlContent}
         headings={headings}
-        prevPost={prevPost}
-        nextPost={nextPost}
+        relatedProject={relatedProject}
+        relatedPosts={relatedPosts}
       />
     </>
   )
