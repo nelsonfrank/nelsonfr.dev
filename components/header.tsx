@@ -17,29 +17,29 @@ export function Header() {
 
   return (
     <header className="border-b border-border bg-background">
-      <div className="page-container flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3.5">
+      <div className="page-container flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2.5 sm:py-3.5">
         <Link
           href="/"
-          className="text-base font-semibold tracking-tight text-foreground hover:text-primary transition-colors duration-200 min-h-[44px] inline-flex items-center"
+          className="text-base font-semibold tracking-tight text-foreground hover:text-primary transition-colors duration-200 min-h-[44px] inline-flex items-center shrink-0"
         >
           Nelson Frank
         </Link>
 
-        <div className="flex flex-wrap items-center gap-x-1 gap-y-1 sm:gap-x-2">
-          <nav aria-label="Primary" className="flex flex-wrap items-center">
+        <div className="flex flex-wrap items-center justify-between w-full sm:w-auto gap-x-1 gap-y-1 sm:gap-x-2">
+          <nav aria-label="Primary" className="flex flex-wrap items-center -ml-2 sm:ml-0">
             {navLinks.map((link, index) => (
               <span key={link.label} className="inline-flex items-center">
                 {index > 0 && (
                   <span
                     aria-hidden="true"
-                    className="text-muted-foreground/50 select-none px-1"
+                    className="text-muted-foreground/50 select-none px-0.5 sm:px-1"
                   >
                     ·
                   </span>
                 )}
                 <Link
                   href={link.href}
-                  className="inline-flex items-center min-h-[44px] px-2 text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="inline-flex items-center justify-center min-h-[44px] px-2 sm:px-2.5 text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
                   {link.label}
                 </Link>

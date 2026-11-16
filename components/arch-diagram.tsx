@@ -14,7 +14,7 @@ export function ArchDiagram({ nodes, className }: ArchDiagramProps) {
       height="48"
       role="img"
       aria-label={label}
-      className={className ?? "w-full h-12 text-foreground select-none"}
+      className={className ?? "w-full h-auto aspect-[20/3] block text-foreground select-none"}
     >
       {/* Box 1 */}
       <rect

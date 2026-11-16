@@ -150,22 +150,24 @@
 
 /* Type scale & layout helpers */
 .page-container {
-  max-width: 1080px;
+  width: 100%;
+  max-width: 67.5rem; /* 1080px */
   margin-left: auto;
   margin-right: auto;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 1.25rem; /* 20px mobile */
+  padding-right: 1.25rem;
 }
 
 @media (min-width: 768px) {
   .page-container {
-    padding-left: 32px;
-    padding-right: 32px;
+    padding-left: 2rem; /* 32px desktop */
+    padding-right: 2rem;
   }
 }
 
 .reading-column {
-  max-width: 700px;
+  width: 100%;
+  max-width: 45rem; /* 720px */
 }
 
 .eyebrow {
@@ -202,7 +204,22 @@
   color: var(--foreground);
   line-height: 1.65;
   font-size: 1.0625rem;
-  max-width: 720px;
+  width: 100%;
+  max-width: 45rem;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.prose img,
+.prose svg,
+.prose video {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose pre {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 @media (min-width: 768px) {
