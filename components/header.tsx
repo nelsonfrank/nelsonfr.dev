@@ -17,6 +17,12 @@ export function Header() {
 
   return (
     <header className="border-b border-border bg-background">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2.5 focus:rounded-md focus:bg-primary focus:text-primary-foreground focus:text-sm focus:font-medium"
+      >
+        Skip to content
+      </a>
       <div className="page-container flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2.5 sm:py-3.5">
         <Link
           href="/"

@@ -111,8 +111,8 @@ export default function ExperienceClient({ experiences }: ExperienceClientProps)
       />
       <Header />
 
-      <main className="py-12 md:py-20 px-5 md:px-8 min-h-screen">
-        <div className="mx-auto max-w-[1080px]">
+      <main id="main-content" className="py-12 md:py-20 min-h-screen">
+        <div className="page-container">
           <div className="mb-12 max-w-[680px]">
             <Link
               href="/"

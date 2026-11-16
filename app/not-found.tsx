@@ -7,7 +7,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center px-5 py-20 text-center">
+      <main id="main-content" className="flex-1 flex flex-col items-center justify-center px-5 py-20 text-center">
         <div className="max-w-md space-y-4">
           <p className="text-xs font-mono uppercase tracking-[0.05em] text-primary">
             404 — Page not found
