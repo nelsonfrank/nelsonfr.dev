@@ -30,5 +30,5 @@ This file tracks the status of content items from the `redesign/v2` implementati
 - **Status**: `liveUrl` is omitted or `"#"` (cleanly hidden in the UI). Add a public deployment URL to `liveUrl` on any project if a live demo is hosted.
 
 ### 3. Optional Company URLs (`content/experience/*.md`)
-- **Files**: `content/experience/id8-space.md`, `content/experience/kalen-limited.md`
-- **Status**: `companyUrl: "#"` renders cleanly as plain text. Replace `"#"` with a public URL if desired.
+- **Files**: `content/experience/id8-space.md`
+- **Status**: `companyUrl: "#"` renders cleanly as plain text (`nbc-bank.md`, `mwangahakika-bank.md`, `must-company.md`, and `kalen-limited.md` all have their live URLs set). Replace `"#"` on `id8-space.md` with a public URL if desired.

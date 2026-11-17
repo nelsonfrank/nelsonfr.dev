@@ -1,7 +1,7 @@
 ---
 title: "Backend Developer"
 company: "Mwangahakika Bank"
-companyUrl: "#"
+companyUrl: "https://mhbbank.co.tz/"
 period: "Jun 2026 — Aug 2026"
 location: "Remote"
 type: "Freelance"
@@ -13,3 +13,4 @@ Designed and built backend service components with Spring Boot within a distribu
 
 - Building and designing backend service components with Spring Boot within a distributed, microservices-oriented banking system, owning delivery as an independent freelance engineer
 - Collaborating remotely with the engineering team via Git-based workflows to integrate new services into the existing system
+

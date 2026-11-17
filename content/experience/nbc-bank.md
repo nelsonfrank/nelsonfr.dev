@@ -1,7 +1,7 @@
 ---
 title: "Backend Developer"
 company: "NBC Bank"
-companyUrl: "https://www.nbctz.com/"
+companyUrl: "https://nbc.co.tz/"
 period: "Sep 2026 — Present"
 location: "Dar es Salaam, Tanzania"
 type: "Contract"
@@ -12,3 +12,4 @@ order: 1
 Building backend services within a distributed banking backend system using Java and Spring Boot, focusing on reliability, maintainability, and correctness for banking workflows.
 
 - Building backend services within a distributed banking backend system using Java and Spring Boot, focusing on reliability, maintainability and correctness for banking workflows
+

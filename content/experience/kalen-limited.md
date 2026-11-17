@@ -1,7 +1,7 @@
 ---
 title: "Fullstack Next.js/NestJS Developer"
 company: "Kalen Limited"
-companyUrl: "#"
+companyUrl: "https://kalen.co.tz/"
 period: "Oct 2022 — Sept 2024"
 location: "Dar es Salaam, Tanzania"
 type: "Full-time"
