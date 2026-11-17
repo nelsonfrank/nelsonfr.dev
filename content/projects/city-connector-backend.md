@@ -4,12 +4,11 @@ description: "High-performance microservices platform for public transport journ
 technologies: ["Go", "Python", "RAPTOR", "GTFS", "GTFS-RT", "Kong Gateway", "PostgreSQL", "Redis", "Docker", "Kubernetes", "Tilt"]
 githubUrl: "https://github.com/nelsonfrank/city-connector-backend"
 category: "Distributed Systems"
-# TODO(content): Fill in case-study metadata and TL;DR fields
-role: ""
-year: ""
-problem: ""
-result: ""
-myPart: ""
+role: "Backend & Infrastructure Engineer"
+year: "2026"
+problem: "Urban transit networks scale non-linearly with stops, timetables, and live delays, causing traditional Dijkstra graph searches and coupled ingestion pipelines to miss sub-100ms query targets."
+result: "Decoupled Go and Python microservices behind Kong Gateway running round-based RAPTOR routing in milliseconds with Redis geospatial caching and atomic GTFS/GTFS-RT ingestion."
+myPart: "Designed and built the Go RAPTOR routing engine, real-time Redis vehicle tracking service, PostGIS stop discovery API, Python GTFS ingestion pipeline, and Kubernetes/Tilt manifests."
 relatedPosts: []
 nextProject: "necta-explorer"
 ---

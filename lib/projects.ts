@@ -41,8 +41,8 @@ export const projects: Project[] = [
     title: "Passkey Authentication Engine",
     description:
       "A production-ready, biometric-driven authentication system designed to replace legacy password and OTP systems.",
-    // TODO(content): Replace [OUTCOME] with concrete metric or security outcome for Passkey Authentication Engine
-    outcome: "[OUTCOME]",
+    outcome:
+      "Eliminates credential phishing and replay attacks via origin-bound WebAuthn assertions and signature counter checks.",
     diagram: {
       nodes: ["Browser", "NestJS API", "Postgres"],
     },
@@ -58,8 +58,8 @@ export const projects: Project[] = [
     title: "City Connector Backend",
     description:
       "High-performance microservices transit routing and real-time engine implementing the RAPTOR algorithm, GTFS ingestion, and Kong API gateway.",
-    // TODO(content): Replace [OUTCOME] with concrete latency/throughput outcome for City Connector Backend
-    outcome: "[OUTCOME]",
+    outcome:
+      "Computes Pareto-optimal multimodal transit routes in milliseconds using in-memory Go RAPTOR arrays and Redis geospatial caching.",
     diagram: {
       nodes: ["Kong", "Go RAPTOR", "Redis"],
     },
@@ -84,8 +84,8 @@ export const projects: Project[] = [
     title: "NECTA Explorer",
     description:
       "A high-performance asynchronous data crawler and interactive web dashboard for Tanzania NECTA examination results.",
-    // TODO(content): Replace [OUTCOME] with concrete crawl speed or records processed outcome for NECTA Explorer
-    outcome: "[OUTCOME]",
+    outcome:
+      "Normalizes multi-year national exam archives across all 5 NECTA levels into indexed PostgreSQL analytics.",
     diagram: {
       nodes: ["Scraper", "Postgres", "Next.js"],
     },
@@ -108,8 +108,8 @@ export const projects: Project[] = [
     title: "i18n Automation CLI",
     description:
       "An AI-native internationalization pipeline for React and TypeScript codebases featuring AST transformation, multi-provider LLM translation, and strict verification gates.",
-    // TODO(content): Replace [OUTCOME] with concrete outcome if featured
-    outcome: "[OUTCOME]",
+    outcome:
+      "Automates React and TypeScript localization via Babel AST codemods backed by 218 passing tests across 30 test suites.",
     image: "/projects/i8n-automation-cli.png",
     technologies: [
       "TypeScript",
@@ -129,8 +129,8 @@ export const projects: Project[] = [
     title: "Homelab & Kubernetes Architecture",
     description:
       "Self-hosted personal cloud and media infrastructure with Portainer stacks and a 3-level progressive migration path to Kubernetes with GitOps and automated TLS.",
-    // TODO(content): Replace [OUTCOME] with concrete outcome if featured
-    outcome: "[OUTCOME]",
+    outcome:
+      "3-level Docker Compose to Kubernetes GitOps blueprint with Argo CD, automated TLS, and fail-closed VPN sidecars.",
     image: "/projects/homelab.png",
     technologies: [
       "Kubernetes",

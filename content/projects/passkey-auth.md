@@ -5,13 +5,12 @@ technologies: ["TypeScript", "NestJS", "React", "TypeORM", "PostgreSQL", "WebAut
 liveUrl: "#"
 githubUrl: "https://github.com/nelsonfrank/passkey-auth-demo"
 category: "Web App"
-# TODO(content): Fill in case-study metadata and TL;DR fields
-role: ""
-year: ""
-problem: ""
-result: ""
-myPart: ""
-relatedPosts: ["passkey-auth-as-multi-factor-auth-option"]
+role: "Lead Engineer"
+year: "2026"
+problem: "Password and OTP authentication flows remain vulnerable to real-time reverse-proxy phishing and credential replay attacks while adding sign-in friction."
+result: "Phishing-resistant biometric authentication engine with strict Relying Party domain scoping, isoBase64URL public-key storage, and cloned-authenticator signature counter checks."
+myPart: "End-to-end architecture and implementation across the NestJS WebAuthn verification backend, PostgreSQL/TypeORM credential store, and React browser authenticator flows."
+relatedPosts: ["passkey-auth-as-multi-factor-auth-option", "TOTP-authentication"]
 nextProject: "city-connector-backend"
 ---
 

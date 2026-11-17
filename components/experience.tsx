@@ -10,7 +10,6 @@ export function Experience({ experiences }: { experiences: ExperienceItem[] }) {
           <h2 className="text-[28px] font-semibold tracking-tight text-foreground">
             Experience
           </h2>
-          {/* TODO(content): Place actual CV PDF at public/cv.pdf */}
           <Link
             href="/cv.pdf"
             className="inline-flex items-center gap-1.5 min-h-[44px] text-xs font-mono uppercase tracking-[0.05em] text-primary hover:underline"

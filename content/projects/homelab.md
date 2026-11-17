@@ -4,12 +4,11 @@ description: "Enterprise-grade self-hosted infrastructure with Docker Compose, P
 technologies: ["Kubernetes", "Docker", "Portainer", "Kustomize", "Argo CD", "cert-manager", "Linux", "Networking"]
 githubUrl: "https://github.com/nelsonfrank/homelab"
 category: "DevOps & Cloud"
-# TODO(content): Fill in case-study metadata and TL;DR fields
-role: ""
-year: ""
-problem: ""
-result: ""
-myPart: ""
+role: "Infrastructure Engineer"
+year: "2026"
+problem: "Migrating multi-service self-hosted Docker Compose stacks to Kubernetes often fails due to monolithic pod anti-patterns, port sprawl, storage mismatches (RWO vs RWX), and VPN leaks."
+result: "3-level progressive Kubernetes migration architecture featuring Kustomize overlays, Traefik/NGINX Ingress, Argo CD GitOps, cert-manager TLS, GPU passthrough, and fail-closed Gluetun VPN sidecars."
+myPart: "Designed and documented the 3-level migration blueprint, Kubernetes manifests, Kustomize overlays, VPN kill-switch pod networking, and Argo CD GitOps automation."
 relatedPosts: []
 nextProject: "passkey-auth"
 ---

@@ -4,12 +4,11 @@ description: "A high-performance asynchronous data crawler and interactive web d
 technologies: ["Python", "httpx", "BeautifulSoup4", "Next.js 15", "React 19", "Prisma ORM", "PostgreSQL", "TailwindCSS", "Recharts", "Docker"]
 githubUrl: "https://github.com/nelsonfrank/necta-explorer"
 category: "Web App"
-# TODO(content): Fill in case-study metadata and TL;DR fields
-role: ""
-year: ""
-problem: ""
-result: ""
-myPart: ""
+role: "Fullstack & Data Engineer"
+year: "2025"
+problem: "Historical NECTA examination archives are published as thousands of nested, inconsistently formatted static HTML pages that cannot be queried or compared across regions, schools, or years."
+result: "Asynchronous Python scraping pipeline and Next.js + Prisma analytics platform normalizing all 5 national exam categories (SFNA, PSLE, FTNA, CSEE, ACSEE) into indexed PostgreSQL schemas."
+myPart: "Built the concurrent Python httpx/BeautifulSoup crawler CLI, relational PostgreSQL/Prisma data model, and Next.js Server Component analytics dashboard."
 relatedPosts: []
 nextProject: "i8n-automation-cli"
 ---

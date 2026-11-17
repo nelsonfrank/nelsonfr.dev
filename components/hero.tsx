@@ -4,8 +4,7 @@ import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { captureEvent } from "@/lib/analytics"
 
-// TODO(content): Update availability status or set to "" to hide the eyebrow
-export const AVAILABILITY_TEXT = "Available for [freelance / full-time]"
+export const AVAILABILITY_TEXT = "Available for full-time & freelance roles"
 
 export function Hero() {
   return (

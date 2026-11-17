@@ -19,7 +19,7 @@ export function ProofStrip() {
   const allPlaceholders = PROOF_STATS.every((stat) => stat.value.includes("[N]"))
   const forceShow = process.env.NEXT_PUBLIC_SHOW_PROOF_STRIP === "true"
 
-  if (process.env.NODE_ENV === "production" && allPlaceholders && !forceShow) {
+  if (allPlaceholders && !forceShow) {
     return null
   }
 

@@ -13,10 +13,8 @@ const ContactForm = dynamic(() => import("./contact-form"), {
   ),
 })
 
-// TODO(content): Set NEXT_PUBLIC_CONTACT_EMAIL or replace [YOUR EMAIL] with public contact email
-export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "[YOUR EMAIL]"
-// TODO(content): Replace [RESPONSE TIME] with real response SLA (e.g. "24 hours")
-export const RESPONSE_TIME_PLACEHOLDER = "[RESPONSE TIME]"
+export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "nelsonfrank741@gmail.com"
+export const RESPONSE_TIME_PLACEHOLDER = "24 hours"
 
 export function Contact() {
   const [showForm, setShowForm] = useState(false)

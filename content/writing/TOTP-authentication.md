@@ -4,8 +4,7 @@ excerpt: "A ground-up explanation of OTP, HOTP, and TOTP — with a full walkthr
 date: "June 30, 2026"
 readTime: "14 min read"
 tags: ["TOTP", "MFA", "Security", "NestJS", "React"]
-# TODO(content): Optionally link to a related project slug (e.g. "passkey-auth")
-project: ""
+project: "passkey-auth"
 ---
 
 # TOTP Authentication: How It Works and How It's Built

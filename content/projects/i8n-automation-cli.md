@@ -4,12 +4,11 @@ description: "An AI-native CLI pipeline that safely internationalizes React & Ty
 technologies: ["TypeScript", "Node.js", "Babel AST", "Gemini 3.8", "OpenAI", "react-i18next", "Vitest", "CLI"]
 githubUrl: "https://github.com/nelsonfrank/i8n-automation-cli"
 category: "Developer Tools"
-# TODO(content): Fill in case-study metadata and TL;DR fields
-role: ""
-year: ""
-problem: ""
-result: ""
-myPart: ""
+role: "Creator & Lead Engineer"
+year: "2026"
+problem: "Regex and raw LLM localization scripts corrupt JSX hierarchies, drop interpolation variables, and mistakenly translate internal state comparison keys."
+result: "3-phase Babel AST extraction, multi-provider LLM translation, and codemod verification pipeline backed by 218 passing automated tests across 30 suites and atomic signal rollbacks."
+myPart: "Architected and implemented the Babel AST parser/codemod engine, multi-provider LLM adapters (Gemini, OpenAI, DeepL, Ollama), pseudo-localization verifier, and interactive CLI review queue."
 relatedPosts: ["typescript-generics"]
 nextProject: "homelab"
 ---

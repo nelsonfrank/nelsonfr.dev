@@ -128,7 +128,6 @@ export default function ExperienceClient({ experiences }: ExperienceClientProps)
               A timeline of my professional engineering roles, teams and systems built.
             </p>
 
-            {/* TODO(content): Add /public/cv.pdf */}
             <Link
               href="/cv.pdf"
               className="inline-flex items-center gap-2 min-h-[44px] px-4 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"

@@ -4,8 +4,7 @@ excerpt: "Go beyond basic types. Learn how generics make your TypeScript code fl
 date: "August 9, 2024"
 readTime: "11 min read"
 tags: ["TypeScript", "Fundamentals"]
-# TODO(content): Optionally link to a related project slug (e.g. "i8n-automation-cli")
-project: ""
+project: "i8n-automation-cli"
 ---
 
 Generics are the most powerful feature in TypeScript's type system, and also the most avoided. Once you get past the angle-bracket syntax anxiety, you'll find that generics let you write code that is simultaneously flexible and rigorously type-safe.
