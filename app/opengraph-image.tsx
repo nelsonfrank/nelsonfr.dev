@@ -2,125 +2,78 @@ import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
 
-export const alt = 'Nelson Frank — Fullstack Software Developer'
+export const alt = 'Nelson Frank · Full-stack software engineer'
 export const size = {
   width: 1200,
   height: 630,
 }
 export const contentType = 'image/png'
 
-let fontRegularPromise: Promise<ArrayBuffer> | null = null
-let fontBoldPromise: Promise<ArrayBuffer> | null = null
-
-function getFontRegular() {
-  if (!fontRegularPromise) {
-    fontRegularPromise = fetch(
-      new URL('https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-400-normal.ttf')
-    ).then((res) => {
-      if (!res.ok) throw new Error('Failed to fetch regular font')
-      return res.arrayBuffer()
-    })
-  }
-  return fontRegularPromise
-}
-
-function getFontBold() {
-  if (!fontBoldPromise) {
-    fontBoldPromise = fetch(
-      new URL('https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-700-normal.ttf')
-    ).then((res) => {
-      if (!res.ok) throw new Error('Failed to fetch bold font')
-      return res.arrayBuffer()
-    })
-  }
-  return fontBoldPromise
-}
-
 export default async function Image() {
-  let fonts: { name: string; data: ArrayBuffer; weight: 400 | 700; style: 'normal' }[] = []
-  try {
-    const [regularData, boldData] = await Promise.all([
-      getFontRegular(),
-      getFontBold(),
-    ])
-    fonts = [
-      {
-        name: 'Geist',
-        data: regularData,
-        weight: 400,
-        style: 'normal',
-      },
-      {
-        name: 'Geist',
-        data: boldData,
-        weight: 700,
-        style: 'normal',
-      },
-    ]
-  } catch (error) {
-    console.error('Failed to load dynamic fonts for OG image:', error)
-  }
-
   return new ImageResponse(
     (
       <div
         tw="flex flex-col w-full h-full p-12 justify-between"
         style={{
-          fontFamily: 'Geist, sans-serif',
-          backgroundColor: '#0b0f14',
-          color: '#e6edf3',
+          fontFamily: 'system-ui, sans-serif',
+          backgroundColor: '#0F1426',
+          color: '#EDF0F7',
         }}
       >
         <div
-          tw="flex flex-col w-full h-full rounded-[12px] p-12 justify-between"
+          tw="flex flex-col w-full h-full rounded-[14px] p-12 justify-between"
           style={{
-            backgroundColor: '#0f151c',
-            border: '1px solid #1f2933',
+            backgroundColor: '#171E36',
+            border: '1px solid #2A3354',
           }}
         >
           {/* Top Row */}
           <div tw="flex flex-row justify-between items-center w-full">
-            <span tw="text-xl font-bold tracking-tight" style={{ color: '#e6edf3' }}>
-              Nelson Frank
-            </span>
-            <span tw="text-lg font-bold" style={{ color: '#3ddbc8' }}>
+            <div tw="flex flex-row items-center">
+              <div
+                tw="flex items-center justify-center rounded-full px-4 py-2 mr-4 text-lg font-bold"
+                style={{
+                  backgroundColor: '#EDF0F7',
+                  color: '#0F1426',
+                }}
+              >
+                NF
+              </div>
+              <span tw="text-xl font-bold tracking-tight" style={{ color: '#EDF0F7' }}>
+                Nelson Frank
+              </span>
+            </div>
+            <span tw="text-lg font-bold" style={{ color: '#6CC4CC' }}>
               nelsonfrank.dev
             </span>
           </div>
 
           {/* Middle Content */}
           <div tw="flex flex-col justify-center items-start">
-            <span
-              tw="text-xs font-bold uppercase mb-4"
-              style={{ color: '#3ddbc8', letterSpacing: '0.08em' }}
-            >
-              FULLSTACK ENGINEER
-            </span>
             <h1
-              tw="text-5xl font-bold tracking-tight leading-tight mb-4 max-w-[920px]"
-              style={{ color: '#e6edf3' }}
+              tw="text-6xl font-bold tracking-tight leading-tight mb-4 max-w-[960px]"
+              style={{ color: '#EDF0F7' }}
             >
-              Full-stack engineer building reliable backend systems and modern web applications.
+              I build fast, reliable software.
             </h1>
-            <p tw="text-2xl leading-relaxed max-w-[820px]" style={{ color: '#9aa7b4' }}>
-              7+ years shipping production software end to end in TypeScript, Go, Java, Spring Boot, and Next.js.
+            <p tw="text-2xl leading-relaxed max-w-[860px]" style={{ color: '#9AA3BA' }}>
+              Full-stack engineer in Dar es Salaam shipping backend services, web platforms, and mobile apps in TypeScript, Go, Java, and Next.js.
             </p>
           </div>
 
           {/* Bottom Row */}
           <div
             tw="flex flex-row items-center justify-between w-full pt-6"
-            style={{ borderTop: '1px solid #1f2933' }}
+            style={{ borderTop: '1px solid #2A3354' }}
           >
             <div tw="flex flex-row items-center">
               {['TypeScript', 'Go', 'Java', 'Spring Boot', 'Next.js', 'PostgreSQL'].map((tech) => (
                 <div
                   key={tech}
-                  tw="px-3.5 py-1.5 rounded text-sm mr-3"
+                  tw="px-4 py-1.5 rounded-full text-sm font-bold mr-3"
                   style={{
-                    backgroundColor: '#0b0f14',
-                    border: '1px solid #1f2933',
-                    color: '#9aa7b4',
+                    backgroundColor: '#173A47',
+                    color: '#6CC4CC',
                   }}
                 >
                   {tech}
@@ -129,11 +82,11 @@ export default async function Image() {
             </div>
             <div tw="flex flex-row items-center">
               <div
-                tw="w-2.5 h-2.5 rounded-full mr-2.5"
-                style={{ backgroundColor: '#3ddbc8' }}
+                tw="w-3 h-3 rounded-full mr-2.5"
+                style={{ backgroundColor: '#F2B632' }}
               />
-              <span tw="text-sm" style={{ color: '#9aa7b4' }}>
-                nelsonfrank.dev
+              <span tw="text-sm font-bold" style={{ color: '#EDF0F7' }}>
+                Dar es Salaam, TZ
               </span>
             </div>
           </div>
@@ -142,7 +95,6 @@ export default async function Image() {
     ),
     {
       ...size,
-      fonts,
     }
   )
 }

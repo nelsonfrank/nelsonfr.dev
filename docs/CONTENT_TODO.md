@@ -1,34 +1,27 @@
 # Content Placeholders & TODOs
 
-This file tracks the status of content items from the `redesign/v2` implementation.
+This file tracks all explicit content placeholders (`[ADD: ...]`) and optional items across the redesigned portfolio (`redesign/new-design-system`).
 
 ---
 
-## Completed Items
+## 1. Active `[ADD: ...]` Placeholders in the Site
 
-- [x] **1. Hero & Availability (`components/hero.tsx`)**: Set `AVAILABILITY_TEXT = "Available for full-time & freelance roles"`.
-- [x] **3. Project Outcomes (`lib/projects.ts`)**: Populated concise, case-study-backed `outcome` summaries for all 5 projects (`passkey-auth`, `city-connector-backend`, `necta-explorer`, `i8n-automation-cli`, `homelab`).
-- [x] **4. Contact & Response SLA (`components/contact.tsx`)**: Set `CONTACT_EMAIL` default to `nelsonfrank741@gmail.com` and `RESPONSE_TIME_PLACEHOLDER` to `"24 hours"`.
-- [x] **5. CV / Resume PDF (`public/cv.pdf`)**: Copied `public/resume.pdf` to `public/cv.pdf` so `/cv.pdf` resolves on both the home page and `/experience`.
-- [x] **6. Case-Study Frontmatter (`content/projects/*.md`)**: Populated `role`, `year`, `problem`, `result`, and `myPart` across all 5 project case studies (`passkey-auth`, `city-connector-backend`, `necta-explorer`, `i8n-automation-cli`, `homelab`).
-- [x] **7. Writing Related Project Links (`content/writing/*.md`)**: Linked `passkey-auth-as-multi-factor-auth-option.md` and `TOTP-authentication.md` to `passkey-auth`, and `typescript-generics.md` to `i8n-automation-cli`.
+1. **Newsletter Provider (`components/newsletter-panel.tsx`)**
+   - **Placeholder**: `[ADD: newsletter provider]` / `[ADD: newsletter provider endpoint]`
+   - **Where shown**: On `/writing` and at the bottom of every `/writing/[slug]` post. The email input and "Subscribe" button are disabled with a note directing readers to the RSS feed (`/feed.xml`) until an email newsletter provider (e.g., Buttondown, Resend Audiences, ConvertKit) is wired.
+2. **Project Case-Study Quantified User / Pilot Metrics (`lib/projects.ts`)**
+   - **`city-connector-backend`**: `usersOrScale: "Multi-agency GTFS & GTFS-RT feeds [ADD: pilot rider count]"`
+   - **`passkey-auth`**: `usersOrScale: "WebAuthn Level 2 / FIDO2 [ADD: production user count]"`
+3. **Project Screenshots (`lib/projects.ts`, `app/projects/[slug]/ProjectDetailsClient.tsx`)**
+   - `city-connector-backend` (`/projects/city-connector-architecture.jpg`) and `necta-explorer` (`/projects/necta-explorer.png`) use real images on disk.
+   - `passkey-auth`, `i8n-automation-cli`, and `homelab` render styled browser/phone frames with their real 3-tier architecture nodes and carry the accessible label `[ADD: real product screenshot]`. Drop screenshots at `public/projects/passkey-auth.png`, `public/projects/i8n-automation-cli.png`, and `public/projects/homelab.png` and add them to `EXISTING_IMAGES` in `components/project-card.tsx` and `app/projects/[slug]/ProjectDetailsClient.tsx`.
+4. **About Page — Outside Work Personal Detail (`app/experience/ExperienceClient.tsx`)**
+   - **Placeholder**: `[ADD: favorite offline hobby or sport]` in the third "Outside work" tile ("Mentoring & life").
 
 ---
 
-## Remaining Optional / Deferred Items
+## 2. Optional Enhancements
 
-### 1. Proof Strip Custom Metrics (Currently Hidden)
-- **File**: `components/proof-strip.tsx` (`PROOF_STATS`)
-- **Status**: Intentionally hidden in both development and production while values contain `[N]` placeholders.
-- **To Enable**: Replace the `[N]` values in `PROOF_STATS` (or set `NEXT_PUBLIC_SHOW_PROOF_STRIP="true"`):
-  1. `value: "[N]+"` — `years building production systems`
-  2. `value: "[N]"` — `shipped projects or users served`
-  3. `value: "[N] ms"` — `headline performance metric`
-
-### 2. Optional Live Demo URLs (`content/projects/*.md` & `lib/projects.ts`)
-- **Files**: `lib/projects.ts` and `content/projects/*.md`
-- **Status**: `liveUrl` is omitted or `"#"` (cleanly hidden in the UI). Add a public deployment URL to `liveUrl` on any project if a live demo is hosted.
-
-### 3. Optional Company URLs (`content/experience/*.md`)
-- **Files**: `content/experience/id8-space.md`
-- **Status**: `companyUrl: "#"` renders cleanly as plain text (`nbc-bank.md`, `mwangahakika-bank.md`, `must-company.md`, and `kalen-limited.md` all have their live URLs set). Replace `"#"` on `id8-space.md` with a public URL if desired.
+- **Live Demo URLs (`lib/projects.ts`, `content/projects/*.md`)**: Currently omitted or set to `"#"` (which cleanly hides the "Open live demo" button so only real GitHub source links appear). Set `liveUrl` to a public deployment URL on any project to show its live demo button.
+- **User Quotes on Case Studies (`lib/projects.ts`)**: `userQuote` is optional and omitted unless a real quote is provided (per rule: never invent quotes or testimonials). Add `userQuote: { quote: "...", attribution: "..." }` to any project in `lib/projects.ts` to render the marigold-bordered pull quote in "The problem" section.
+- **Company URL for Id8 Space (`content/experience/id8-space.md`)**: Set to `"#"` (renders as plain text while NBC Bank, Mwangahakika Bank, MUST Company, and Kalen Limited link to their live websites).

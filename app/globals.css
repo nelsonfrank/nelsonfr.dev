@@ -29,8 +29,8 @@
   --status-green: #2DA36B;
   --frame-shadow: rgba(24, 32, 58, 0.14);
 
-  --display: var(--font-display), 'Bricolage Grotesque', system-ui, sans-serif;
-  --serif: var(--font-serif), 'Newsreader', Georgia, serif;
+  --display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --serif: 'Newsreader', Georgia, serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Alias for existing shadcn/ui primitives */
