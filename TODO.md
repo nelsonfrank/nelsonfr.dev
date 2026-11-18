@@ -1,6 +1,6 @@
 # Portfolio TODO
 
-Actionable task list for RSS, Newsletter, and Content Readability Refactoring.
+Actionable task list for RSS, Newsletter, Content Readability Refactoring, Experience Page Footer, and Site Performance & Testing.
 
 ---
 
@@ -69,3 +69,24 @@ Actionable task list for RSS, Newsletter, and Content Readability Refactoring.
 - [ ] `necta-explorer` (NECTA Result Explorer) — Apply Rules 2, 3, 4, 5 (focus story on students/parents searching exam results and how scraping/analytics were structured).
 - [ ] `i8n-automation-cli` (i18n Automation CLI) — Apply Rules 2, 3, 4, 5 (clarify developer workflow problem and AST transformation pipeline without repetition).
 - [ ] `homelab` (Kubernetes Homelab) — Apply Rules 2, 3, 4, 5 (streamline GitOps, FluxCD, and bare-metal networking story into a clear, readable narrative).
+
+---
+
+## 4. Add Footer Section on the Experience Page
+- [ ] **Render Full Footer on `/experience` (`app/experience/ExperienceClient.tsx`)**:
+  - Add the shared `<Contact />` footer block alongside `<Footer />` at the bottom of `ExperienceClient.tsx` so `/experience` matches `/`, `/projects`, `/projects/[slug]`, `/writing`, and `/writing/[slug]`.
+  - Avoid duplicate `#contact` anchor IDs between `.cv-cta` and `<Contact />` (e.g., either replace the inline `.cv-cta` contact block or use distinct IDs and ensure `@media print` hides the site-wide `<Contact />` and `<Footer />` cleanly).
+
+---
+
+## 5. Test Heavily & Improve Site Performance
+- [ ] **End-to-End & Route Verification**:
+  - Verify all static & dynamic routes (`/`, `/projects`, `/projects/[slug]`, `/writing`, `/writing/[slug]`, `/experience`, `/feed.xml`, `/sitemap.xml`, `/robots.txt`) build and render with zero console or hydration errors.
+  - Test interactive flows: topic/tag filtering, search input + URL query sync, Mermaid diagram rendering & zoom modal, theme toggle, newsletter signup, contact form, and CV PDF download/print layout.
+- [ ] **Bundle & Client Component Optimization**:
+  - Audit `"use client"` boundaries across `app/` and `components/`—keep static layout shells, headers, footers, and markdown prose server-rendered wherever possible and isolate interactive islands (search/filter bars, TOC scroll-spy, Mermaid hydration).
+  - Ensure heavy client libraries (`mermaid`, `posthog-js`, syntax highlighting) are lazy-loaded only when needed and do not block First Contentful Paint (FCP) or Largest Contentful Paint (LCP).
+- [ ] **Core Web Vitals & Asset Optimization**:
+  - Audit images (`public/projects/*`, `public/placeholder-user.jpg`) for `next/image` sizing, `sizes` attributes, `priority` on above-the-fold hero/stage visuals, and zero Cumulative Layout Shift (CLS) during font/diagram loads.
+  - Run production build (`pnpm build`) and Lighthouse / Web Vitals checks to verify bundle sizes, TTFB, LCP, INP, and CLS across desktop and mobile viewports.
+
