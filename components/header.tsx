@@ -1,25 +1,50 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { captureEvent } from "@/lib/analytics"
 
 export function Header() {
   const pathname = usePathname()
+  const [isDark, setIsDark] = useState(false)
 
   const isWork = pathname === "/projects" || pathname.startsWith("/projects/")
   const isWriting = pathname === "/writing" || pathname.startsWith("/writing/")
   const isAbout = pathname === "/experience" || pathname === "/about"
 
+  useEffect(() => {
+    const syncTheme = () => {
+      try {
+        const root = document.documentElement
+        const attr = root.getAttribute("data-theme")
+        const dark =
+          attr === "dark" ||
+          (!attr && window.matchMedia("(prefers-color-scheme: dark)").matches)
+        setIsDark(dark)
+      } catch {
+        // Ignore errors
+      }
+    }
+
+    syncTheme()
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+    const handleChange = () => syncTheme()
+    mediaQuery.addEventListener("change", handleChange)
+    return () => mediaQuery.removeEventListener("change", handleChange)
+  }, [])
+
   const toggleTheme = () => {
     try {
       const root = document.documentElement
       const attr = root.getAttribute("data-theme")
-      const isDark =
+      const currentlyDark =
         attr === "dark" ||
         (!attr && window.matchMedia("(prefers-color-scheme: dark)").matches)
-      const next = isDark ? "light" : "dark"
+      const next = currentlyDark ? "light" : "dark"
       root.setAttribute("data-theme", next)
+      setIsDark(next === "dark")
       try {
         localStorage.setItem("theme", next)
       } catch {
@@ -47,21 +72,18 @@ export function Header() {
         </Link>
         <Link
           href="/projects"
-          className="hide-xs"
           aria-current={isWork ? "page" : undefined}
         >
           Work
         </Link>
         <Link
           href="/writing"
-          className="hide-xs"
           aria-current={isWriting ? "page" : undefined}
         >
           Writing
         </Link>
         <Link
           href="/experience"
-          className="hide-xs"
           aria-current={isAbout ? "page" : undefined}
         >
           About
@@ -70,10 +92,47 @@ export function Header() {
         <button
           id="t"
           type="button"
+          className="theme-btn"
           onClick={toggleTheme}
-          aria-label="Switch theme"
+          aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+          title={isDark ? "Switch to light theme" : "Switch to dark theme"}
         >
-          Theme
+          <svg
+            className="theme-icon icon-sun"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+          <svg
+            className="theme-icon icon-moon"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
         </button>
       </nav>
     </>

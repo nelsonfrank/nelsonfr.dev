@@ -1,6 +1,6 @@
 # Portfolio TODO
 
-Actionable task list for RSS, Newsletter, Content Readability Refactoring, Experience Page Footer, and Site Performance & Testing.
+Actionable task list for RSS, Newsletter, Content Readability Refactoring, Experience Page Footer, Mobile Navigation, and Site Performance & Testing.
 
 ---
 
@@ -73,13 +73,23 @@ Actionable task list for RSS, Newsletter, Content Readability Refactoring, Exper
 ---
 
 ## 4. Add Footer Section on the Experience Page
-- [ ] **Render Full Footer on `/experience` (`app/experience/ExperienceClient.tsx`)**:
+- [x] **Render Full Footer on `/experience` (`app/experience/ExperienceClient.tsx`)**:
   - Add the shared `<Contact />` footer block alongside `<Footer />` at the bottom of `ExperienceClient.tsx` so `/experience` matches `/`, `/projects`, `/projects/[slug]`, `/writing`, and `/writing/[slug]`.
   - Avoid duplicate `#contact` anchor IDs between `.cv-cta` and `<Contact />` (e.g., either replace the inline `.cv-cta` contact block or use distinct IDs and ensure `@media print` hides the site-wide `<Contact />` and `<Footer />` cleanly).
 
 ---
 
-## 5. Test Heavily & Improve Site Performance
+## 5. Improve Navigation on Small Devices
+- [x] **Fix Hidden Primary Links on Mobile (`components/header.tsx`, `app/globals.css`)**:
+  - Removed `.hide-xs { display: none; }` so `Work`, `Writing`, `About`, `Contact`, and `Theme` all stay visible and one-tap accessible on small screens (`320px–560px`).
+- [x] **Dynamic Theme Icon (`components/header.tsx`, `app/globals.css`)**:
+  - Replaced text `"Theme"` button with a compact circular icon toggle that dynamically renders a Moon icon in light mode and a Sun icon in dark mode (with CSS-first rendering to prevent hydration flash).
+- [x] **Check Secondary Sticky Navs on Mobile**:
+  - Verified the sticky section nav on `/experience` (`.cv-menu`) and TOC on `/writing/[slug]` align cleanly below `.site-nav` on small viewports.
+
+---
+
+## 6. Test Heavily & Improve Site Performance
 - [ ] **End-to-End & Route Verification**:
   - Verify all static & dynamic routes (`/`, `/projects`, `/projects/[slug]`, `/writing`, `/writing/[slug]`, `/experience`, `/feed.xml`, `/sitemap.xml`, `/robots.txt`) build and render with zero console or hydration errors.
   - Test interactive flows: topic/tag filtering, search input + URL query sync, Mermaid diagram rendering & zoom modal, theme toggle, newsletter signup, contact form, and CV PDF download/print layout.

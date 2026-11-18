@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Header } from "@/components/header"
+import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
-import { CONTACT_EMAIL } from "@/components/contact"
 import type { Experience } from "@/lib/experience"
 import type { Project } from "@/lib/projects"
 import type { PostMeta } from "@/lib/posts"
@@ -620,7 +620,7 @@ export default function ExperienceClient({
               </div>
             </section>
 
-            <div className="cv-cta" id="contact">
+            <div className="cv-cta">
               <div>
                 <h2>Want the full picture?</h2>
                 <p>Download my CV, or tell me about your project.</p>
@@ -633,7 +633,7 @@ export default function ExperienceClient({
                 >
                   Download CV (PDF)
                 </a>
-                <a className="btn s" href={`mailto:${CONTACT_EMAIL}`}>
+                <a className="btn s" href="#contact">
                   Get in touch
                 </a>
               </div>
@@ -641,6 +641,8 @@ export default function ExperienceClient({
           </main>
         </div>
       </div>
+
+      <Contact heading="Let’s work together" />
 
       <Footer />
     </>
