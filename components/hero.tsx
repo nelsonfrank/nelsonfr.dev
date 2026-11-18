@@ -1,26 +1,17 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
 import { captureEvent } from "@/lib/analytics"
 
 export const AVAILABILITY_TEXT = "Available for full-time & freelance roles"
 
-const SPEC_ROWS = [
-  { label: "CURRENT", value: "Backend Dev @ NBC Bank" },
-  { label: "EXPERIENCE", value: "7+ years in production" },
-  { label: "CORE STACK", value: "TypeScript · Go · Java · Node.js" },
-  { label: "BACKEND", value: "Spring Boot · NestJS · Postgres" },
-  { label: "FRONTEND", value: "React · Next.js · Tailwind CSS" },
-  { label: "INFRA", value: "Docker · Kubernetes · AWS" },
-  { label: "BASE", value: "Dar es Salaam, TZ (Remote-ready)" },
-] as const
-
 export function Hero() {
   return (
     <section className="py-12 md:py-20">
       <div className="page-container animate-fade-in">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Column: Editorial Headline & CTAs */}
           <div className="lg:col-span-7 space-y-6">
             {AVAILABILITY_TEXT && (
@@ -60,34 +51,30 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right Column: Engineering Spec Card */}
-          <aside
-            aria-label="Engineering specification summary"
-            className="lg:col-span-5 w-full rounded-md border border-border bg-card overflow-hidden"
-          >
-            <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-border bg-background/60">
-              <span className="meta-mono text-xs uppercase tracking-[0.06em] text-primary font-medium">
-                PROFILE // SYS.SPEC
-              </span>
-              <span className="meta-mono text-xs">UTC+03</span>
-            </div>
-
-            <dl className="divide-y divide-border">
-              {SPEC_ROWS.map((row) => (
-                <div
-                  key={row.label}
-                  className="grid grid-cols-[110px_1fr] gap-3 px-5 py-3 items-baseline"
-                >
-                  <dt className="meta-mono text-[11px] uppercase tracking-[0.05em]">
-                    {row.label}
-                  </dt>
-                  <dd className="text-xs sm:text-sm font-mono text-foreground leading-snug">
-                    {row.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </aside>
+          {/* Right Column: Editorial Portrait Frame */}
+          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            <figure className="w-full max-w-[380px] rounded-md border border-border bg-card overflow-hidden">
+              <div className="relative aspect-square w-full bg-background/50">
+                <Image
+                  src="/landing-page.png"
+                  alt="Nelson Frank — Full-Stack and Backend Engineer"
+                  width={600}
+                  height={600}
+                  priority
+                  sizes="(max-width: 768px) 340px, 380px"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <figcaption className="flex items-center justify-between gap-3 px-4 py-3 border-t border-border bg-card">
+                <span className="text-xs font-medium text-foreground">
+                  Nelson Frank
+                </span>
+                <span className="meta-mono text-xs">
+                  Dar es Salaam · UTC+3
+                </span>
+              </figcaption>
+            </figure>
+          </div>
         </div>
       </div>
     </section>
