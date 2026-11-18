@@ -91,7 +91,7 @@ nelsonfr.dev/
 Projects use a **hybrid static + markdown** model:
 1. **`lib/projects.ts`** defines the `Project` interface and exports `projects` and `SELECTED_WORK_SLUGS` (`passkey-auth`, `city-connector-backend`, `necta-explorer`).
 2. **`content/projects/<slug>.md`** stores the full engineering case study body and optional frontmatter overrides/extensions:
-   - `title`, `description`, `technologies`, `liveUrl`, `githubUrl`, `category`, `outcome`
+   - `title`, `description`, `technologies`, `liveUrl`, `githubUrl`, `githubLinks` (`[{ label, url }]`), `category`, `outcome`
    - `diagram`: `{ nodes: [string, string, string] }`
    - `role`, `year` (Metadata strip)
    - `problem`, `result`, `myPart` (TL;DR panel)

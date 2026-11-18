@@ -17,7 +17,7 @@ Nelson Frank is a fullstack engineer building secure auth, transit backends, and
 ## Featured Projects
 
 - [Passkey Authentication Engine](https://nelsonfrank.dev/projects/passkey-auth) — Biometric passwordless and multi-factor authentication system built with WebAuthn, NestJS, React, and PostgreSQL (`Browser -> NestJS API -> Postgres`).
-- [City Connector Backend](https://nelsonfrank.dev/projects/city-connector-backend) — High-performance transit routing (RAPTOR) and real-time GTFS engine built with Go, Python, Kong Gateway, Redis, and Kubernetes (`Kong -> Go RAPTOR -> Redis`).
+- [City Connector](https://nelsonfrank.dev/projects/city-connector-backend) — Full-stack multi-agency transit platform pairing an offline-first React Native (Expo SDK 58, MapLibre, MMKV) mobile app ([city-connector-mobile](https://github.com/nelsonfrank/city-connector-mobile)) with a high-performance Go RAPTOR routing and Python GTFS-RT backend ([city-connector-backend](https://github.com/nelsonfrank/city-connector-backend)) behind Kong Gateway, PostGIS, Redis, and Kubernetes (`RN Mobile -> Go RAPTOR -> Redis/GTFS`).
 - [NECTA Explorer](https://nelsonfrank.dev/projects/necta-explorer) — Asynchronous Python web crawler and interactive Next.js analytics dashboard for Tanzania NECTA examination results (`Scraper -> Postgres -> Next.js`).
 
 ## Latest Articles

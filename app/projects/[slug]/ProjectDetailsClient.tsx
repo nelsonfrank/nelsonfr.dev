@@ -124,8 +124,13 @@ export default function ProjectDetailsClient({
   useMermaid(articleRef, htmlContent)
 
   const hasLiveUrl = Boolean(project.liveUrl && project.liveUrl !== "#")
-  const hasGithubUrl = Boolean(project.githubUrl && project.githubUrl !== "#")
-  const hasLinks = hasLiveUrl || hasGithubUrl
+  const githubLinks =
+    project.githubLinks && project.githubLinks.length > 0
+      ? project.githubLinks
+      : project.githubUrl && project.githubUrl !== "#"
+        ? [{ label: "GitHub", url: project.githubUrl }]
+        : []
+  const hasLinks = hasLiveUrl || githubLinks.length > 0
   const hasTldr = Boolean(project.problem || project.result || project.myPart)
 
   const tocHeadings: TocHeading[] = [
@@ -215,23 +220,25 @@ export default function ProjectDetailsClient({
                           <ExternalLink className="size-3.5" aria-hidden="true" />
                         </Link>
                       )}
-                      {hasGithubUrl && (
+                      {githubLinks.map((repo) => (
                         <Link
-                          href={project.githubUrl!}
+                          key={repo.url}
+                          href={repo.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() =>
                             captureEvent("project_source_code_viewed", {
                               project_title: project.title,
-                              github_url: project.githubUrl,
+                              github_url: repo.url,
+                              repo_label: repo.label,
                             })
                           }
                           className="inline-flex items-center gap-1.5 min-h-[44px] sm:min-h-0 text-xs font-mono text-primary hover:underline"
                         >
-                          <span>GitHub</span>
+                          <span>{repo.label}</span>
                           <Github className="size-3.5" aria-hidden="true" />
                         </Link>
-                      )}
+                      ))}
                     </div>
                   </div>
                 )}

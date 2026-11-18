@@ -6,46 +6,25 @@ import { captureEvent } from "@/lib/analytics"
 
 export const AVAILABILITY_TEXT = "Available for full-time & freelance roles"
 
-const LEDGER_ITEMS = [
-  {
-    index: "01 / CURRENT",
-    title: "NBC Bank",
-    detail: "Backend Developer · Java & Spring Boot",
-  },
-  {
-    index: "02 / EXPERIENCE",
-    title: "7+ Years Shipping",
-    detail: "End-to-end production systems & client delivery",
-  },
-  {
-    index: "03 / CORE STACK",
-    title: "TypeScript · Go · Java",
-    detail: "Next.js · Node.js / NestJS · Spring Boot",
-  },
-  {
-    index: "04 / INFRA & DATA",
-    title: "Postgres · Redis · Cloud",
-    detail: "Docker · Kubernetes · AWS · Microservices",
-  },
+const SPEC_ROWS = [
+  { label: "CURRENT", value: "Backend Dev @ NBC Bank" },
+  { label: "EXPERIENCE", value: "7+ years in production" },
+  { label: "CORE STACK", value: "TypeScript · Go · Java · Node.js" },
+  { label: "BACKEND", value: "Spring Boot · NestJS · Postgres" },
+  { label: "FRONTEND", value: "React · Next.js · Tailwind CSS" },
+  { label: "INFRA", value: "Docker · Kubernetes · AWS" },
+  { label: "BASE", value: "Dar es Salaam, TZ (Remote-ready)" },
 ] as const
 
 export function Hero() {
   return (
-    <section className="py-10 md:py-16">
+    <section className="py-12 md:py-20">
       <div className="page-container animate-fade-in">
-        <div className="rounded-md border border-border bg-background overflow-hidden">
-          {/* Top Datasheet Status Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-3 sm:px-8 border-b border-border bg-card">
-            <div className="flex items-center gap-2.5 meta-mono uppercase tracking-[0.05em]">
-              <span className="text-foreground font-medium">FULL-STACK &amp; BACKEND ENGINEER</span>
-              <span aria-hidden="true" className="text-border-strong">
-                /
-              </span>
-              <span>DAR ES SALAAM · UTC+3</span>
-            </div>
-
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+          {/* Left Column: Editorial Headline & CTAs */}
+          <div className="lg:col-span-7 space-y-6">
             {AVAILABILITY_TEXT && (
-              <p className="eyebrow inline-flex items-center gap-2 text-xs">
+              <p className="eyebrow inline-flex items-center gap-2.5 px-3 py-1 rounded-full border border-border bg-card">
                 <span
                   className="inline-block size-2 rounded-full bg-primary shrink-0"
                   aria-hidden="true"
@@ -53,15 +32,12 @@ export function Hero() {
                 <span>{AVAILABILITY_TEXT}</span>
               </p>
             )}
-          </div>
 
-          {/* Main Editorial Cell */}
-          <div className="px-5 py-10 sm:px-8 sm:py-12 md:px-10 md:py-16 space-y-6">
-            <h1 className="text-[36px] md:text-[56px] font-bold tracking-[-0.03em] leading-[1.07] text-foreground max-w-[780px]">
+            <h1 className="text-[36px] md:text-[52px] font-bold tracking-[-0.03em] leading-[1.08] text-foreground">
               Full-stack engineer building reliable backend systems and modern web applications.
             </h1>
 
-            <p className="text-[17px] md:text-[19px] leading-[1.6] text-muted-foreground max-w-[680px]">
+            <p className="text-[17px] md:text-[19px] leading-[1.6] text-muted-foreground max-w-[640px]">
               7+ years shipping production software end to end in TypeScript, Go, Java, Spring Boot, and Next.js — from distributed banking and transit services to fast, maintainable interfaces.
             </p>
 
@@ -84,25 +60,34 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Bottom 4-Cell Ledger Strip */}
-          <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-border bg-card divide-y sm:divide-y-0 sm:divide-x divide-border">
-            {LEDGER_ITEMS.map((item) => (
-              <div
-                key={item.index}
-                className="px-5 py-4 sm:px-6 sm:py-5 space-y-1 border-b sm:border-b-0 lg:border-b-0 border-border last:border-b-0"
-              >
-                <dt className="meta-mono text-[11px] uppercase tracking-[0.06em] text-primary">
-                  {item.index}
-                </dt>
-                <dd className="text-sm font-semibold text-foreground leading-snug pt-0.5">
-                  {item.title}
-                </dd>
-                <dd className="meta-mono text-xs leading-normal">
-                  {item.detail}
-                </dd>
-              </div>
-            ))}
-          </dl>
+          {/* Right Column: Engineering Spec Card */}
+          <aside
+            aria-label="Engineering specification summary"
+            className="lg:col-span-5 w-full rounded-md border border-border bg-card overflow-hidden"
+          >
+            <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-border bg-background/60">
+              <span className="meta-mono text-xs uppercase tracking-[0.06em] text-primary font-medium">
+                PROFILE // SYS.SPEC
+              </span>
+              <span className="meta-mono text-xs">UTC+03</span>
+            </div>
+
+            <dl className="divide-y divide-border">
+              {SPEC_ROWS.map((row) => (
+                <div
+                  key={row.label}
+                  className="grid grid-cols-[110px_1fr] gap-3 px-5 py-3 items-baseline"
+                >
+                  <dt className="meta-mono text-[11px] uppercase tracking-[0.05em]">
+                    {row.label}
+                  </dt>
+                  <dd className="text-xs sm:text-sm font-mono text-foreground leading-snug">
+                    {row.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </aside>
         </div>
       </div>
     </section>

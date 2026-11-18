@@ -89,22 +89,28 @@ export default async function ProjectDetailsPage({ params }: RouteParams) {
     ]
   }
 
-  const hasValidGithubUrl = Boolean(project.githubUrl && project.githubUrl !== "#")
-  const softwareSourceCodeJsonLd = hasValidGithubUrl
-    ? {
-        "@context": "https://schema.org",
-        "@type": "SoftwareSourceCode",
-        "name": project.title,
-        "description": project.description,
-        "codeRepository": project.githubUrl,
-        "programmingLanguage": project.technologies,
-        "author": {
-          "@type": "Person",
-          "name": "Nelson Frank",
-          "url": "https://nelsonfrank.dev",
-        },
-      }
-    : null
+  const repoUrls =
+    project.githubLinks && project.githubLinks.length > 0
+      ? project.githubLinks.map((r) => r.url)
+      : project.githubUrl && project.githubUrl !== "#"
+        ? [project.githubUrl]
+        : []
+  const softwareSourceCodeJsonLd =
+    repoUrls.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "name": project.title,
+          "description": project.description,
+          "codeRepository": repoUrls.length === 1 ? repoUrls[0] : repoUrls,
+          "programmingLanguage": project.technologies,
+          "author": {
+            "@type": "Person",
+            "name": "Nelson Frank",
+            "url": "https://nelsonfrank.dev",
+          },
+        }
+      : null
 
   return (
     <>

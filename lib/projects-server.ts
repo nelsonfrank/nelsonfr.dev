@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
-import { type Project, type ProjectDecision, projects } from "./projects"
+import { type Project, type ProjectDecision, type ProjectLink, projects } from "./projects"
 
 const PROJECTS_CONTENT_DIR = path.join(process.cwd(), "content/projects")
 
@@ -16,6 +16,22 @@ function stringArray(val: unknown): string[] | undefined {
   const items = val
     .map((item) => (typeof item === "string" ? item.trim() : ""))
     .filter((item) => item.length > 0)
+  return items.length > 0 ? items : undefined
+}
+
+function parseProjectLinks(val: unknown): ProjectLink[] | undefined {
+  if (!Array.isArray(val)) return undefined
+  const items: ProjectLink[] = []
+  for (const raw of val) {
+    if (raw && typeof raw === "object") {
+      const rec = raw as Record<string, unknown>
+      const label = nonEmptyString(rec.label)
+      const url = nonEmptyString(rec.url)
+      if (label && url && url !== "#") {
+        items.push({ label, url })
+      }
+    }
+  }
   return items.length > 0 ? items : undefined
 }
 
@@ -63,6 +79,7 @@ export function getProject(slug: string): Project | undefined {
         technologies: stringArray(data.technologies) ?? staticProject.technologies,
         liveUrl: nonEmptyString(data.liveUrl) ?? staticProject.liveUrl,
         githubUrl: nonEmptyString(data.githubUrl) ?? staticProject.githubUrl,
+        githubLinks: parseProjectLinks(data.githubLinks) ?? staticProject.githubLinks,
         category: nonEmptyString(data.category) ?? staticProject.category,
         outcome: nonEmptyString(data.outcome) ?? staticProject.outcome,
         diagram,
