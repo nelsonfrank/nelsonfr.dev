@@ -3,6 +3,11 @@ export interface ProjectDecision {
   tradeoff: string
 }
 
+export interface ProjectLink {
+  label: string
+  url: string
+}
+
 export interface Project {
   slug: string
   title: string
@@ -11,6 +16,7 @@ export interface Project {
   technologies: string[]
   liveUrl?: string
   githubUrl?: string
+  githubLinks?: ProjectLink[]
   featured: boolean
   category?: string
   outcome?: string
@@ -55,16 +61,19 @@ export const projects: Project[] = [
   },
   {
     slug: "city-connector-backend",
-    title: "City Connector Backend",
+    title: "City Connector",
     description:
-      "High-performance microservices transit routing and real-time engine implementing the RAPTOR algorithm, GTFS ingestion, and Kong API gateway.",
+      "Full-stack multi-agency transit platform pairing an offline-first React Native (Expo) mobile app with Go RAPTOR routing microservices, GTFS/GTFS-RT ingestion, and Kong API gateway.",
     outcome:
-      "Computes Pareto-optimal multimodal transit routes in milliseconds using in-memory Go RAPTOR arrays and Redis geospatial caching.",
+      "Computes Pareto-optimal multimodal transit routes in milliseconds via Go RAPTOR and Redis, rendered on an offline-first React Native MapLibre client.",
     diagram: {
-      nodes: ["Kong", "Go RAPTOR", "Redis"],
+      nodes: ["RN Mobile", "Go RAPTOR", "Redis/GTFS"],
     },
     image: "/projects/city-connector-backend.png",
     technologies: [
+      "React Native",
+      "Expo",
+      "TypeScript",
       "Go",
       "Python",
       "RAPTOR",
@@ -72,10 +81,19 @@ export const projects: Project[] = [
       "Kong Gateway",
       "PostgreSQL",
       "Redis",
-      "Docker",
       "Kubernetes",
     ],
     githubUrl: "https://github.com/nelsonfrank/city-connector-backend",
+    githubLinks: [
+      {
+        label: "Backend",
+        url: "https://github.com/nelsonfrank/city-connector-backend",
+      },
+      {
+        label: "Mobile",
+        url: "https://github.com/nelsonfrank/city-connector-mobile",
+      },
+    ],
     featured: true,
     category: "Distributed Systems",
   },

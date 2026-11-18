@@ -188,3 +188,4 @@ export function useMermaid(
     }
   }, [containerRef, htmlContent, resolvedTheme, onDiagramClick])
 }
+

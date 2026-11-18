@@ -100,10 +100,10 @@ export default async function Image() {
               tw="text-5xl font-bold tracking-tight leading-tight mb-4 max-w-[920px]"
               style={{ color: '#e6edf3' }}
             >
-              Building secure auth, transit backends and cloud infrastructure.
+              Full-stack engineer building reliable backend systems and modern web applications.
             </h1>
             <p tw="text-2xl leading-relaxed max-w-[820px]" style={{ color: '#9aa7b4' }}>
-              TypeScript, Go and Python on Kubernetes. Based in Dar es Salaam, working with teams worldwide.
+              7+ years shipping production software end to end in TypeScript, Go, Java, Spring Boot, and Next.js.
             </p>
           </div>
 
@@ -113,7 +113,7 @@ export default async function Image() {
             style={{ borderTop: '1px solid #1f2933' }}
           >
             <div tw="flex flex-row items-center">
-              {['TypeScript', 'Go', 'Python', 'PostgreSQL', 'Kubernetes'].map((tech) => (
+              {['TypeScript', 'Go', 'Java', 'Spring Boot', 'Next.js', 'PostgreSQL'].map((tech) => (
                 <div
                   key={tech}
                   tw="px-3.5 py-1.5 rounded text-sm mr-3"
