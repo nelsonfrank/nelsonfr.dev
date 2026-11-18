@@ -25,3 +25,4 @@ export function LiveClock() {
 
   return <b id="clock">{time}</b>
 }
+

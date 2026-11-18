@@ -43,3 +43,4 @@ export function NewsletterPanel({ compact = false }: { compact?: boolean }) {
     </aside>
   )
 }
+

@@ -32,3 +32,4 @@ export function FeaturedPostCard({ post }: { post: PostMeta }) {
     </article>
   )
 }
+
