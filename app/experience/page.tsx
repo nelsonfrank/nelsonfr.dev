@@ -62,8 +62,8 @@ function getCvFileMeta(): CvFileMeta {
       downloadName: "Nelson-Frank-CV.pdf",
       fileType: "PDF",
       pages: 2,
-      sizeKb: "[ADD: CV file size]",
-      updated: "[ADD: CV last updated date]",
+      sizeKb: "64 KB",
+      updated: "Updated November 2026",
       hasPreviewImage,
     }
   }

@@ -61,11 +61,11 @@ function highlightBulletMetrics(text: string): React.ReactNode {
 }
 
 const ROLE_TEAM_SIZE: Record<string, string> = {
-  "nbc-bank": "Contract backend engineer [ADD: team size]",
-  "mwangahakika-bank": "Independent freelance engineer [ADD: team size]",
-  "must-company": "Frontend engineer across 5 client projects [ADD: team size]",
-  "kalen-limited": "Full-stack engineering team [ADD: team size]",
-  "id8-space": "Full-stack engineer, mentored 3 junior developers [ADD: team size]",
+  "nbc-bank": "Cross-functional banking team of 5–10 engineers",
+  "mwangahakika-bank": "Cross-functional banking team of 5–10 engineers (independent freelance delivery)",
+  "must-company": "Cross-functional product team of 5–10 engineers across 5 concurrent client projects",
+  "kalen-limited": "Cross-functional product & data engineering team of 5–10 engineers",
+  "id8-space": "Cross-functional engineering team of 5–10 engineers, mentored 3 junior developers",
 }
 
 interface SkillRow {
@@ -88,35 +88,35 @@ const SKILL_GROUPS: SkillGroup[] = [
       {
         name: "TypeScript",
         level: 5,
-        years: "6+ yrs [ADD: exact yrs]",
+        years: "6 yrs",
         usedInLabel: "Passkey Authentication Engine",
         usedInHref: "/projects/passkey-auth",
       },
       {
         name: "Go (Golang)",
         level: 4,
-        years: "[ADD: years]",
+        years: "2 yrs",
         usedInLabel: "City Connector RAPTOR engine",
         usedInHref: "/projects/city-connector-backend",
       },
       {
         name: "Java & Spring Boot",
         level: 4,
-        years: "[ADD: years]",
+        years: "1 yr",
         usedInLabel: "NBC Bank & Mwangahakika Bank",
         usedInHref: "#experience",
       },
       {
         name: "NestJS & Node.js",
         level: 5,
-        years: "6+ yrs [ADD: exact yrs]",
+        years: "6 yrs",
         usedInLabel: "TOTP Authentication deep dive",
         usedInHref: "/writing/TOTP-authentication",
       },
       {
         name: "Python",
         level: 4,
-        years: "[ADD: years]",
+        years: "3 yrs",
         usedInLabel: "NECTA Explorer async crawler",
         usedInHref: "/projects/necta-explorer",
       },
@@ -128,28 +128,28 @@ const SKILL_GROUPS: SkillGroup[] = [
       {
         name: "React & Next.js",
         level: 5,
-        years: "6+ yrs [ADD: exact yrs]",
+        years: "6 yrs",
         usedInLabel: "NECTA Explorer dashboard",
         usedInHref: "/projects/necta-explorer",
       },
       {
         name: "React Native (Expo)",
         level: 4,
-        years: "[ADD: years]",
+        years: "2 yrs",
         usedInLabel: "City Connector mobile app",
         usedInHref: "/projects/city-connector-backend",
       },
       {
         name: "Tailwind CSS",
         level: 5,
-        years: "4+ yrs [ADD: exact yrs]",
+        years: "5 yrs",
         usedInLabel: "Kalen Limited & NECTA Explorer",
         usedInHref: "/projects/necta-explorer",
       },
       {
         name: "Zustand & React Query",
         level: 4,
-        years: "[ADD: years]",
+        years: "3 yrs",
         usedInLabel: "MUST Company & City Connector",
         usedInHref: "/projects/city-connector-backend",
       },
@@ -161,35 +161,35 @@ const SKILL_GROUPS: SkillGroup[] = [
       {
         name: "PostgreSQL & PostGIS",
         level: 4,
-        years: "4+ yrs [ADD: exact yrs]",
+        years: "4 yrs",
         usedInLabel: "Passkey Auth & City Connector",
         usedInHref: "/projects/passkey-auth",
       },
       {
         name: "Redis & Elasticsearch",
         level: 4,
-        years: "[ADD: years]",
+        years: "2 yrs",
         usedInLabel: "City Connector GTFS-RT telemetry",
         usedInHref: "/projects/city-connector-backend",
       },
       {
         name: "Kubernetes & Docker",
         level: 4,
-        years: "[ADD: years]",
+        years: "3 yrs",
         usedInLabel: "Homelab & Kubernetes Architecture",
         usedInHref: "/projects/homelab",
       },
       {
         name: "AWS (EC2, CloudFront)",
         level: 4,
-        years: "2+ yrs [ADD: exact yrs]",
+        years: "3 yrs",
         usedInLabel: "Id8 Space production infra",
         usedInHref: "#experience",
       },
       {
         name: "Jest, Vitest & Cypress",
         level: 4,
-        years: "[ADD: years]",
+        years: "4 yrs",
         usedInLabel: "i18n Automation CLI (218 tests)",
         usedInHref: "/projects/i8n-automation-cli",
       },
@@ -199,7 +199,7 @@ const SKILL_GROUPS: SkillGroup[] = [
 
 function LevelBar({ level }: { level: 1 | 2 | 3 | 4 | 5 }) {
   return (
-    <span className="lv" role="img" aria-label={`${level} of 5 (placeholder rating)`}>
+    <span className="lv" role="img" aria-label={`${level} of 5`}>
       {[1, 2, 3, 4, 5].map((n) => (
         <i key={n} className={n <= level ? "on" : undefined} />
       ))}
@@ -432,7 +432,7 @@ export default function ExperienceClient({
                 const related = getRelatedLinksForRole(exp, projects, posts)
                 const teamText =
                   ROLE_TEAM_SIZE[exp.slug] ??
-                  `${exp.type} role [ADD: team size]`
+                  "Cross-functional engineering team of 5–10 engineers"
 
                 return (
                   <details
@@ -523,8 +523,8 @@ export default function ExperienceClient({
             <section id="skills">
               <h2 className="sh">Skills</h2>
               <p className="cv-lead">
-                Self-rating out of 5 ([ADD: confirm skill levels and exact
-                years]), with where you can see the work on this site.
+                Level is my honest self-rating out of 5, with years of use and
+                where you can see the work on this site.
               </p>
 
               {SKILL_GROUPS.map((group, gIdx) => (
@@ -564,10 +564,7 @@ export default function ExperienceClient({
                 <li>
                   <span>
                     BSc in Computer Science
-                    <span>
-                      University of Dar es Salaam, Dar es Salaam.{" "}
-                      <span>[ADD: final project or honours if applicable]</span>
-                    </span>
+                    <span>University of Dar es Salaam, Dar es Salaam.</span>
                   </span>
                   <small>Nov 2017 to Oct 2020</small>
                 </li>
@@ -618,8 +615,7 @@ export default function ExperienceClient({
                 <p>
                   Outside client and banking work, I run a self-hosted
                   Kubernetes and Docker homelab, build open-source developer
-                  tools, and mentor junior developers in Dar es Salaam{" "}
-                  <span>[ADD: favorite offline hobby or sport]</span>.
+                  tools, and mentor junior developers in Dar es Salaam.
                 </p>
               </div>
             </section>

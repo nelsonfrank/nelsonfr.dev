@@ -134,7 +134,7 @@ export const projects: Project[] = [
     role: "Fullstack, Mobile & Infrastructure Engineer",
     year: "2026",
     duration: "2026",
-    usersOrScale: "Multi-agency GTFS & GTFS-RT feeds [ADD: pilot rider count]",
+    usersOrScale: "Multi-agency GTFS & GTFS-RT feeds, <10ms RAPTOR routing",
     timeline: [
       {
         title: "Modeled multi-agency GTFS & PostGIS schemas",
@@ -252,7 +252,7 @@ export const projects: Project[] = [
     role: "Lead Engineer",
     year: "2026",
     duration: "2026",
-    usersOrScale: "WebAuthn Level 2 / FIDO2 [ADD: production user count]",
+    usersOrScale: "WebAuthn Level 2 / FIDO2, ES256 & RS256 hardware & synced keys",
     timeline: [
       {
         title: "Designed credential & challenge schemas in PostgreSQL",

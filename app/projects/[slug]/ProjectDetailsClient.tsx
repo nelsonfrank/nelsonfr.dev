@@ -148,7 +148,7 @@ export default function ProjectDetailsClient({
             aria-label={
               stageImage
                 ? `Architecture and screens of ${project.title}`
-                : `System preview of ${project.title} ([ADD: real product screenshot])`
+                : `System architecture preview of ${project.title}`
             }
           >
             <div className="stage-browser">
