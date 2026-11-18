@@ -37,8 +37,8 @@ export interface Project {
 }
 
 export const SELECTED_WORK_SLUGS = [
-  "passkey-auth",
   "city-connector-backend",
+  "passkey-auth",
   "necta-explorer",
 ] as const
 
@@ -149,6 +149,8 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/nelsonfrank/i8n-automation-cli",
     featured: true,
     category: "Developer Tools",
+    role: "Creator & Lead Engineer",
+    year: "2026",
   },
   {
     slug: "homelab",
@@ -170,5 +172,7 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/nelsonfrank/homelab",
     featured: true,
     category: "DevOps & Cloud",
+    role: "Infrastructure Engineer",
+    year: "2026",
   },
 ]
