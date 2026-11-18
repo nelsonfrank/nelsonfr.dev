@@ -5,89 +5,10 @@ import Link from "next/link"
 import { ArrowLeft, Clock, Calendar, ArrowUpRight } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { useMermaid } from "@/hooks/use-mermaid"
 import type { PostMeta } from "@/lib/posts"
 import type { Project } from "@/lib/projects"
 import type { TocHeading } from "@/lib/markdown"
-
-let mermaidInitialized = false
-
-function useMermaid(
-  containerRef: React.RefObject<HTMLDivElement | null>,
-  htmlContent: string,
-  onDiagramClick: (svgHtml: string) => void
-) {
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const blocks = Array.from(
-      container.querySelectorAll<HTMLDivElement>("div.mermaid-block")
-    )
-    if (blocks.length === 0) return
-
-    let cancelled = false
-
-    async function render() {
-      const mermaid = (await import("mermaid")).default
-
-      if (!mermaidInitialized) {
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: "dark",
-          themeVariables: {
-            darkMode: true,
-            background: "transparent",
-            primaryColor: "#0b7a6e",
-            primaryTextColor: "#e6edf3",
-            primaryBorderColor: "#3ddbc8",
-            lineColor: "#9aa7b4",
-            secondaryColor: "#0f151c",
-            tertiaryColor: "#0b0f14",
-            edgeLabelBackground: "#0f151c",
-            clusterBkg: "#0f151c",
-            titleColor: "#e6edf3",
-            nodeTextColor: "#e6edf3",
-            fontFamily: "'Geist', sans-serif",
-            fontSize: "14px",
-          },
-          flowchart: { htmlLabels: true, curve: "basis" },
-          sequence: { useMaxWidth: true },
-        })
-        mermaidInitialized = true
-      }
-
-      for (let i = 0; i < blocks.length; i++) {
-        if (cancelled) break
-        const block = blocks[i]
-        const scriptEl = block.querySelector<HTMLScriptElement>(
-          "script[type='application/mermaid']"
-        )
-        const definition = scriptEl?.textContent ?? ""
-        if (!definition.trim()) continue
-
-        try {
-          const id = `mermaid-svg-${Date.now()}-${i}`
-          const { svg } = await mermaid.render(id, definition)
-          if (cancelled) break
-          block.innerHTML = svg
-          block.style.cursor = "zoom-in"
-          block.onclick = () => {
-            onDiagramClick(block.innerHTML)
-          }
-        } catch (err) {
-          console.error("Mermaid render error:", err)
-          block.innerHTML = `<pre style="color:hsl(0 80% 60%);font-size:0.75rem;white-space:pre-wrap;text-align:left">${String(err)}</pre>`
-        }
-      }
-    }
-
-    render()
-    return () => {
-      cancelled = true
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [htmlContent])
-}
 
 function TableOfContents({ headings }: { headings: TocHeading[] }) {
   const [activeId, setActiveId] = useState<string>("")
@@ -346,20 +267,20 @@ export default function PostClient({
 
       {modalSvg && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6 cursor-zoom-out"
+          className="fixed inset-0 z-50 bg-background/85 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 cursor-zoom-out"
           onClick={() => setModalSvg(null)}
         >
           <button
             type="button"
             onClick={() => setModalSvg(null)}
-            className="absolute top-6 right-6 min-w-[44px] min-h-[44px] p-2.5 rounded-md border border-border bg-card text-foreground hover:border-primary transition-colors cursor-pointer z-50 flex items-center justify-center"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 min-w-[44px] min-h-[44px] p-2.5 rounded-md border border-border bg-card text-foreground hover:border-primary transition-colors cursor-pointer z-50 flex items-center justify-center"
             aria-label="Close diagram"
           >
             ✕
           </button>
 
           <div
-            className="bg-[#0b0f14] border border-[#1f2933] p-6 md:p-10 rounded-lg max-w-5xl w-full max-h-[85vh] overflow-auto flex items-center justify-center relative cursor-default"
+            className="bg-card border border-border p-6 md:p-10 rounded-lg max-w-5xl w-full max-h-[85vh] overflow-auto flex items-center justify-center relative cursor-default shadow-xl"
             onClick={(e) => e.stopPropagation()}
             data-mermaid-modal
             dangerouslySetInnerHTML={{ __html: modalSvg }}

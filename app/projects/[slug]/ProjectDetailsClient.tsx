@@ -6,80 +6,11 @@ import { ArrowLeft, Github, ExternalLink, ArrowUpRight, FolderGit2 } from "lucid
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { ArchDiagram } from "@/components/arch-diagram"
+import { useMermaid } from "@/hooks/use-mermaid"
 import { captureEvent } from "@/lib/analytics"
 import type { Project } from "@/lib/projects"
 import type { PostMeta } from "@/lib/posts"
 import type { TocHeading } from "@/lib/markdown"
-
-let mermaidInitialized = false
-
-function useMermaid(containerRef: React.RefObject<HTMLElement | null>, htmlContent: string) {
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const blocks = Array.from(
-      container.querySelectorAll<HTMLDivElement>("div.mermaid-block")
-    )
-    if (blocks.length === 0) return
-
-    let cancelled = false
-
-    async function render() {
-      const mermaid = (await import("mermaid")).default
-
-      if (!mermaidInitialized) {
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: "dark",
-          themeVariables: {
-            darkMode: true,
-            background: "transparent",
-            primaryColor: "#0b7a6e",
-            primaryTextColor: "#e6edf3",
-            primaryBorderColor: "#3ddbc8",
-            lineColor: "#9aa7b4",
-            secondaryColor: "#0f151c",
-            tertiaryColor: "#0b0f14",
-            edgeLabelBackground: "#0f151c",
-            clusterBkg: "#0f151c",
-            titleColor: "#e6edf3",
-            nodeTextColor: "#e6edf3",
-            fontFamily: "'Geist', sans-serif",
-            fontSize: "14px",
-          },
-          flowchart: { htmlLabels: true, curve: "basis" },
-          sequence: { useMaxWidth: true },
-        })
-        mermaidInitialized = true
-      }
-
-      for (let i = 0; i < blocks.length; i++) {
-        if (cancelled) break
-        const block = blocks[i]
-        const scriptEl = block.querySelector<HTMLScriptElement>(
-          "script[type='application/mermaid']"
-        )
-        const definition = scriptEl?.textContent ?? ""
-        if (!definition.trim()) continue
-
-        try {
-          const id = `project-mermaid-svg-${Date.now()}-${i}`
-          const { svg } = await mermaid.render(id, definition)
-          if (cancelled) break
-          block.innerHTML = svg
-        } catch (err) {
-          console.error("Mermaid render error:", err)
-        }
-      }
-    }
-
-    render()
-    return () => {
-      cancelled = true
-    }
-  }, [containerRef, htmlContent])
-}
 
 function CaseStudyToc({ headings }: { headings: TocHeading[] }) {
   const [activeId, setActiveId] = useState<string>("")

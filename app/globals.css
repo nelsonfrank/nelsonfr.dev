@@ -493,14 +493,19 @@ figure[data-rehype-pretty-code-figure] [data-language] {
 
 .prose .mermaid-block {
   margin: 2rem 0;
-  padding: 1.5rem 1rem;
-  background: #0f151c;
+  padding: 1.5rem 1.25rem;
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   overflow-x: auto;
   text-align: center;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.prose .mermaid-block:hover {
+  border-color: var(--border-strong);
 }
 
 .prose .mermaid-block svg {
@@ -510,6 +515,63 @@ figure[data-rehype-pretty-code-figure] [data-language] {
   font-family: var(--font-sans), sans-serif;
 }
 
+/* Flowchart & Sequence SVG refinements for crisp contrast in both themes */
+.prose .mermaid-block svg .node rect,
+.prose .mermaid-block svg .node polygon,
+.prose .mermaid-block svg rect.actor,
+[data-mermaid-modal] svg .node rect,
+[data-mermaid-modal] svg .node polygon,
+[data-mermaid-modal] svg rect.actor {
+  rx: 5px;
+  ry: 5px;
+  stroke-width: 1.25px;
+}
+
+.prose .mermaid-block svg .cluster rect,
+[data-mermaid-modal] svg .cluster rect {
+  rx: 6px;
+  ry: 6px;
+  stroke-dasharray: 4 3;
+  stroke-width: 1px;
+}
+
+.prose .mermaid-block svg .cluster-label .nodeLabel,
+[data-mermaid-modal] svg .cluster-label .nodeLabel {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary) !important;
+}
+
+.prose .mermaid-block svg .edgeLabel,
+.prose .mermaid-block svg .edgeLabel span,
+.prose .mermaid-block svg .messageText,
+.prose .mermaid-block svg .loopText,
+.prose .mermaid-block svg .labelText,
+[data-mermaid-modal] svg .edgeLabel,
+[data-mermaid-modal] svg .edgeLabel span,
+[data-mermaid-modal] svg .messageText,
+[data-mermaid-modal] svg .loopText,
+[data-mermaid-modal] svg .labelText {
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important;
+}
+
+.prose .mermaid-block svg .edgeLabel rect,
+[data-mermaid-modal] svg .edgeLabel rect {
+  rx: 3px;
+  ry: 3px;
+  opacity: 0.95;
+}
+
+.prose .mermaid-block svg .loopLine,
+[data-mermaid-modal] svg .loopLine {
+  stroke-dasharray: 4 3 !important;
+  stroke-width: 1px !important;
+}
+
 .prose .mermaid-block > script {
   display: none;
 }
@@ -517,7 +579,7 @@ figure[data-rehype-pretty-code-figure] [data-language] {
 .prose .mermaid-block:not(:has(svg))::after {
   content: "Loading diagram…";
   display: block;
-  color: #9aa7b4;
+  color: var(--muted-foreground);
   font-size: 0.8125rem;
   font-family: var(--font-mono);
   letter-spacing: 0.04em;
@@ -527,6 +589,6 @@ figure[data-rehype-pretty-code-figure] [data-language] {
 [data-mermaid-modal] svg {
   width: 100% !important;
   height: auto !important;
-  max-height: 70vh !important;
+  max-height: 75vh !important;
   display: block;
 }
