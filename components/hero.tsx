@@ -9,9 +9,9 @@ export const AVAILABILITY_TEXT = "Available for full-time & freelance roles"
 
 export function Hero() {
   return (
-    <section className="py-12 md:py-20">
+    <section className="py-12 md:py-20 overflow-hidden">
       <div className="page-container animate-fade-in">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           {/* Left Column: Editorial Headline & CTAs */}
           <div className="lg:col-span-7 space-y-6">
             {AVAILABILITY_TEXT && (
@@ -24,7 +24,7 @@ export function Hero() {
               </p>
             )}
 
-            <h1 className="text-[36px] md:text-[52px] font-bold tracking-[-0.03em] leading-[1.08] text-foreground">
+            <h1 className="text-[36px] md:text-[54px] font-bold tracking-[-0.03em] leading-[1.08] text-foreground">
               Full-stack engineer building reliable backend systems and modern web applications.
             </h1>
 
@@ -51,29 +51,40 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right Column: Editorial Portrait Frame */}
+          {/* Right Column: Blended Full-Column Portrait */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">
-            <figure className="w-full max-w-[380px] rounded-md border border-border bg-card overflow-hidden">
-              <div className="relative aspect-square w-full bg-background/50">
+            <div className="relative w-full max-w-[420px] lg:max-w-[460px] aspect-square flex items-end justify-center">
+              {/* Subtle radial backdrop so the transparent portrait blends into both dark and light backgrounds */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-4 rounded-full opacity-60 dark:opacity-40"
+                style={{
+                  background:
+                    "radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--primary) 16%, transparent) 0%, transparent 72%)",
+                }}
+              />
+
+              {/* Portrait with bottom fade mask so the cut edge dissolves seamlessly into the background */}
+              <div
+                className="relative w-full h-full"
+                style={{
+                  WebkitMaskImage:
+                    "linear-gradient(to bottom, #000 78%, transparent 100%)",
+                  maskImage:
+                    "linear-gradient(to bottom, #000 78%, transparent 100%)",
+                }}
+              >
                 <Image
                   src="/landing-page.png"
                   alt="Nelson Frank — Full-Stack and Backend Engineer"
                   width={600}
                   height={600}
                   priority
-                  sizes="(max-width: 768px) 340px, 380px"
-                  className="w-full h-full object-cover"
+                  sizes="(max-width: 768px) 90vw, 460px"
+                  className="w-full h-full object-contain object-bottom select-none"
                 />
               </div>
-              <figcaption className="flex items-center justify-between gap-3 px-4 py-3 border-t border-border bg-card">
-                <span className="text-xs font-medium text-foreground">
-                  Nelson Frank
-                </span>
-                <span className="meta-mono text-xs">
-                  Dar es Salaam · UTC+3
-                </span>
-              </figcaption>
-            </figure>
+            </div>
           </div>
         </div>
       </div>

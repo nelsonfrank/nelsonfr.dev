@@ -59,6 +59,8 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/nelsonfrank/passkey-auth-demo",
     featured: true,
     category: "Web App",
+    role: "Lead Engineer",
+    year: "2026",
   },
   {
     slug: "city-connector-backend",
@@ -98,6 +100,8 @@ export const projects: Project[] = [
     ],
     featured: true,
     category: "Distributed Systems",
+    role: "Fullstack, Mobile & Infra",
+    year: "2026",
   },
   {
     slug: "necta-explorer",
@@ -122,6 +126,8 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/nelsonfrank/necta-explorer",
     featured: true,
     category: "Web App",
+    role: "Fullstack & Data Engineer",
+    year: "2025",
   },
   {
     slug: "i8n-automation-cli",
