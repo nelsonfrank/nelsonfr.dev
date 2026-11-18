@@ -1,58 +1,93 @@
 import Link from "next/link"
-import { ArrowUpRight } from "lucide-react"
 import type { Experience as ExperienceItem } from "@/lib/experience"
+import { LiveClock } from "@/components/live-clock"
 
-export function Experience({ experiences }: { experiences: ExperienceItem[] }) {
+const HOME_SKILLS = [
+  "TypeScript",
+  "Go",
+  "Java",
+  "Spring Boot",
+  "Next.js",
+  "React Native",
+  "NestJS",
+  "PostgreSQL",
+  "Redis",
+  "Kubernetes",
+]
+
+export function Experience({
+  experiences,
+}: {
+  experiences: ExperienceItem[]
+}) {
+  const topThree = experiences.slice(0, 3)
+
   return (
-    <section id="about" className="py-16 md:py-20 border-t border-border">
-      <div className="page-container">
-        <div className="flex flex-wrap items-baseline justify-between gap-4 mb-8">
-          <h2 className="text-[28px] font-semibold tracking-tight text-foreground">
-            Experience
-          </h2>
-          <Link
-            href="/cv.pdf"
-            className="inline-flex items-center gap-1.5 min-h-[44px] text-xs font-mono uppercase tracking-[0.05em] text-primary hover:underline"
-          >
-            <span>Download CV (PDF)</span>
-            <ArrowUpRight className="size-4" aria-hidden="true" />
-          </Link>
+    <section id="about" className="site-section">
+      <div className="wrap">
+        <h2 className="sec-h2">About me</h2>
+        <p className="sec-sub">The short version, at a glance.</p>
+
+        <div className="bento-grid">
+          <div className="tile t-bio">
+            <h3>Who I am</h3>
+            <p>
+              I turn complex engineering problems into dependable software. I’ve
+              spent over seven years shipping banking backends, multimodal
+              transit engines, and full-stack web products for teams in
+              Tanzania, South Korea, and remotely.
+            </p>
+            <div>
+              {HOME_SKILLS.map((skill) => (
+                <span key={skill} className="tag">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="tile t-time">
+            <h3>Dar es Salaam</h3>
+            <LiveClock />
+            <p>Local time (EAT). I reply within 24 hours.</p>
+          </div>
+
+          <div className="tile t-now">
+            <h3>Right now</h3>
+            <p>
+              Building distributed Java &amp; Spring Boot banking services at
+              NBC Bank and maintaining open-source localization and transit
+              tools.
+            </p>
+          </div>
+
+          <div className="tile t-xp">
+            <h3>Experience</h3>
+            <ul className="xp-mini">
+              {topThree.map((exp) => (
+                <li key={exp.slug}>
+                  <span>
+                    {exp.title}, {exp.company}
+                  </span>
+                  <small>{exp.period}</small>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="tile t-how">
+            <h3>How I work</h3>
+            <p>
+              I own features from schema design through production deployment,
+              verify every change with automated tests, and keep communication
+              direct and clear.
+            </p>
+          </div>
         </div>
 
-        <div className="divide-y divide-border border-t border-b border-border">
-          {experiences.map((exp) => {
-            const summaryLine = exp.bullets[0] || exp.description
-            return (
-              <div
-                key={exp.slug}
-                className="grid gap-1.5 md:grid-cols-[180px_1fr] md:gap-8 py-4"
-              >
-                <div className="meta-mono pt-0.5">{exp.period}</div>
-                <div className="space-y-1 min-w-0">
-                  <h3 className="text-base text-foreground leading-snug">
-                    <span className="font-semibold">{exp.title}</span>
-                    <span className="text-muted-foreground"> · </span>
-                    {exp.companyUrl && exp.companyUrl !== "#" ? (
-                      <Link
-                        href={exp.companyUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        {exp.company}
-                      </Link>
-                    ) : (
-                      <span className="text-muted-foreground">{exp.company}</span>
-                    )}
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-1">
-                    {summaryLine}
-                  </p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        <p className="more-link">
+          <Link href="/experience">More about me and my full experience</Link>
+        </p>
       </div>
     </section>
   )

@@ -1,181 +1,290 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import Link from "next/link"
-import { ArrowLeft, Search } from "lucide-react"
 import { Header } from "@/components/header"
+import { FeaturedPostCard } from "@/components/featured-post-card"
+import { PostRow } from "@/components/post-row"
+import { NewsletterPanel } from "@/components/newsletter-panel"
+import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
 import type { PostMeta } from "@/lib/posts"
-
-function PostRow({ post }: { post: PostMeta & { href: string } }) {
-  return (
-    <Link
-      href={post.href}
-      className="group flex flex-col md:flex-row md:items-baseline justify-between gap-2 md:gap-8 py-5 border-b border-border hover:border-primary transition-colors duration-200 min-h-[44px]"
-    >
-      <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-8 min-w-0">
-        <div className="shrink-0 md:w-40 flex items-center gap-3 md:block">
-          <time className="block text-xs font-mono text-muted-foreground">
-            {post.date}
-          </time>
-          <span className="block text-xs font-mono text-muted-foreground/70">{post.readTime}</span>
-        </div>
-
-        <div className="space-y-1.5 min-w-0">
-          <h2 className="text-[18px] font-medium text-foreground group-hover:text-primary transition-colors duration-200 leading-snug">
-            {post.title}
-          </h2>
-          <p className="text-sm text-muted-foreground line-clamp-2 max-w-[680px]">{post.excerpt}</p>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-1.5 shrink-0">
-        {post.tags.map((tag) => (
-          <span
-            key={tag}
-            className="px-2 py-0.5 text-xs font-mono text-muted-foreground border border-border rounded"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-    </Link>
-  )
-}
 
 interface WritingClientProps {
   posts: PostMeta[]
 }
 
-export default function WritingClient({ posts }: WritingClientProps) {
-  const [activeTag, setActiveTag] = useState<string | null>(null)
-  const [query, setQuery] = useState("")
+const PAGE_LIMIT = 20
 
-  const allTags = Array.from(new Set(posts.flatMap((p) => p.tags))).sort()
-  const allPosts = posts.map((p) => ({ ...p, href: `/writing/${p.slug}` }))
-
-  const filtered = allPosts.filter((p) => {
-    const matchTag = !activeTag || p.tags.includes(activeTag)
-    const q = query.toLowerCase()
-    const matchQuery =
-      !q ||
-      p.title.toLowerCase().includes(q) ||
-      p.excerpt.toLowerCase().includes(q) ||
-      p.tags.some((t) => t.toLowerCase().includes(q))
-    return matchTag && matchQuery
-  })
-
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://nelsonfrank.dev"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Writing",
-        "item": "https://nelsonfrank.dev/writing"
-      }
-    ]
+function getYear(dateStr: string): string {
+  const parsed = new Date(dateStr)
+  if (!isNaN(parsed.getTime())) {
+    return String(parsed.getFullYear())
   }
+  const match = dateStr.match(/\b(20\d{2})\b/)
+  return match ? match[1] : "Archive"
+}
+
+export default function WritingClient({ posts }: WritingClientProps) {
+  const [activeTopic, setActiveTopic] = useState<string>("All")
+  const [inputValue, setInputValue] = useState<string>("")
+  const [debouncedQuery, setDebouncedQuery] = useState<string>("")
+  const [visibleLimit, setVisibleLimit] = useState<number>(PAGE_LIMIT)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  const topics = useMemo(() => {
+    const seen = new Set<string>()
+    for (const post of posts) {
+      for (const tag of post.tags) {
+        seen.add(tag)
+      }
+    }
+    return ["All", ...Array.from(seen)]
+  }, [posts])
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const topicParam = params.get("topic")
+      const qParam = params.get("q")
+
+      if (topicParam) {
+        const matched = topics.find(
+          (t) => t.toLowerCase() === topicParam.toLowerCase()
+        )
+        setActiveTopic(matched ?? topicParam)
+      }
+      if (qParam) {
+        setInputValue(qParam)
+        setDebouncedQuery(qParam.trim().toLowerCase())
+      }
+    } catch {
+      // Ignore URL parse error
+    }
+  }, [topics])
+
+  const syncUrl = (nextTopic: string, nextQ: string) => {
+    try {
+      const url = new URL(window.location.href)
+      if (nextTopic === "All") {
+        url.searchParams.delete("topic")
+      } else {
+        url.searchParams.set("topic", nextTopic.toLowerCase())
+      }
+      const trimmedQ = nextQ.trim()
+      if (!trimmedQ) {
+        url.searchParams.delete("q")
+      } else {
+        url.searchParams.set("q", trimmedQ)
+      }
+      window.history.replaceState({}, "", url.pathname + url.search + url.hash)
+    } catch {
+      // Ignore history error
+    }
+  }
+
+  const handleTopicClick = (topic: string) => {
+    setActiveTopic(topic)
+    syncUrl(topic, inputValue)
+  }
+
+  const handleSearchChange = (val: string) => {
+    setInputValue(val)
+    if (timerRef.current) clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(() => {
+      const normalized = val.trim().toLowerCase()
+      setDebouncedQuery(normalized)
+      syncUrl(activeTopic, val)
+    }, 100)
+  }
+
+  const clearSearch = () => {
+    if (timerRef.current) clearTimeout(timerRef.current)
+    setInputValue("")
+    setDebouncedQuery("")
+    syncUrl(activeTopic, "")
+  }
+
+  const newestPost = posts[0]
+
+  const years = useMemo(() => {
+    const ySet = new Set<string>()
+    for (const p of posts) {
+      ySet.add(getYear(p.date))
+    }
+    return Array.from(ySet).sort((a, b) => Number(b) - Number(a))
+  }, [posts])
+
+  const isFiltering = activeTopic !== "All" || debouncedQuery.length > 0
+
+  const matchMap = useMemo(() => {
+    const map = new Map<string, boolean>()
+    let matchedSoFar = 0
+    const targetTopic = activeTopic.toLowerCase()
+
+    for (const post of posts) {
+      const topicMatch =
+        activeTopic === "All" ||
+        post.tags.some((t) => t.toLowerCase() === targetTopic)
+      const qMatch =
+        !debouncedQuery ||
+        post.title.toLowerCase().includes(debouncedQuery) ||
+        post.excerpt.toLowerCase().includes(debouncedQuery)
+
+      const matches = topicMatch && qMatch
+      if (matches) {
+        matchedSoFar++
+        // Search covers all posts; pagination limit only applies when not searching
+        const withinLimit =
+          debouncedQuery.length > 0 || matchedSoFar <= visibleLimit
+        map.set(post.slug, withinLimit)
+      } else {
+        map.set(post.slug, false)
+      }
+    }
+    return { map, totalMatched: matchedSoFar }
+  }, [posts, activeTopic, debouncedQuery, visibleLimit])
+
+  const visibleYears = useMemo(() => {
+    const set = new Set<string>()
+    for (const post of posts) {
+      if (matchMap.map.get(post.slug)) {
+        set.add(getYear(post.date))
+      }
+    }
+    return set
+  }, [posts, matchMap])
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
       <Header />
 
-      <main id="main-content" className="py-12 md:py-20 min-h-screen">
-        <div className="page-container">
-          <div className="mb-12">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 min-h-[44px] text-xs font-mono uppercase tracking-[0.05em] text-muted-foreground hover:text-primary transition-colors mb-4"
-            >
-              <ArrowLeft className="size-3.5" />
-              Home
-            </Link>
-            <h1 className="text-[36px] md:text-[60px] font-bold tracking-[-0.03em] leading-[1.08] text-foreground mb-4">
-              Writing
+      <main id="main-content">
+        <div className="wrap">
+          <header className="page-head">
+            <h1>
+              Notes from <span className="hl-word">real projects.</span>
             </h1>
-            <p className="text-muted-foreground text-[17px] md:text-[19px] max-w-[680px] leading-[1.6]">
-              Technical articles and architecture notes on authentication, backend systems and TypeScript.
+            <p>
+              Practical posts on authentication, backend architecture, and
+              TypeScript. Written when a system ships.
             </p>
-          </div>
+            <Link className="rss-link" href="/feed.xml">
+              Subscribe with RSS
+            </Link>
+          </header>
 
-          <div className="mb-8 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between pb-6 border-b border-border">
-            <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search posts…"
-                aria-label="Search posts"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="w-full min-h-[44px] bg-input border border-border rounded-md py-2 pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors duration-200"
-              />
-            </div>
+          {newestPost && <FeaturedPostCard post={newestPost} />}
 
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => setActiveTag(null)}
-                className={`min-h-[44px] px-3 py-1.5 rounded-md text-xs font-mono border transition-colors duration-200 cursor-pointer ${
-                  activeTag === null
-                    ? "bg-primary border-primary text-primary-foreground font-medium"
-                    : "bg-card border-border text-muted-foreground hover:border-primary hover:text-foreground"
-                }`}
-              >
-                All
-              </button>
-              {allTags.map((tag) => (
+          <div className="filter-bar">
+            <div
+              className="chips"
+              role="group"
+              aria-label="Filter posts by topic"
+            >
+              {topics.map((topic) => (
                 <button
-                  key={tag}
+                  key={topic}
                   type="button"
-                  onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                  className={`min-h-[44px] px-3 py-1.5 rounded-md text-xs font-mono border transition-colors duration-200 cursor-pointer ${
-                    activeTag === tag
-                      ? "bg-primary border-primary text-primary-foreground font-medium"
-                      : "bg-card border-border text-muted-foreground hover:border-primary hover:text-foreground"
-                  }`}
+                  className="chip"
+                  data-f={topic.toLowerCase()}
+                  aria-pressed={
+                    activeTopic.toLowerCase() === topic.toLowerCase()
+                  }
+                  onClick={() => handleTopicClick(topic)}
                 >
-                  {tag}
+                  {topic}
                 </button>
               ))}
             </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.85rem",
+                flexWrap: "wrap",
+              }}
+            >
+              <span className="count-line" aria-live="polite">
+                {matchMap.totalMatched}{" "}
+                {matchMap.totalMatched === 1 ? "post" : "posts"}
+              </span>
+              <input
+                className="search-input"
+                id="q"
+                type="search"
+                placeholder="Search posts"
+                aria-label="Search posts"
+                value={inputValue}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    e.preventDefault()
+                    clearSearch()
+                  }
+                }}
+              />
+            </div>
           </div>
 
-          <p className="text-xs font-mono text-muted-foreground mb-4">
-            {filtered.length} {filtered.length === 1 ? "article" : "articles"}
+          <div id="list">
+            {years.map((year) => {
+              const yearPosts = posts.filter((p) => getYear(p.date) === year)
+              const yearHasVisible = visibleYears.has(year)
+
+              return (
+                <div key={year}>
+                  <h2
+                    className="yr"
+                    data-y={year}
+                    hidden={!yearHasVisible}
+                  >
+                    {year}
+                  </h2>
+                  {yearPosts.map((post) => {
+                    const isVisible = Boolean(matchMap.map.get(post.slug))
+                    return (
+                      <PostRow
+                        key={post.slug}
+                        post={post}
+                        hidden={!isVisible}
+                        dataYear={year}
+                        dataTopics={post.tags
+                          .map((t) => t.toLowerCase())
+                          .join(" ")}
+                      />
+                    )
+                  })}
+                </div>
+              )
+            })}
+          </div>
+
+          {!isFiltering && posts.length > visibleLimit && (
+            <div style={{ marginTop: "2rem" }}>
+              <button
+                type="button"
+                className="btn s"
+                onClick={() => setVisibleLimit((prev) => prev + PAGE_LIMIT)}
+              >
+                Load more posts
+              </button>
+            </div>
+          )}
+
+          <p
+            className="empty-state"
+            id="empty"
+            hidden={matchMap.totalMatched > 0}
+          >
+            No posts match. Try another topic or a different word.
           </p>
 
-          <div className="border-t border-border">
-            {filtered.length > 0 ? (
-              filtered.map((post) => <PostRow key={post.slug} post={post} />)
-            ) : (
-              <div className="py-16 text-center text-muted-foreground">
-                <p className="text-base">No posts found.</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveTag(null)
-                    setQuery("")
-                  }}
-                  className="mt-4 min-h-[44px] px-4 text-sm font-mono text-primary hover:underline"
-                >
-                  Clear filters
-                </button>
-              </div>
-            )}
-          </div>
+          <NewsletterPanel />
         </div>
+
+        <Contact />
       </main>
 
       <Footer />

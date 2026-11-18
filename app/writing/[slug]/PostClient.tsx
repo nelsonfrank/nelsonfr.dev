@@ -1,124 +1,65 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback, memo } from "react"
+import { useEffect, useRef, useState, memo } from "react"
 import Link from "next/link"
-import { ArrowLeft, Clock, Calendar, ArrowUpRight } from "lucide-react"
 import { Header } from "@/components/header"
+import { NewsletterPanel } from "@/components/newsletter-panel"
+import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
 import { useMermaid } from "@/hooks/use-mermaid"
 import type { PostMeta } from "@/lib/posts"
 import type { Project } from "@/lib/projects"
 import type { TocHeading } from "@/lib/markdown"
 
-function TableOfContents({ headings }: { headings: TocHeading[] }) {
-  const [activeId, setActiveId] = useState<string>("")
-  const isScrollingRef = useRef(false)
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    e.preventDefault()
-    const el = document.getElementById(id)
-    if (!el) return
-
-    setActiveId(id)
-    isScrollingRef.current = true
-
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
-
-    const top = el.getBoundingClientRect().top + window.scrollY - 32
-    window.scrollTo({ top, behavior: "smooth" })
-
-    scrollTimeoutRef.current = setTimeout(() => {
-      isScrollingRef.current = false
-    }, 800)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
+function renderHighlightedTitle(title: string, highlightPhrase?: string) {
+  if (!highlightPhrase) {
+    const words = title.split(" ")
+    if (words.length <= 2) {
+      return <span className="hl-word">{title}</span>
     }
-  }, [])
+    const lastTwo = words.slice(-2).join(" ")
+    const prefix = words.slice(0, -2).join(" ")
+    return (
+      <>
+        {prefix} <span className="hl-word">{lastTwo}</span>
+      </>
+    )
+  }
 
-  useEffect(() => {
-    if (headings.length === 0) return
+  const idx = title.toLowerCase().indexOf(highlightPhrase.toLowerCase())
+  if (idx === -1) {
+    return <span className="hl-word">{title}</span>
+  }
 
-    const observers: IntersectionObserver[] = []
-    const visibleIds = new Set<string>()
-
-    headings.forEach(({ id }) => {
-      const el = document.getElementById(id)
-      if (!el) return
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (isScrollingRef.current) return
-
-          if (entry.isIntersecting) {
-            visibleIds.add(id)
-          } else {
-            visibleIds.delete(id)
-          }
-          const firstVisible = headings.find((h) => visibleIds.has(h.id))
-          if (firstVisible) setActiveId(firstVisible.id)
-        },
-        {
-          rootMargin: "-80px 0px -60% 0px",
-          threshold: 0,
-        }
-      )
-      observer.observe(el)
-      observers.push(observer)
-    })
-
-    return () => observers.forEach((o) => o.disconnect())
-  }, [headings])
-
-  if (headings.length === 0) return null
+  const before = title.slice(0, idx)
+  const match = title.slice(idx, idx + highlightPhrase.length)
+  const after = title.slice(idx + highlightPhrase.length)
 
   return (
-    <aside
-      aria-label="On this page"
-      className="hidden lg:block lg:w-[200px] lg:sticky lg:top-8 lg:self-start shrink-0"
-    >
-      <p className="eyebrow mb-3">On this page</p>
-      <ul className="space-y-1.5 border-l border-border pl-3">
-        {headings.map((heading) => {
-          const isActive = activeId === heading.id
-          return (
-            <li key={heading.id} className={heading.level === 3 ? "pl-3" : ""}>
-              <a
-                href={`#${heading.id}`}
-                onClick={(e) => handleClick(e, heading.id)}
-                className={`block text-xs leading-snug py-1 transition-colors duration-200 ${
-                  isActive
-                    ? "text-primary font-medium"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {heading.text}
-              </a>
-            </li>
-          )
-        })}
-      </ul>
-    </aside>
+    <>
+      {before}
+      <span className="hl-word">{match}</span>
+      {after}
+    </>
   )
 }
 
 const BlogPostHtml = memo(
   ({
     htmlContent,
+    articleRef,
     onDiagramClick,
   }: {
     htmlContent: string
+    articleRef: React.RefObject<HTMLElement | null>
     onDiagramClick: (svgHtml: string) => void
   }) => {
-    const bodyRef = useRef<HTMLDivElement>(null)
-    useMermaid(bodyRef, htmlContent, onDiagramClick)
+    useMermaid(articleRef, htmlContent, onDiagramClick)
 
     return (
       <article
-        ref={bodyRef}
+        ref={articleRef}
+        id="art"
         className="prose"
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
@@ -142,7 +83,47 @@ export default function PostClient({
   relatedProject,
   relatedPosts,
 }: PostClientProps) {
+  const articleRef = useRef<HTMLElement | null>(null)
+  const progressBarRef = useRef<HTMLDivElement | null>(null)
+  const [activeId, setActiveId] = useState<string>(headings[0]?.id ?? "")
+  const [copied, setCopied] = useState(false)
   const [modalSvg, setModalSvg] = useState<string | null>(null)
+
+  useEffect(() => {
+    function updateProgressAndSpy() {
+      const art = articleRef.current
+      const bar = progressBarRef.current
+      if (art && bar) {
+        const rect = art.getBoundingClientRect()
+        const h = Math.max(1, rect.height - window.innerHeight * 0.6)
+        const p = Math.min(
+          1,
+          Math.max(0, (-rect.top + window.innerHeight * 0.2) / h)
+        )
+        bar.style.transform = `scaleX(${p})`
+      }
+
+      if (headings.length > 0) {
+        let cur = headings[0].id
+        for (const h of headings) {
+          const el = document.getElementById(h.id)
+          if (el && el.getBoundingClientRect().top < window.innerHeight * 0.35) {
+            cur = h.id
+          }
+        }
+        setActiveId(cur)
+      }
+    }
+
+    window.addEventListener("scroll", updateProgressAndSpy, { passive: true })
+    window.addEventListener("resize", updateProgressAndSpy)
+    updateProgressAndSpy()
+
+    return () => {
+      window.removeEventListener("scroll", updateProgressAndSpy)
+      window.removeEventListener("resize", updateProgressAndSpy)
+    }
+  }, [headings])
 
   useEffect(() => {
     if (!modalSvg) return
@@ -153,134 +134,248 @@ export default function PostClient({
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [modalSvg])
 
+  const handleCopyLink = () => {
+    const finish = () => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard
+          .writeText(window.location.href)
+          .then(finish, finish)
+      } else {
+        finish()
+      }
+    } catch {
+      finish()
+    }
+  }
+
+  const shareUrl = `https://nelsonfrank.dev/writing/${post.slug}`
+  const shareText = encodeURIComponent(`${post.title} by Nelson Frank`)
+  const encodedUrl = encodeURIComponent(shareUrl)
+
   return (
     <>
+      <div className="reading-progress-track" aria-hidden="true">
+        <div ref={progressBarRef} id="bar" className="reading-progress-bar" />
+      </div>
+
       <Header />
 
-      <main id="main-content" className="py-12 md:py-20 min-h-screen">
-        <div className="page-container">
-          <div className="mb-10 pb-8 border-b border-border max-w-[720px]">
-            <Link
-              href="/writing"
-              className="inline-flex items-center gap-2 min-h-[44px] text-xs font-mono uppercase tracking-[0.05em] text-muted-foreground hover:text-primary transition-colors mb-4"
-            >
-              <ArrowLeft className="size-3.5" aria-hidden="true" />
-              <span>All articles</span>
+      <main id="main-content">
+        <div className="wrap">
+          <header className="post-head">
+            <Link className="back-link" href="/writing">
+              ← Back to all posts
             </Link>
 
-            <div className="flex flex-wrap gap-2 mb-4">
-              {post.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2 py-0.5 meta-mono border border-border rounded bg-card"
+            <h1>{renderHighlightedTitle(post.title, post.highlightPhrase)}</h1>
+
+            <p className="post-dek">{post.excerpt}</p>
+
+            <div className="byline">
+              <div className="avatar-circle" aria-hidden="true">
+                NF
+              </div>
+              <div>
+                <b>Nelson Frank</b>
+                {post.date} · {post.readTime}
+              </div>
+            </div>
+
+            {post.tags.length > 0 && (
+              <div style={{ marginTop: "1.2rem" }}>
+                {post.tags.map((tag) => (
+                  <Link
+                    key={tag}
+                    className="tag"
+                    href={`/writing?topic=${encodeURIComponent(tag.toLowerCase())}`}
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </header>
+
+          <div
+            className="post-cover"
+            role="img"
+            aria-label={`Visual overview for ${post.title}`}
+          >
+            <div className="post-cover-inner" aria-hidden="true">
+              <div>
+                <span className="mock-bar hl" />
+                <span className="mock-bar" />
+                <span className="mock-bar" style={{ width: "68%" }} />
+              </div>
+              <div className="mock-nodes">
+                {post.tags.slice(0, 3).map((tag, idx) => (
+                  <span
+                    key={tag}
+                    className={`mock-node${idx === 1 ? " mid" : ""}`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="post-layout">
+            {headings.length > 0 && (
+              <aside className="toc-aside" aria-label="On this page">
+                <b>On this page</b>
+                <ol>
+                  {headings.map((h) => (
+                    <li key={h.id}>
+                      <a
+                        href={`#${h.id}`}
+                        className={activeId === h.id ? "on" : undefined}
+                      >
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </aside>
+            )}
+
+            <div>
+              <BlogPostHtml
+                htmlContent={htmlContent}
+                articleRef={articleRef}
+                onDiagramClick={setModalSvg}
+              />
+
+              <div className="share-row">
+                <span>Share this post</span>
+                <button
+                  className="btn s"
+                  id="copy"
+                  type="button"
+                  onClick={handleCopyLink}
                 >
-                  {tag}
-                </span>
-              ))}
-            </div>
+                  {copied ? "Link copied" : "Copy link"}
+                </button>
+                <a
+                  className="btn s"
+                  href={`https://x.com/intent/tweet?text=${shareText}&url=${encodedUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Post on X
+                </a>
+                <a
+                  className="btn s"
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LinkedIn
+                </a>
+              </div>
 
-            <h1 className="text-[36px] md:text-[48px] font-bold tracking-[-0.03em] text-foreground leading-[1.08] mb-4">
-              {post.title}
-            </h1>
+              <div className="author-box">
+                <div className="avatar-circle" aria-hidden="true">
+                  NF
+                </div>
+                <div>
+                  <b>Nelson Frank</b>
+                  Full-stack software engineer in Dar es Salaam. I write about
+                  authentication, distributed backend services, and TypeScript.{" "}
+                  <Link href="/experience">More about me</Link>
+                </div>
+              </div>
 
-            <div className="flex flex-wrap items-center gap-3 meta-mono">
-              <span className="inline-flex items-center gap-1.5">
-                <Calendar className="size-3.5" aria-hidden="true" />
-                {post.date}
-              </span>
-              <span aria-hidden="true">·</span>
-              <span className="inline-flex items-center gap-1.5">
-                <Clock className="size-3.5" aria-hidden="true" />
-                {post.readTime}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex flex-col lg:flex-row lg:items-start gap-12">
-            <div className="w-full max-w-[720px] min-w-0">
-              <BlogPostHtml htmlContent={htmlContent} onDiagramClick={setModalSvg} />
-
-              <section
-                aria-label="Related content"
-                className="mt-14 pt-8 border-t border-border space-y-8"
-              >
-                {relatedProject && (
-                  <div className="space-y-3">
-                    <p className="eyebrow">Related project</p>
-                    <Link
-                      href={`/projects/${relatedProject.slug}`}
-                      className="group flex items-center justify-between gap-4 rounded-md border border-border bg-card p-5 hover:border-primary transition-colors duration-200 min-h-[44px]"
-                    >
-                      <div className="space-y-1 min-w-0">
-                        <p className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+              {relatedProject && (
+                <div style={{ margin: "2rem 0" }}>
+                  <article className="next-card">
+                    <div>
+                      <small>Related case study</small>
+                      <h3>
+                        <Link href={`/projects/${relatedProject.slug}`}>
                           {relatedProject.title}
-                        </p>
-                        <p className="text-sm text-muted-foreground line-clamp-1">
-                          {relatedProject.description}
-                        </p>
-                      </div>
-                      <ArrowUpRight
-                        className="size-5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors"
-                        aria-hidden="true"
-                      />
-                    </Link>
-                  </div>
-                )}
-
-                {relatedPosts.length > 0 && (
-                  <div className="space-y-3">
-                    <p className="eyebrow">Related articles</p>
-                    <div className="divide-y divide-border border-t border-b border-border">
-                      {relatedPosts.map((related) => (
-                        <Link
-                          key={related.slug}
-                          href={`/writing/${related.slug}`}
-                          className="group flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-6 py-4 min-h-[44px] transition-colors duration-200"
-                        >
-                          <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 min-w-0">
-                            <time className="meta-mono shrink-0 sm:w-36">
-                              {related.date}
-                            </time>
-                            <span className="text-[18px] font-medium text-foreground group-hover:text-primary transition-colors duration-200">
-                              {related.title}
-                            </span>
-                          </div>
-                          {related.tags[0] && (
-                            <span className="meta-mono shrink-0">
-                              {related.tags[0]}
-                            </span>
-                          )}
                         </Link>
-                      ))}
+                      </h3>
+                      <p>{relatedProject.description}</p>
                     </div>
-                  </div>
-                )}
-              </section>
-            </div>
+                    <span className="tag">Case study</span>
+                  </article>
+                </div>
+              )}
 
-            <TableOfContents headings={headings} />
+              <NewsletterPanel compact />
+            </div>
           </div>
+
+          {relatedPosts.length > 0 && (
+            <section className="related-sec">
+              <h2>Keep reading</h2>
+              <div className="related-grid">
+                {relatedPosts.map((rel) => (
+                  <article key={rel.slug} className="related-card">
+                    <small>
+                      {rel.date} · {rel.readTime}
+                    </small>
+                    <h3>
+                      <Link href={`/writing/${rel.slug}`}>{rel.title}</Link>
+                    </h3>
+                    <p>{rel.excerpt}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
+
+        <Contact />
       </main>
 
       <Footer />
 
       {modalSvg && (
         <div
-          className="fixed inset-0 z-50 bg-background/85 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 cursor-zoom-out"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 50,
+            background: "var(--glass)",
+            backdropFilter: "blur(8px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "1.5rem",
+          }}
           onClick={() => setModalSvg(null)}
         >
           <button
             type="button"
             onClick={() => setModalSvg(null)}
-            className="absolute top-4 right-4 sm:top-6 sm:right-6 min-w-[44px] min-h-[44px] p-2.5 rounded-md border border-border bg-card text-foreground hover:border-primary transition-colors cursor-pointer z-50 flex items-center justify-center"
+            className="btn s"
+            style={{
+              position: "absolute",
+              top: "1.25rem",
+              right: "1.25rem",
+              background: "var(--surface)",
+            }}
             aria-label="Close diagram"
           >
-            ✕
+            Close
           </button>
-
           <div
-            className="bg-card border border-border p-6 md:p-10 rounded-lg max-w-5xl w-full max-h-[85vh] overflow-auto flex items-center justify-center relative cursor-default shadow-xl"
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--line)",
+              borderRadius: "14px",
+              padding: "1.5rem",
+              maxWidth: "64rem",
+              width: "100%",
+              maxHeight: "85vh",
+              overflow: "auto",
+            }}
             onClick={(e) => e.stopPropagation()}
             data-mermaid-modal
             dangerouslySetInnerHTML={{ __html: modalSvg }}

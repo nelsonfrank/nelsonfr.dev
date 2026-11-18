@@ -13,10 +13,12 @@ const EXISTING_IMAGES = new Set([
 export function ProjectCard({
   project,
   featured = false,
+  hidden = false,
   dataCategories,
 }: {
   project: Project
   featured?: boolean
+  hidden?: boolean
   dataCategories?: string
 }) {
   const hasRealImage = Boolean(project.image && EXISTING_IMAGES.has(project.image))
@@ -39,6 +41,7 @@ export function ProjectCard({
   return (
     <article
       className={`pj${featured ? " big" : ""}`}
+      hidden={hidden}
       data-c={dataCategories ?? project.categories.map((c) => c.toLowerCase()).join(" ")}
     >
       <div className={`shot${tintClass ? ` ${tintClass}` : ""}`}>

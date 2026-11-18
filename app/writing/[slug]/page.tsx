@@ -20,30 +20,31 @@ export async function generateMetadata({
   const post = getPost(slug)
   if (!post) {
     return {
-      title: "Post Not Found",
+      title: "Post not found",
     }
   }
 
   return {
-    title: `${post.title} — Nelson Frank`,
+    title: post.title,
     description: post.excerpt || `Read ${post.title} by Nelson Frank`,
     alternates: {
-      canonical: "./",
+      canonical: `/writing/${slug}`,
       types: {
         "application/rss+xml": "/feed.xml",
       },
     },
     openGraph: {
-      title: post.title,
+      title: `${post.title} · Nelson Frank`,
       description: post.excerpt,
       type: "article",
+      url: `https://nelsonfrank.dev/writing/${slug}`,
       publishedTime: post.date,
       authors: ["Nelson Frank"],
       tags: post.tags,
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
+      title: `${post.title} · Nelson Frank`,
       description: post.excerpt,
     },
   }
@@ -77,7 +78,10 @@ export default async function PostPage({
     })
     .sort((a, b) => {
       if (b.sharedCount !== a.sharedCount) return b.sharedCount - a.sharedCount
-      return new Date(b.candidate.date).getTime() - new Date(a.candidate.date).getTime()
+      return (
+        new Date(b.candidate.date).getTime() -
+        new Date(a.candidate.date).getTime()
+      )
     })
     .slice(0, 2)
     .map((entry) => entry.candidate)
@@ -85,44 +89,44 @@ export default async function PostPage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": post.title,
-    "description": post.excerpt,
-    "datePublished": post.date,
-    "dateModified": post.date,
-    "author": {
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
       "@type": "Person",
-      "name": "Nelson Frank",
-      "url": "https://nelsonfrank.dev"
+      name: "Nelson Frank",
+      url: "https://nelsonfrank.dev",
     },
-    "mainEntityOfPage": {
+    mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://nelsonfrank.dev/writing/${slug}`
-    }
+      "@id": `https://nelsonfrank.dev/writing/${slug}`,
+    },
   }
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       {
         "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://nelsonfrank.dev"
+        position: 1,
+        name: "Home",
+        item: "https://nelsonfrank.dev",
       },
       {
         "@type": "ListItem",
-        "position": 2,
-        "name": "Writing",
-        "item": "https://nelsonfrank.dev/writing"
+        position: 2,
+        name: "Writing",
+        item: "https://nelsonfrank.dev/writing",
       },
       {
         "@type": "ListItem",
-        "position": 3,
-        "name": post.title,
-        "item": `https://nelsonfrank.dev/writing/${slug}`
-      }
-    ]
+        position: 3,
+        name: post.title,
+        item: `https://nelsonfrank.dev/writing/${slug}`,
+      },
+    ],
   }
 
   return (

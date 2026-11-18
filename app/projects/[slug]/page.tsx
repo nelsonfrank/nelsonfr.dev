@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import { projects } from "@/lib/projects"
 import { getProject } from "@/lib/projects-server"
 import { getAllPosts } from "@/lib/posts"
-import { markdownToHtml, extractHeadings } from "@/lib/markdown"
+import { markdownToHtml } from "@/lib/markdown"
 import ProjectDetailsClient from "./ProjectDetailsClient"
 
 interface RouteParams {
@@ -21,25 +21,25 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
   const project = getProject(slug)
   if (!project) {
     return {
-      title: "Project Not Found",
+      title: "Project not found",
     }
   }
 
   return {
-    title: `${project.title} — Nelson Frank`,
+    title: `${project.title} · Case study`,
     description: project.description,
     alternates: {
-      canonical: "./",
+      canonical: `/projects/${slug}`,
     },
     openGraph: {
-      title: project.title,
+      title: `${project.title} · Case study · Nelson Frank`,
       description: project.description,
       type: "website",
       url: `https://nelsonfrank.dev/projects/${slug}`,
     },
     twitter: {
       card: "summary_large_image",
-      title: project.title,
+      title: `${project.title} · Case study · Nelson Frank`,
       description: project.description,
     },
   }
@@ -51,7 +51,6 @@ export default async function ProjectDetailsPage({ params }: RouteParams) {
   if (!project) notFound()
 
   const htmlContent = project.content ? await markdownToHtml(project.content) : ""
-  const headings = project.content ? await extractHeadings(project.content) : []
 
   const allPosts = getAllPosts()
   const relatedArticles = (project.relatedPosts ?? [])
@@ -67,26 +66,26 @@ export default async function ProjectDetailsPage({ params }: RouteParams) {
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       {
         "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://nelsonfrank.dev"
+        position: 1,
+        name: "Home",
+        item: "https://nelsonfrank.dev",
       },
       {
         "@type": "ListItem",
-        "position": 2,
-        "name": "Projects",
-        "item": "https://nelsonfrank.dev/projects"
+        position: 2,
+        name: "Work",
+        item: "https://nelsonfrank.dev/projects",
       },
       {
         "@type": "ListItem",
-        "position": 3,
-        "name": project.title,
-        "item": `https://nelsonfrank.dev/projects/${slug}`
-      }
-    ]
+        position: 3,
+        name: project.title,
+        item: `https://nelsonfrank.dev/projects/${slug}`,
+      },
+    ],
   }
 
   const repoUrls =
@@ -100,14 +99,14 @@ export default async function ProjectDetailsPage({ params }: RouteParams) {
       ? {
           "@context": "https://schema.org",
           "@type": "SoftwareSourceCode",
-          "name": project.title,
-          "description": project.description,
-          "codeRepository": repoUrls.length === 1 ? repoUrls[0] : repoUrls,
-          "programmingLanguage": project.technologies,
-          "author": {
+          name: project.title,
+          description: project.description,
+          codeRepository: repoUrls.length === 1 ? repoUrls[0] : repoUrls,
+          programmingLanguage: project.technologies,
+          author: {
             "@type": "Person",
-            "name": "Nelson Frank",
-            "url": "https://nelsonfrank.dev",
+            name: "Nelson Frank",
+            url: "https://nelsonfrank.dev",
           },
         }
       : null
@@ -121,13 +120,14 @@ export default async function ProjectDetailsPage({ params }: RouteParams) {
       {softwareSourceCodeJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSourceCodeJsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(softwareSourceCodeJsonLd),
+          }}
         />
       )}
       <ProjectDetailsClient
         project={project}
         htmlContent={htmlContent}
-        headings={headings}
         relatedArticles={relatedArticles}
         nextProject={nextProject}
       />

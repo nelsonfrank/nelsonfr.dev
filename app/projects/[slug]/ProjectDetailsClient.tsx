@@ -1,115 +1,24 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import { useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Github, ExternalLink, ArrowUpRight, FolderGit2 } from "lucide-react"
 import { Header } from "@/components/header"
+import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
-import { ArchDiagram } from "@/components/arch-diagram"
 import { useMermaid } from "@/hooks/use-mermaid"
 import { captureEvent } from "@/lib/analytics"
 import type { Project } from "@/lib/projects"
 import type { PostMeta } from "@/lib/posts"
-import type { TocHeading } from "@/lib/markdown"
 
-function CaseStudyToc({ headings }: { headings: TocHeading[] }) {
-  const [activeId, setActiveId] = useState<string>("")
-  const isScrollingRef = useRef(false)
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    e.preventDefault()
-    const el = document.getElementById(id)
-    if (!el) return
-
-    setActiveId(id)
-    isScrollingRef.current = true
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
-
-    const top = el.getBoundingClientRect().top + window.scrollY - 24
-    window.scrollTo({ top, behavior: "smooth" })
-
-    scrollTimeoutRef.current = setTimeout(() => {
-      isScrollingRef.current = false
-    }, 800)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (headings.length === 0) return
-
-    const observers: IntersectionObserver[] = []
-    const visibleIds = new Set<string>()
-
-    headings.forEach(({ id }) => {
-      const el = document.getElementById(id)
-      if (!el) return
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (isScrollingRef.current) return
-          if (entry.isIntersecting) {
-            visibleIds.add(id)
-          } else {
-            visibleIds.delete(id)
-          }
-          const firstVisible = headings.find((h) => visibleIds.has(h.id))
-          if (firstVisible) setActiveId(firstVisible.id)
-        },
-        {
-          rootMargin: "-60px 0px -65% 0px",
-          threshold: 0,
-        }
-      )
-      observer.observe(el)
-      observers.push(observer)
-    })
-
-    return () => observers.forEach((o) => o.disconnect())
-  }, [headings])
-
-  if (headings.length === 0) return null
-
-  return (
-    <aside
-      aria-label="On this page"
-      className="hidden lg:block lg:w-[200px] lg:sticky lg:top-8 lg:self-start shrink-0"
-    >
-      <p className="eyebrow mb-3">On this page</p>
-      <ul className="space-y-1.5 border-l border-border pl-3">
-        {headings.map((heading) => {
-          const isActive = activeId === heading.id
-          return (
-            <li key={heading.id} className={heading.level === 3 ? "pl-2.5" : ""}>
-              <a
-                href={`#${heading.id}`}
-                onClick={(e) => handleClick(e, heading.id)}
-                className={`block text-xs leading-snug py-1 transition-colors duration-200 ${
-                  isActive
-                    ? "text-primary font-medium"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {heading.text}
-              </a>
-            </li>
-          )
-        })}
-      </ul>
-    </aside>
-  )
-}
+const EXISTING_IMAGES = new Set([
+  "/projects/city-connector-architecture.jpg",
+  "/projects/necta-explorer.png",
+])
 
 interface ProjectDetailsClientProps {
   project: Project
   htmlContent: string
-  headings: TocHeading[]
   relatedArticles: PostMeta[]
   nextProject: Project
 }
@@ -117,7 +26,6 @@ interface ProjectDetailsClientProps {
 export default function ProjectDetailsClient({
   project,
   htmlContent,
-  headings,
   relatedArticles,
   nextProject,
 }: ProjectDetailsClientProps) {
@@ -129,271 +37,315 @@ export default function ProjectDetailsClient({
     project.githubLinks && project.githubLinks.length > 0
       ? project.githubLinks
       : project.githubUrl && project.githubUrl !== "#"
-        ? [{ label: "GitHub", url: project.githubUrl }]
+        ? [{ label: "View source", url: project.githubUrl }]
         : []
-  const hasLinks = hasLiveUrl || githubLinks.length > 0
-  const hasTldr = Boolean(project.problem || project.result || project.myPart)
-  const hasArchitecture = Boolean(project.architectureImage || project.diagram)
 
-  const tocHeadings: TocHeading[] = [
-    ...(hasArchitecture ? [{ id: "architecture", text: "Architecture", level: 2 }] : []),
-    ...headings,
-  ]
+  const stageImage =
+    project.architectureImage && EXISTING_IMAGES.has(project.architectureImage)
+      ? project.architectureImage
+      : project.image && EXISTING_IMAGES.has(project.image)
+        ? project.image
+        : null
 
   return (
     <>
       <Header />
 
-      <main id="main-content" className="py-12 md:py-20 min-h-screen">
-        <div className="page-container">
-          <div className="flex flex-col lg:flex-row lg:items-start gap-12">
-            {/* Main Article Column (max 720px) */}
-            <div className="w-full max-w-[720px] min-w-0 space-y-10">
-              {/* 1. Back link "All projects", H1 (48px), one-sentence summary */}
-              <div className="space-y-4">
-                <Link
-                  href="/projects"
-                  className="inline-flex items-center gap-2 min-h-[44px] text-xs font-mono uppercase tracking-[0.05em] text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <ArrowLeft className="size-3.5" aria-hidden="true" />
-                  <span>All projects</span>
-                </Link>
+      <main id="main-content">
+        <div className="wrap">
+          <header className="case-head">
+            <Link className="back-link" href="/projects">
+              ← Back to all work
+            </Link>
 
-                <h1 className="text-[36px] md:text-[48px] font-bold tracking-[-0.03em] leading-[1.08] text-foreground">
-                  {project.title}
-                </h1>
+            <h1>
+              {project.resultHeadline.prefix}
+              <span className="hl-word">
+                {project.resultHeadline.highlight}
+              </span>
+              {project.resultHeadline.suffix}
+            </h1>
 
-                <p className="text-[17px] md:text-[19px] leading-[1.6] text-muted-foreground">
-                  {project.description}
-                </p>
+            <p className="case-dek">{project.description}</p>
+
+            {(hasLiveUrl || githubLinks.length > 0) && (
+              <div className="cta-row">
+                {hasLiveUrl && (
+                  <a
+                    className="btn p"
+                    href={project.liveUrl!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() =>
+                      captureEvent("project_live_website_visited", {
+                        project_title: project.title,
+                        live_url: project.liveUrl,
+                      })
+                    }
+                  >
+                    Open live demo
+                  </a>
+                )}
+                {githubLinks.map((repo, idx) => (
+                  <a
+                    key={repo.url}
+                    className={!hasLiveUrl && idx === 0 ? "btn p" : "btn s"}
+                    href={repo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() =>
+                      captureEvent("project_source_code_viewed", {
+                        project_title: project.title,
+                        github_url: repo.url,
+                        repo_label: repo.label,
+                      })
+                    }
+                  >
+                    {githubLinks.length === 1 ? "View source" : repo.label}
+                  </a>
+                ))}
               </div>
+            )}
 
-              {/* 2. Metadata strip (up to 4 columns, hairline top and bottom): Role | Year | Stack | Links */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 border-t border-b border-border py-5">
-                {project.role && (
-                  <div className="space-y-1">
-                    <span className="block meta-mono uppercase tracking-[0.05em]">Role</span>
-                    <span className="block text-sm text-foreground font-medium">
-                      {project.role}
-                    </span>
-                  </div>
-                )}
-
-                {project.year && (
-                  <div className="space-y-1">
-                    <span className="block meta-mono uppercase tracking-[0.05em]">Year</span>
-                    <span className="block text-sm font-mono text-foreground">
-                      {project.year}
-                    </span>
-                  </div>
-                )}
-
-                {project.technologies.length > 0 && (
-                  <div className={`space-y-1.5 ${!project.role && !project.year ? "sm:col-span-2 md:col-span-3" : ""}`}>
-                    <span className="block meta-mono uppercase tracking-[0.05em]">Stack</span>
-                    <div className="flex flex-wrap gap-x-2.5 gap-y-1">
-                      {project.technologies.map((tech) => (
-                        <span key={tech} className="text-xs font-mono text-foreground">
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {hasLinks && (
-                  <div className="space-y-1.5">
-                    <span className="block meta-mono uppercase tracking-[0.05em]">Links</span>
-                    <div className="flex flex-wrap items-center gap-3">
-                      {hasLiveUrl && (
-                        <Link
-                          href={project.liveUrl!}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() =>
-                            captureEvent("project_live_website_visited", {
-                              project_title: project.title,
-                              live_url: project.liveUrl,
-                            })
-                          }
-                          className="inline-flex items-center gap-1.5 min-h-[44px] sm:min-h-0 text-xs font-mono text-primary hover:underline"
-                        >
-                          <span>Live</span>
-                          <ExternalLink className="size-3.5" aria-hidden="true" />
-                        </Link>
-                      )}
-                      {githubLinks.map((repo) => (
-                        <Link
-                          key={repo.url}
-                          href={repo.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() =>
-                            captureEvent("project_source_code_viewed", {
-                              project_title: project.title,
-                              github_url: repo.url,
-                              repo_label: repo.label,
-                            })
-                          }
-                          className="inline-flex items-center gap-1.5 min-h-[44px] sm:min-h-0 text-xs font-mono text-primary hover:underline"
-                        >
-                          <span>{repo.label}</span>
-                          <Github className="size-3.5" aria-hidden="true" />
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* 3. TL;DR panel (bordered, surface background) */}
-              {hasTldr && (
-                <section
-                  aria-label="TL;DR summary"
-                  className="rounded-md border border-border bg-card p-5 sm:p-6 space-y-3"
-                >
-                  <p className="eyebrow">TL;DR</p>
-                  <dl className="space-y-2 text-sm leading-relaxed">
-                    {project.problem && (
-                      <div className="grid sm:grid-cols-[90px_1fr] gap-1 sm:gap-3">
-                        <dt className="meta-mono font-medium text-foreground">Problem</dt>
-                        <dd className="text-muted-foreground">{project.problem}</dd>
-                      </div>
-                    )}
-                    {project.result && (
-                      <div className="grid sm:grid-cols-[90px_1fr] gap-1 sm:gap-3">
-                        <dt className="meta-mono font-medium text-foreground">Result</dt>
-                        <dd className="text-muted-foreground">{project.result}</dd>
-                      </div>
-                    )}
-                    {project.myPart && (
-                      <div className="grid sm:grid-cols-[90px_1fr] gap-1 sm:gap-3">
-                        <dt className="meta-mono font-medium text-foreground">My part</dt>
-                        <dd className="text-muted-foreground">{project.myPart}</dd>
-                      </div>
-                    )}
-                  </dl>
-                </section>
-              )}
-
-              {/* 4. Architecture (early on the page) */}
-              {hasArchitecture && (
-                <section id="architecture" className="space-y-3">
-                  <h2 className="text-[28px] font-semibold tracking-tight text-foreground">
-                    Architecture
-                  </h2>
-                  {project.architectureImage ? (
-                    <div className="rounded-md border border-border bg-card overflow-hidden">
-                      <Image
-                        src={project.architectureImage}
-                        alt={`${project.title} system architecture diagram`}
-                        width={1024}
-                        height={489}
-                        className="w-full h-auto block"
-                        priority
-                      />
-                    </div>
-                  ) : (
-                    project.diagram && (
-                      <div className="rounded-md border border-border bg-card p-4 sm:p-6">
-                        <ArchDiagram
-                          nodes={project.diagram.nodes}
-                          className="w-full max-w-[480px] h-auto aspect-[20/3] block text-foreground select-none"
-                        />
-                      </div>
-                    )
-                  )}
-                </section>
-              )}
-
-              {/* 5. Key decisions (structured frontmatter if present) */}
-              {project.decisions && project.decisions.length > 0 && (
-                <section id="key-decisions" className="space-y-4">
-                  <h2 className="text-[28px] font-semibold tracking-tight text-foreground">
-                    Key decisions
-                  </h2>
-                  <ol className="divide-y divide-border border-t border-b border-border">
-                    {project.decisions.map((item, idx) => (
-                      <li
-                        key={idx}
-                        className="py-4 grid gap-2 sm:grid-cols-[32px_1fr]"
-                      >
-                        <span className="meta-mono text-primary font-medium">
-                          {String(idx + 1).padStart(2, "0")}
-                        </span>
-                        <div className="space-y-1 text-sm">
-                          <p className="font-semibold text-foreground">{item.decision}</p>
-                          <p className="text-muted-foreground">{item.tradeoff}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-              )}
-
-              {/* 6. Results (structured frontmatter if present) */}
-              {project.results && project.results.length > 0 && (
-                <section id="results" className="space-y-3">
-                  <h2 className="text-[28px] font-semibold tracking-tight text-foreground">
-                    Results
-                  </h2>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    {project.results.map((res, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5">
-                        <span className="mt-2 size-1.5 rounded-full bg-primary shrink-0" />
-                        <span>{res}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-
-              {/* Case Study Markdown Body */}
-              {htmlContent ? (
-                <article
-                  ref={articleRef}
-                  className="prose max-w-none"
-                  dangerouslySetInnerHTML={{ __html: htmlContent }}
-                />
-              ) : (
-                <div className="py-16 text-center border border-dashed border-border rounded-md bg-card">
-                  <FolderGit2 className="size-8 mx-auto text-muted-foreground mb-3" />
-                  <p className="text-sm text-muted-foreground font-medium">
-                    Detailed case study in preparation.
-                  </p>
+            <dl className="facts-strip">
+              {project.role && (
+                <div>
+                  <dt>Role</dt>
+                  <dd>{project.role}</dd>
                 </div>
               )}
+              {(project.duration || project.year) && (
+                <div>
+                  <dt>Year</dt>
+                  <dd>{project.duration ?? project.year}</dd>
+                </div>
+              )}
+              {project.usersOrScale && (
+                <div>
+                  <dt>Users &amp; scale</dt>
+                  <dd>{project.usersOrScale}</dd>
+                </div>
+              )}
+              {project.technologies.length > 0 && (
+                <div>
+                  <dt>Stack</dt>
+                  <dd>{project.technologies.slice(0, 6).join(", ")}</dd>
+                </div>
+              )}
+            </dl>
+          </header>
 
-              {/* 7. Related: link to a related article and the next project */}
-              <section
-                aria-label="Related content"
-                className="pt-8 border-t border-border space-y-6"
-              >
-                {relatedArticles.length > 0 && (
-                  <div className="space-y-3">
-                    <p className="eyebrow">Related article</p>
-                    <div className="divide-y divide-border border-t border-b border-border">
-                      {relatedArticles.map((article) => (
-                        <Link
-                          key={article.slug}
-                          href={`/writing/${article.slug}`}
-                          className="group flex items-baseline justify-between gap-4 py-3.5 min-h-[44px]"
-                        >
-                          <span className="text-base font-medium text-foreground group-hover:text-primary transition-colors">
-                            {article.title}
-                          </span>
-                          <span className="meta-mono shrink-0 inline-flex items-center gap-1 text-primary">
-                            Read article
-                            <ArrowUpRight className="size-3.5" aria-hidden="true" />
-                          </span>
-                        </Link>
-                      ))}
-                    </div>
+          <div
+            className="visual-stage"
+            role="img"
+            aria-label={
+              stageImage
+                ? `Architecture and screens of ${project.title}`
+                : `System preview of ${project.title} ([ADD: real product screenshot])`
+            }
+          >
+            <div className="stage-browser">
+              {stageImage ? (
+                <div className="relative w-full h-full">
+                  <Image
+                    src={stageImage}
+                    alt={`${project.title} visual preview`}
+                    width={1024}
+                    height={560}
+                    priority
+                    sizes="(max-width: 820px) 90vw, 680px"
+                    className="w-full h-full object-cover object-top"
+                  />
+                </div>
+              ) : (
+                <div className="frame-screen">
+                  <div>
+                    <span className="mock-bar hl" />
+                    <span className="mock-bar" />
+                    <span className="mock-bar" style={{ width: "70%" }} />
                   </div>
-                )}
+                  {project.diagram && (
+                    <div className="mock-nodes">
+                      <span className="mock-node">
+                        {project.diagram.nodes[0]}
+                      </span>
+                      <span className="mock-node mid">
+                        {project.diagram.nodes[1]}
+                      </span>
+                      <span className="mock-node">
+                        {project.diagram.nodes[2]}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="stage-phone" aria-hidden="true">
+              <span className="mock-bar hl" />
+              <span className="mock-bar" />
+              <span className="mock-bar" />
+              <span className="mock-bar" />
+              <span className="mock-bar hl" />
+              <span className="mock-bar" />
+            </div>
+          </div>
 
-                <div className="space-y-2">
-                  <p className="eyebrow">Next project</p>
+          {project.problem && (
+            <section id="problem" className="site-section">
+              <div className="split-sec">
+                <h2>The problem</h2>
+                <div className="serif-copy">
+                  <p>{project.problem}</p>
+                  {project.userQuote && (
+                    <div className="quote-block">
+                      “{project.userQuote.quote}”
+                      <small>{project.userQuote.attribution}</small>
+                    </div>
+                  )}
+                  {project.myPart && (
+                    <p>
+                      <strong>My part:</strong> {project.myPart}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {project.timeline && project.timeline.length > 0 && (
+            <section id="process" className="site-section">
+              <div className="split-sec">
+                <h2>How I worked</h2>
+                <ol className="timeline-steps">
+                  {project.timeline.map((step, i) => (
+                    <li key={i}>
+                      <b>{step.title}</b>
+                      <small>{step.period}</small>
+                      <p>{step.detail}</p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </section>
+          )}
+
+          {project.decisions && project.decisions.length > 0 && (
+            <section id="decisions" className="site-section">
+              <div className="split-sec">
+                <h2>Key decisions</h2>
+                <div className="decisions-grid">
+                  {project.decisions.map((item, i) => (
+                    <div key={i} className="surface-card">
+                      <h3>{item.decision}</h3>
+                      {item.summary && <p>{item.summary}</p>}
+                      <p className="vs">
+                        <b>Tradeoff</b>
+                        {item.tradeoff}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {project.screens && project.screens.length > 0 && (
+            <section id="screens" className="site-section">
+              <div className="split-sec">
+                <h2>The product</h2>
+                <div className="screens-grid">
+                  {project.screens.map((scr, i) => (
+                    <figure key={i} className="screen-fig">
+                      <div className="ph-mock" aria-hidden="true">
+                        <span className="mock-bar hl" />
+                        <span className="mock-bar" />
+                        <span className="mock-bar" />
+                        <span className="mock-bar" style={{ width: "75%" }} />
+                      </div>
+                      <figcaption>{scr.caption}</figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {project.outcomeCards && project.outcomeCards.length > 0 && (
+            <section id="results" className="site-section">
+              <div className="split-sec">
+                <h2>Results</h2>
+                <div className="results-grid">
+                  {project.outcomeCards.map((card, i) => (
+                    <div key={i} className="surface-card">
+                      <b>{card.metric}</b>
+                      <p>{card.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {project.learned && (
+            <section id="learned" className="site-section">
+              <div className="split-sec">
+                <h2>What I learned</h2>
+                <div className="serif-copy">
+                  <p>{project.learned.summary}</p>
+                  {project.learned.bullets.length > 0 && (
+                    <ul>
+                      {project.learned.bullets.map((b, i) => (
+                        <li key={i}>{b}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {htmlContent && (
+            <section id="deep-dive" className="site-section">
+              <div className="split-sec">
+                <h2>Technical deep dive</h2>
+                <article
+                  ref={articleRef}
+                  className="prose"
+                  dangerouslySetInnerHTML={{ __html: htmlContent }}
+                />
+              </div>
+            </section>
+          )}
+
+          {relatedArticles.length > 0 && (
+            <section id="related-writing" className="site-section">
+              <div className="split-sec">
+                <h2>Related writing</h2>
+                <div>
+                  {relatedArticles.map((article) => (
+                    <article key={article.slug} className="post-row">
+                      <time>{article.date}</time>
+                      <div>
+                        <h3>
+                          <Link href={`/writing/${article.slug}`}>
+                            {article.title}
+                          </Link>
+                        </h3>
+                        <p>{article.excerpt}</p>
+                      </div>
+                      <span className="rt">{article.readTime}</span>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          <section className="site-section" style={{ borderTop: 0, paddingTop: "1rem" }}>
+            <article className="next-card">
+              <div>
+                <small>Next project</small>
+                <h3>
                   <Link
                     href={`/projects/${nextProject.slug}`}
                     onClick={() =>
@@ -403,29 +355,20 @@ export default function ProjectDetailsClient({
                         next_slug: nextProject.slug,
                       })
                     }
-                    className="group flex items-center justify-between gap-4 rounded-md border border-border bg-card p-5 hover:border-primary transition-colors duration-200 min-h-[44px]"
                   >
-                    <div className="space-y-1 min-w-0">
-                      <p className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                        {nextProject.title}
-                      </p>
-                      <p className="text-sm text-muted-foreground line-clamp-1">
-                        {nextProject.description}
-                      </p>
-                    </div>
-                    <ArrowUpRight
-                      className="size-5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors"
-                      aria-hidden="true"
-                    />
+                    {nextProject.title}
                   </Link>
-                </div>
-              </section>
-            </div>
-
-            {/* Sticky "On this page" Aside (~200px) */}
-            <CaseStudyToc headings={tocHeadings} />
-          </div>
+                </h3>
+                <p>{nextProject.description}</p>
+              </div>
+              {nextProject.technologies[0] && (
+                <span className="tag">{nextProject.technologies[0]}</span>
+              )}
+            </article>
+          </section>
         </div>
+
+        <Contact />
       </main>
 
       <Footer />
