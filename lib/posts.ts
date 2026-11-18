@@ -12,10 +12,11 @@ export interface PostMeta {
   readTime: string
   tags: string[]
   project?: string
+  highlightPhrase?: string
 }
 
 export interface Post extends PostMeta {
-  content: string // raw markdown body
+  content: string
 }
 
 function readMarkdownFile(slug: string): { data: Record<string, unknown>; content: string } | null {
@@ -32,6 +33,18 @@ function parseProjectSlug(val: unknown): string | undefined {
   return trimmed.length > 0 ? trimmed : undefined
 }
 
+function calculateReadTime(content: string): string {
+  const words = content.trim().split(/\s+/).filter(Boolean).length
+  const minutes = Math.max(1, Math.round(words / 200))
+  return `${minutes} min read`
+}
+
+const DEFAULT_HIGHLIGHTS: Record<string, string> = {
+  "TOTP-authentication": "How It Works and How It's Built",
+  "passkey-auth-as-multi-factor-auth-option": "Multi-Factor Authentication",
+  "typescript-generics": "TypeScript Generics",
+}
+
 export function getAllPosts(): PostMeta[] {
   if (!fs.existsSync(CONTENT_DIR)) return []
 
@@ -43,16 +56,24 @@ export function getAllPosts(): PostMeta[] {
       const file = readMarkdownFile(slug)
       if (!file) return null
 
-      const { data } = file
+      const { data, content } = file
       const project = parseProjectSlug(data.project)
+      const rawReadTime = typeof data.readTime === "string" ? data.readTime.trim() : ""
+      const readTime = rawReadTime || calculateReadTime(content)
+      const highlightPhrase =
+        typeof data.highlightPhrase === "string" && data.highlightPhrase.trim()
+          ? data.highlightPhrase.trim()
+          : DEFAULT_HIGHLIGHTS[slug]
+
       return {
         slug,
         title: String(data.title ?? ""),
         excerpt: String(data.excerpt ?? ""),
         date: String(data.date ?? ""),
-        readTime: String(data.readTime ?? ""),
+        readTime,
         tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
         ...(project ? { project } : {}),
+        ...(highlightPhrase ? { highlightPhrase } : {}),
       }
     })
     .filter((p): p is PostMeta => p !== null)
@@ -64,14 +85,22 @@ export function getPost(slug: string): Post | undefined {
   if (!file) return undefined
 
   const { data, content } = file
+  const rawReadTime = typeof data.readTime === "string" ? data.readTime.trim() : ""
+  const readTime = rawReadTime || calculateReadTime(content)
+  const highlightPhrase =
+    typeof data.highlightPhrase === "string" && data.highlightPhrase.trim()
+      ? data.highlightPhrase.trim()
+      : DEFAULT_HIGHLIGHTS[slug]
+
   return {
     slug,
     title: String(data.title ?? ""),
     excerpt: String(data.excerpt ?? ""),
     date: String(data.date ?? ""),
-    readTime: String(data.readTime ?? ""),
+    readTime,
     tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
     project: parseProjectSlug(data.project),
+    ...(highlightPhrase ? { highlightPhrase } : {}),
     content,
   }
 }

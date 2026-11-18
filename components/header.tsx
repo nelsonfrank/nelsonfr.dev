@@ -2,59 +2,80 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { captureEvent } from "@/lib/analytics"
 
 export function Header() {
   const pathname = usePathname()
-  const isHome = pathname === "/"
 
-  const navLinks = [
-    { href: isHome ? "#work" : "/projects", label: "Work" },
-    { href: isHome ? "#writing" : "/writing", label: "Writing" },
-    { href: isHome ? "#about" : "/experience", label: "About" },
-    { href: isHome ? "#contact" : "/#contact", label: "Contact" },
-  ]
+  const isWork = pathname === "/projects" || pathname.startsWith("/projects/")
+  const isWriting = pathname === "/writing" || pathname.startsWith("/writing/")
+  const isAbout = pathname === "/experience" || pathname === "/about"
+
+  const toggleTheme = () => {
+    try {
+      const root = document.documentElement
+      const attr = root.getAttribute("data-theme")
+      const isDark =
+        attr === "dark" ||
+        (!attr && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      const next = isDark ? "light" : "dark"
+      root.setAttribute("data-theme", next)
+      try {
+        localStorage.setItem("theme", next)
+      } catch {
+        // Ignore storage errors
+      }
+      captureEvent("theme_toggled", { theme: next })
+    } catch {
+      // Ignore errors
+    }
+  }
 
   return (
-    <header className="border-b border-border bg-background">
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2.5 focus:rounded-md focus:bg-primary focus:text-primary-foreground focus:text-sm focus:font-medium"
-      >
+    <>
+      <a href="#main-content" className="skip-link">
         Skip to content
       </a>
-      <div className="page-container flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2.5 sm:py-3.5">
+      <nav aria-label="Main" className="site-nav">
         <Link
           href="/"
-          className="text-base font-semibold tracking-tight text-foreground hover:text-primary transition-colors duration-200 min-h-[44px] inline-flex items-center shrink-0"
+          className="me"
+          aria-label="Nelson Frank — Home"
+          aria-current={pathname === "/" ? "page" : undefined}
         >
-          Nelson Frank
+          NF
         </Link>
-
-        <div className="flex flex-wrap items-center justify-between w-full sm:w-auto gap-x-1 gap-y-1 sm:gap-x-2">
-          <nav aria-label="Primary" className="flex flex-wrap items-center -ml-2 sm:ml-0">
-            {navLinks.map((link, index) => (
-              <span key={link.label} className="inline-flex items-center">
-                {index > 0 && (
-                  <span
-                    aria-hidden="true"
-                    className="text-muted-foreground/50 select-none px-0.5 sm:px-1"
-                  >
-                    ·
-                  </span>
-                )}
-                <Link
-                  href={link.href}
-                  className="inline-flex items-center justify-center min-h-[44px] px-2 sm:px-2.5 text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  {link.label}
-                </Link>
-              </span>
-            ))}
-          </nav>
-          <ThemeToggle />
-        </div>
-      </div>
-    </header>
+        <Link
+          href="/projects"
+          className="hide-xs"
+          aria-current={isWork ? "page" : undefined}
+        >
+          Work
+        </Link>
+        <Link
+          href="/writing"
+          className="hide-xs"
+          aria-current={isWriting ? "page" : undefined}
+        >
+          Writing
+        </Link>
+        <Link
+          href="/experience"
+          className="hide-xs"
+          aria-current={isAbout ? "page" : undefined}
+        >
+          About
+        </Link>
+        <a href="#contact">Contact</a>
+        <button
+          id="t"
+          type="button"
+          onClick={toggleTheme}
+          aria-label="Switch theme"
+        >
+          Theme
+        </button>
+      </nav>
+    </>
   )
 }

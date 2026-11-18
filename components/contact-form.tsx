@@ -1,15 +1,22 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { Send, CheckCircle } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { Turnstile, type TurnstileRef } from "./turnstile"
-import { captureEvent, captureError, getPostHogHeaders, identifyUser } from "@/lib/analytics"
+import {
+  captureEvent,
+  captureError,
+  getPostHogHeaders,
+  identifyUser,
+} from "@/lib/analytics"
 
 export default function ContactForm() {
   const turnstileRef = useRef<TurnstileRef>(null)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [statusMessage, setStatusMessage] = useState<{
+    type: "success" | "error"
+    text: string
+  } | null>(null)
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
 
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
@@ -21,9 +28,16 @@ export default function ContactForm() {
     formState: { errors, isSubmitting },
   } = useForm<{ name: string; email: string; message: string }>()
 
-  const onSubmit = async (data: { name: string; email: string; message: string }) => {
+  const onSubmit = async (data: {
+    name: string
+    email: string
+    message: string
+  }) => {
+    setStatusMessage(null)
     if (siteKey && !captchaToken) {
-      toast.error("Please complete the captcha verification.")
+      const msg = "Please complete the verification check before sending."
+      setStatusMessage({ type: "error", text: msg })
+      toast.error(msg)
       return
     }
 
@@ -47,9 +61,7 @@ export default function ContactForm() {
       if (response.ok) {
         import("@sentry/nextjs")
           .then((Sentry) => {
-            Sentry.metrics.count("test_metric", 1)
             Sentry.metrics.count("contact_form_success", 1)
-            Sentry.logger.info("User triggered test log", { log_source: "sentry_test" })
           })
           .catch(() => {})
 
@@ -63,21 +75,29 @@ export default function ContactForm() {
           email: data.email,
         })
 
-        setIsSubmitted(true)
-        toast.success(result.message || "Message sent successfully!")
+        const msg =
+          result.message ||
+          "Your message was sent. I will reply within 24 hours."
+        setStatusMessage({ type: "success", text: msg })
+        toast.success(msg)
         reset()
         setCaptchaToken(null)
         turnstileRef.current?.reset()
-        setTimeout(() => setIsSubmitted(false), 3000)
       } else {
-        toast.error(result.error || "Failed to send the message. Please try again.")
+        const msg =
+          result.error ||
+          "Could not send your message. Please try again or email me directly."
+        setStatusMessage({ type: "error", text: msg })
+        toast.error(msg)
         setCaptchaToken(null)
         turnstileRef.current?.reset()
       }
     } catch (error) {
-      console.error(error)
       captureError(error as Error)
-      toast.error("An unexpected error occurred. Please try again.")
+      const msg =
+        "Network error while sending. Please check your connection or email me directly."
+      setStatusMessage({ type: "error", text: msg })
+      toast.error(msg)
       setCaptchaToken(null)
       turnstileRef.current?.reset()
     }
@@ -86,64 +106,149 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mt-4 max-w-[600px] space-y-4 pt-2"
+      style={{
+        marginTop: "1.75rem",
+        maxWidth: "36rem",
+        display: "grid",
+        gap: "1rem",
+      }}
     >
-      <div className="space-y-1.5">
-        <label htmlFor="name" className="block text-xs font-mono text-muted-foreground">
+      <div>
+        <label
+          htmlFor="name"
+          style={{
+            display: "block",
+            fontWeight: 600,
+            fontSize: "0.9rem",
+            marginBottom: "0.35rem",
+            color: "var(--paper)",
+          }}
+        >
           Name
         </label>
         <input
           type="text"
           id="name"
-          {...register("name", { required: "Name is required" })}
-          className="w-full min-h-[44px] px-3.5 py-2.5 bg-input border border-border rounded-md text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors duration-200"
+          {...register("name", { required: "Please enter your name." })}
           placeholder="Your name"
+          style={{
+            width: "100%",
+            minHeight: "44px",
+            padding: "0.7rem 1rem",
+            borderRadius: "6px",
+            border: "1px solid var(--line)",
+            background: "var(--paper)",
+            color: "var(--ink)",
+            font: "400 1rem var(--display)",
+          }}
         />
         {errors.name && (
-          <p className="text-xs text-destructive mt-1">{errors.name.message}</p>
+          <p
+            style={{
+              margin: "0.3rem 0 0",
+              fontSize: "0.85rem",
+              color: "var(--marigold)",
+            }}
+          >
+            {errors.name.message}
+          </p>
         )}
       </div>
 
-      <div className="space-y-1.5">
-        <label htmlFor="email" className="block text-xs font-mono text-muted-foreground">
+      <div>
+        <label
+          htmlFor="email"
+          style={{
+            display: "block",
+            fontWeight: 600,
+            fontSize: "0.9rem",
+            marginBottom: "0.35rem",
+            color: "var(--paper)",
+          }}
+        >
           Email
         </label>
         <input
           type="email"
           id="email"
           {...register("email", {
-            required: "Email is required",
+            required: "Please enter your email address.",
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Invalid email address",
+              message: "Please enter a valid email address.",
             },
           })}
-          className="w-full min-h-[44px] px-3.5 py-2.5 bg-input border border-border rounded-md text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors duration-200"
-          placeholder="your@email.com"
+          placeholder="you@example.com"
+          style={{
+            width: "100%",
+            minHeight: "44px",
+            padding: "0.7rem 1rem",
+            borderRadius: "6px",
+            border: "1px solid var(--line)",
+            background: "var(--paper)",
+            color: "var(--ink)",
+            font: "400 1rem var(--display)",
+          }}
         />
         {errors.email && (
-          <p className="text-xs text-destructive mt-1">{errors.email.message}</p>
+          <p
+            style={{
+              margin: "0.3rem 0 0",
+              fontSize: "0.85rem",
+              color: "var(--marigold)",
+            }}
+          >
+            {errors.email.message}
+          </p>
         )}
       </div>
 
-      <div className="space-y-1.5">
-        <label htmlFor="message" className="block text-xs font-mono text-muted-foreground">
+      <div>
+        <label
+          htmlFor="message"
+          style={{
+            display: "block",
+            fontWeight: 600,
+            fontSize: "0.9rem",
+            marginBottom: "0.35rem",
+            color: "var(--paper)",
+          }}
+        >
           Message
         </label>
         <textarea
           id="message"
-          {...register("message", { required: "Message is required" })}
           rows={4}
-          className="w-full px-3.5 py-2.5 bg-input border border-border rounded-md text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors duration-200 resize-y"
-          placeholder="Tell me about your project..."
+          {...register("message", {
+            required: "Please write a short message about your project.",
+          })}
+          placeholder="Tell me what you’re building and when you need it…"
+          style={{
+            width: "100%",
+            padding: "0.7rem 1rem",
+            borderRadius: "6px",
+            border: "1px solid var(--line)",
+            background: "var(--paper)",
+            color: "var(--ink)",
+            font: "400 1rem var(--display)",
+            resize: "vertical",
+          }}
         />
         {errors.message && (
-          <p className="text-xs text-destructive mt-1">{errors.message.message}</p>
+          <p
+            style={{
+              margin: "0.3rem 0 0",
+              fontSize: "0.85rem",
+              color: "var(--marigold)",
+            }}
+          >
+            {errors.message.message}
+          </p>
         )}
       </div>
 
       {siteKey && (
-        <div className="flex justify-start">
+        <div>
           <Turnstile
             ref={turnstileRef}
             siteKey={siteKey}
@@ -154,26 +259,32 @@ export default function ContactForm() {
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={isSubmitted || isSubmitting || (!!siteKey && !captchaToken)}
-        className="inline-flex items-center justify-center gap-2 min-h-[44px] w-full sm:w-auto px-5 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-      >
-        {isSubmitted ? (
-          <>
-            <CheckCircle className="size-4" />
-            <span>Message Sent</span>
-          </>
-        ) : isSubmitting ? (
-          <span>Sending...</span>
-        ) : (
-          <>
-            <span>Send Message</span>
-            <Send className="size-4" />
-          </>
-        )}
-      </button>
+      <div>
+        <button
+          type="submit"
+          disabled={isSubmitting || (!!siteKey && !captchaToken)}
+          className="btn p"
+        >
+          {isSubmitting ? "Sending message…" : "Send message"}
+        </button>
+      </div>
+
+      {statusMessage && (
+        <p
+          role="status"
+          aria-live="polite"
+          style={{
+            margin: 0,
+            fontSize: "0.95rem",
+            color:
+              statusMessage.type === "success"
+                ? "var(--lagoon-soft)"
+                : "var(--marigold)",
+          }}
+        >
+          {statusMessage.text}
+        </p>
+      )}
     </form>
   )
 }
-
