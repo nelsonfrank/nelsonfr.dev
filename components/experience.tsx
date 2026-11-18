@@ -62,17 +62,34 @@ export function Experience({
           </div>
 
           <div className="tile t-xp">
-            <h3>Experience</h3>
+            <h3>
+              <Link
+                href="/experience#experience"
+                style={{ color: "var(--ink)", textDecoration: "none" }}
+              >
+                Experience
+              </Link>
+            </h3>
             <ul className="xp-mini">
               {topThree.map((exp) => (
                 <li key={exp.slug}>
                   <span>
-                    {exp.title}, {exp.company}
+                    <Link
+                      href="/experience#experience"
+                      style={{ color: "var(--ink)", textDecoration: "none" }}
+                    >
+                      {exp.title}, {exp.company}
+                    </Link>
                   </span>
                   <small>{exp.period}</small>
                 </li>
               ))}
             </ul>
+            <p style={{ marginTop: "0.75rem", fontSize: "0.9rem" }}>
+              <Link href="/experience#experience">
+                Full role details and CV →
+              </Link>
+            </p>
           </div>
 
           <div className="tile t-how">

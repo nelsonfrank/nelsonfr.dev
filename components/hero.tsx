@@ -38,6 +38,7 @@ export function Hero() {
             <a
               className="btn s"
               href="/cv.pdf"
+              download="Nelson-Frank-CV.pdf"
               onClick={() => captureEvent("cta_download_cv_clicked")}
             >
               Download CV

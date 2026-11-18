@@ -111,7 +111,14 @@ export default function ProjectDetailsClient({
               {project.role && (
                 <div>
                   <dt>Role</dt>
-                  <dd>{project.role}</dd>
+                  <dd>
+                    <Link
+                      href="/experience"
+                      style={{ color: "var(--ink)", textDecoration: "underline", textUnderlineOffset: "3px" }}
+                    >
+                      {project.role}
+                    </Link>
+                  </dd>
                 </div>
               )}
               {(project.duration || project.year) && (

@@ -1,10 +1,24 @@
 "use client"
 
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { Header } from "@/components/header"
-import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
+import { CONTACT_EMAIL } from "@/components/contact"
 import type { Experience } from "@/lib/experience"
+import type { Project } from "@/lib/projects"
+import type { PostMeta } from "@/lib/posts"
+
+export interface CvFileMeta {
+  url: string
+  downloadName: string
+  fileType: string
+  pages: number
+  sizeKb: string
+  updated: string
+  hasPreviewImage: boolean
+}
 
 const METRIC_PATTERNS = [
   "32% of commits",
@@ -46,281 +60,591 @@ function highlightBulletMetrics(text: string): React.ReactNode {
   )
 }
 
-const SKILL_GROUPS = [
+const ROLE_TEAM_SIZE: Record<string, string> = {
+  "nbc-bank": "Contract backend engineer [ADD: team size]",
+  "mwangahakika-bank": "Independent freelance engineer [ADD: team size]",
+  "must-company": "Frontend engineer across 5 client projects [ADD: team size]",
+  "kalen-limited": "Full-stack engineering team [ADD: team size]",
+  "id8-space": "Full-stack engineer, mentored 3 junior developers [ADD: team size]",
+}
+
+interface SkillRow {
+  name: string
+  level: 1 | 2 | 3 | 4 | 5
+  years: string
+  usedInLabel: string
+  usedInHref?: string
+}
+
+interface SkillGroup {
+  group: string
+  items: SkillRow[]
+}
+
+const SKILL_GROUPS: SkillGroup[] = [
   {
-    title: "Build (Frontend & Mobile)",
-    skills: [
-      "TypeScript",
-      "React",
-      "Next.js",
-      "React Native",
-      "Expo",
-      "Tailwind CSS",
-      "Zustand",
-      "TanStack Query",
+    group: "Core & Backend",
+    items: [
+      {
+        name: "TypeScript",
+        level: 5,
+        years: "6+ yrs [ADD: exact yrs]",
+        usedInLabel: "Passkey Authentication Engine",
+        usedInHref: "/projects/passkey-auth",
+      },
+      {
+        name: "Go (Golang)",
+        level: 4,
+        years: "[ADD: years]",
+        usedInLabel: "City Connector RAPTOR engine",
+        usedInHref: "/projects/city-connector-backend",
+      },
+      {
+        name: "Java & Spring Boot",
+        level: 4,
+        years: "[ADD: years]",
+        usedInLabel: "NBC Bank & Mwangahakika Bank",
+        usedInHref: "#experience",
+      },
+      {
+        name: "NestJS & Node.js",
+        level: 5,
+        years: "6+ yrs [ADD: exact yrs]",
+        usedInLabel: "TOTP Authentication deep dive",
+        usedInHref: "/writing/TOTP-authentication",
+      },
+      {
+        name: "Python",
+        level: 4,
+        years: "[ADD: years]",
+        usedInLabel: "NECTA Explorer async crawler",
+        usedInHref: "/projects/necta-explorer",
+      },
     ],
   },
   {
-    title: "Backend & Data",
-    skills: [
-      "Go",
-      "Java",
-      "Spring Boot",
-      "NestJS",
-      "Node.js",
-      "PostgreSQL",
-      "Redis",
-      "Elasticsearch",
+    group: "Frontend & Mobile",
+    items: [
+      {
+        name: "React & Next.js",
+        level: 5,
+        years: "6+ yrs [ADD: exact yrs]",
+        usedInLabel: "NECTA Explorer dashboard",
+        usedInHref: "/projects/necta-explorer",
+      },
+      {
+        name: "React Native (Expo)",
+        level: 4,
+        years: "[ADD: years]",
+        usedInLabel: "City Connector mobile app",
+        usedInHref: "/projects/city-connector-backend",
+      },
+      {
+        name: "Tailwind CSS",
+        level: 5,
+        years: "4+ yrs [ADD: exact yrs]",
+        usedInLabel: "Kalen Limited & NECTA Explorer",
+        usedInHref: "/projects/necta-explorer",
+      },
+      {
+        name: "Zustand & React Query",
+        level: 4,
+        years: "[ADD: years]",
+        usedInLabel: "MUST Company & City Connector",
+        usedInHref: "/projects/city-connector-backend",
+      },
     ],
   },
   {
-    title: "Cloud, Testing & Workflow",
-    skills: [
-      "Kubernetes",
-      "Docker",
-      "AWS (EC2, CloudFront)",
-      "CI/CD",
-      "Jest & Vitest",
-      "Cypress",
-      "JUnit & go-testing",
+    group: "Data, Cloud & Testing",
+    items: [
+      {
+        name: "PostgreSQL & PostGIS",
+        level: 4,
+        years: "4+ yrs [ADD: exact yrs]",
+        usedInLabel: "Passkey Auth & City Connector",
+        usedInHref: "/projects/passkey-auth",
+      },
+      {
+        name: "Redis & Elasticsearch",
+        level: 4,
+        years: "[ADD: years]",
+        usedInLabel: "City Connector GTFS-RT telemetry",
+        usedInHref: "/projects/city-connector-backend",
+      },
+      {
+        name: "Kubernetes & Docker",
+        level: 4,
+        years: "[ADD: years]",
+        usedInLabel: "Homelab & Kubernetes Architecture",
+        usedInHref: "/projects/homelab",
+      },
+      {
+        name: "AWS (EC2, CloudFront)",
+        level: 4,
+        years: "2+ yrs [ADD: exact yrs]",
+        usedInLabel: "Id8 Space production infra",
+        usedInHref: "#experience",
+      },
+      {
+        name: "Jest, Vitest & Cypress",
+        level: 4,
+        years: "[ADD: years]",
+        usedInLabel: "i18n Automation CLI (218 tests)",
+        usedInHref: "/projects/i8n-automation-cli",
+      },
     ],
   },
 ]
 
-const VALUES = [
-  {
-    title: "Own delivery end to end",
-    detail:
-      "I take features from requirements and database schema design all the way to deployment and production monitoring.",
-  },
-  {
-    title: "Verify before shipping",
-    detail:
-      "Automated test suites, strict runtime validation, and careful code review keep fast releases from breaking production.",
-  },
-  {
-    title: "Measure real bottlenecks",
-    detail:
-      "Whether it’s a 60% slower PostgreSQL query or a multi-agency transit search, I profile first and fix what the numbers show.",
-  },
-  {
-    title: "Communicate plainly",
-    detail:
-      "Clear written updates, honest trade-offs, and direct collaboration across time zones.",
-  },
-]
+function LevelBar({ level }: { level: 1 | 2 | 3 | 4 | 5 }) {
+  return (
+    <span className="lv" role="img" aria-label={`${level} of 5 (placeholder rating)`}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <i key={n} className={n <= level ? "on" : undefined} />
+      ))}
+    </span>
+  )
+}
+
+function getRelatedLinksForRole(
+  exp: Experience,
+  projects: Project[],
+  posts: PostMeta[]
+): { label: string; href: string }[] {
+  const techSet = new Set(exp.technologies.map((t) => t.toLowerCase()))
+  const links: { label: string; href: string }[] = []
+
+  for (const project of projects) {
+    const overlap = project.technologies.some((t) =>
+      techSet.has(t.toLowerCase())
+    )
+    if (overlap) {
+      links.push({
+        label: `${project.title} case study`,
+        href: `/projects/${project.slug}`,
+      })
+    }
+    if (links.length >= 2) break
+  }
+
+  for (const post of posts) {
+    const overlap = post.tags.some((t) => techSet.has(t.toLowerCase()))
+    if (overlap) {
+      links.push({
+        label: post.title,
+        href: `/writing/${post.slug}`,
+      })
+    }
+    if (links.length >= 3) break
+  }
+
+  return links
+}
+
+const MENU_ITEMS = [
+  { id: "experience", label: "Experience" },
+  { id: "skills", label: "Skills" },
+  { id: "education", label: "Education" },
+  { id: "more", label: "Talks and open source" },
+  { id: "about", label: "About me" },
+] as const
 
 interface ExperienceClientProps {
   experiences: Experience[]
+  projects: Project[]
+  posts: PostMeta[]
+  cvMeta: CvFileMeta
 }
 
 export default function ExperienceClient({
   experiences,
+  projects,
+  posts,
+  cvMeta,
 }: ExperienceClientProps) {
+  const detailsRefs = useRef<(HTMLDetailsElement | null)[]>([])
+  const [allExpanded, setAllExpanded] = useState(false)
+  const [activeSection, setActiveSection] = useState<string>("experience")
+
+  const syncExpandState = () => {
+    const els = detailsRefs.current.filter(
+      (el): el is HTMLDetailsElement => el !== null
+    )
+    if (els.length === 0) return
+    setAllExpanded(els.every((el) => el.open))
+  }
+
+  const handleToggleAll = () => {
+    const els = detailsRefs.current.filter(
+      (el): el is HTMLDetailsElement => el !== null
+    )
+    const nextOpen = !els.every((el) => el.open)
+    els.forEach((el) => {
+      el.open = nextOpen
+    })
+    setAllExpanded(nextOpen)
+  }
+
+  useEffect(() => {
+    syncExpandState()
+
+    function spy() {
+      let current: string = MENU_ITEMS[0].id
+      for (const item of MENU_ITEMS) {
+        const el = document.getElementById(item.id)
+        if (el && el.getBoundingClientRect().top < window.innerHeight * 0.35) {
+          current = item.id
+        }
+      }
+      setActiveSection(current)
+    }
+
+    window.addEventListener("scroll", spy, { passive: true })
+    spy()
+    return () => window.removeEventListener("scroll", spy)
+  }, [])
+
   return (
     <>
       <Header />
 
-      <main id="main-content">
-        <div className="wrap">
-          <header className="hero-grid">
+      <div className="wrap">
+        <header className="cv-head">
+          <h1>
+            Nelson Frank, <span className="hl-word">full-stack</span> engineer
+          </h1>
+          <p className="role-lead">
+            Backend Developer at NBC Bank, Dar es Salaam. Seven-plus years
+            building distributed banking services, transit platforms, and web
+            applications.
+          </p>
+
+          <div className="cv-panel">
+            {cvMeta.hasPreviewImage ? (
+              <div className="cv-doc-thumb">
+                <Image
+                  src="/cv-preview.webp"
+                  alt="First page of my CV"
+                  width={340}
+                  height={480}
+                  sizes="(max-width: 520px) 80px, 120px"
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+            ) : (
+              <div className="cv-doc-thumb is-mock" aria-hidden="true">
+                <i className="h" />
+                <i className="m" />
+                <i className="w" />
+                <i />
+                <i className="w" />
+                <i />
+                <i className="w" />
+                <i />
+              </div>
+            )}
+
             <div>
-              <h1 className="about-h1">
-                Hi, I’m Nelson. I build <span className="hl-word">dependable</span>{" "}
-                software for teams and real users.
-              </h1>
-              <p className="hero-intro">
-                I’m a full-stack and backend engineer in Dar es Salaam with over
-                seven years of experience shipping distributed banking services,
-                transit platforms, and modern web applications.
+              <h2>My CV</h2>
+              <p className="cv-meta">
+                {cvMeta.fileType} · {cvMeta.pages}{" "}
+                {cvMeta.pages === 1 ? "page" : "pages"} · {cvMeta.sizeKb} ·{" "}
+                {cvMeta.updated}
               </p>
-              <div className="cta-row">
-                <a className="btn p" href="/cv.pdf">
-                  Download CV
+              <div className="cv-acts">
+                <a
+                  className="btn p"
+                  href={cvMeta.url}
+                  download={cvMeta.downloadName}
+                >
+                  Download CV (PDF)
                 </a>
-                <a className="btn s" href="#contact">
+                <a
+                  className="btn s"
+                  href={cvMeta.url}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Open in a new tab
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <dl className="cv-facts">
+            <div>
+              <dt>Experience</dt>
+              <dd>7+ years</dd>
+            </div>
+            <div>
+              <dt>Location</dt>
+              <dd>Dar es Salaam (UTC+3)</dd>
+            </div>
+            <div>
+              <dt>Languages</dt>
+              <dd>English, Swahili</dd>
+            </div>
+            <div>
+              <dt>Work type</dt>
+              <dd>Full-time, freelance</dd>
+            </div>
+            <div>
+              <dt>Availability</dt>
+              <dd>Open to roles</dd>
+            </div>
+          </dl>
+        </header>
+
+        <div className="cv-layout">
+          <nav className="cv-menu" aria-label="On this page">
+            <b>On this page</b>
+            <ol>
+              {MENU_ITEMS.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={`#${item.id}`}
+                    className={activeSection === item.id ? "on" : undefined}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+
+          <main id="main-content" className="cv-main">
+            <section id="experience">
+              <div className="xph">
+                <div>
+                  <h2 className="sh">Experience</h2>
+                  <p className="cv-lead" style={{ margin: 0 }}>
+                    {experiences.length} roles, newest first. Open a role for
+                    the full detail.
+                  </p>
+                </div>
+                <button id="all" type="button" onClick={handleToggleAll}>
+                  {allExpanded ? "Collapse all" : "Expand all"}
+                </button>
+              </div>
+
+              {experiences.map((exp, index) => {
+                const related = getRelatedLinksForRole(exp, projects, posts)
+                const teamText =
+                  ROLE_TEAM_SIZE[exp.slug] ??
+                  `${exp.type} role [ADD: team size]`
+
+                return (
+                  <details
+                    key={exp.slug}
+                    className="job"
+                    open={index === 0}
+                    ref={(el) => {
+                      detailsRefs.current[index] = el
+                    }}
+                    onToggle={syncExpandState}
+                  >
+                    <summary>
+                      <div>
+                        <h3>{exp.title}</h3>
+                        <span className="co">
+                          {exp.company}
+                          {exp.location ? `, ${exp.location}` : ""}
+                        </span>
+                      </div>
+                      <div className="when">
+                        {exp.period}
+                        <span className="chev" aria-hidden="true">
+                          ›
+                        </span>
+                      </div>
+                    </summary>
+
+                    <div className="in">
+                      <dl>
+                        <dt>Team</dt>
+                        <dd>{teamText}</dd>
+
+                        {exp.description && (
+                          <>
+                            <dt>Owned</dt>
+                            <dd>{exp.description}</dd>
+                          </>
+                        )}
+
+                        {exp.bullets.length > 0 && (
+                          <>
+                            <dt>Results</dt>
+                            <dd>
+                              <ul>
+                                {exp.bullets.map((bullet, bIdx) => (
+                                  <li key={bIdx}>
+                                    {highlightBulletMetrics(bullet)}
+                                  </li>
+                                ))}
+                              </ul>
+                            </dd>
+                          </>
+                        )}
+
+                        {exp.technologies.length > 0 && (
+                          <>
+                            <dt>Stack</dt>
+                            <dd>
+                              {exp.technologies.map((tech) => (
+                                <span key={tech} className="tag">
+                                  {tech}
+                                </span>
+                              ))}
+                            </dd>
+                          </>
+                        )}
+
+                        {related.length > 0 && (
+                          <>
+                            <dt>Related</dt>
+                            <dd>
+                              {related.map((rel, rIdx) => (
+                                <span key={rel.href}>
+                                  {rIdx > 0 && " · "}
+                                  <Link href={rel.href}>{rel.label}</Link>
+                                </span>
+                              ))}
+                            </dd>
+                          </>
+                        )}
+                      </dl>
+                    </div>
+                  </details>
+                )
+              })}
+            </section>
+
+            <section id="skills">
+              <h2 className="sh">Skills</h2>
+              <p className="cv-lead">
+                Self-rating out of 5 ([ADD: confirm skill levels and exact
+                years]), with where you can see the work on this site.
+              </p>
+
+              {SKILL_GROUPS.map((group, gIdx) => (
+                <div key={group.group}>
+                  <h3 className="grp">{group.group}</h3>
+                  <div className="sk">
+                    {gIdx === 0 && (
+                      <div className="r h" aria-hidden="true">
+                        <span>Skill</span>
+                        <span>Level</span>
+                        <span>Years</span>
+                        <span>Used in</span>
+                      </div>
+                    )}
+                    {group.items.map((sk) => (
+                      <div key={sk.name} className="r">
+                        <b>{sk.name}</b>
+                        <LevelBar level={sk.level} />
+                        <span className="u">{sk.years}</span>
+                        <span className="w">
+                          {sk.usedInHref ? (
+                            <Link href={sk.usedInHref}>{sk.usedInLabel}</Link>
+                          ) : (
+                            sk.usedInLabel
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </section>
+
+            <section id="education">
+              <h2 className="sh">Education</h2>
+              <ul className="cv-list" style={{ marginTop: "1rem" }}>
+                <li>
+                  <span>
+                    BSc in Computer Science
+                    <span>
+                      University of Dar es Salaam, Dar es Salaam.{" "}
+                      <span>[ADD: final project or honours if applicable]</span>
+                    </span>
+                  </span>
+                  <small>Nov 2017 to Oct 2020</small>
+                </li>
+              </ul>
+            </section>
+
+            <section id="more">
+              <h2 className="sh">Talks and open source</h2>
+              <ul className="cv-list" style={{ marginTop: "1rem" }}>
+                {projects.map((project) => (
+                  <li key={project.slug}>
+                    <span>
+                      <Link href={`/projects/${project.slug}`}>
+                        {project.title}
+                      </Link>
+                      <span>
+                        {project.role}. {project.outcome ?? project.description}
+                        {project.githubUrl && project.githubUrl !== "#" && (
+                          <>
+                            {" · "}
+                            <a
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              GitHub repository
+                            </a>
+                          </>
+                        )}
+                      </span>
+                    </span>
+                    <small>{project.year}</small>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section id="about">
+              <h2 className="sh">About me</h2>
+              <div className="cv-sm" style={{ marginTop: "1rem" }}>
+                <p>
+                  I studied Computer Science at the University of Dar es Salaam
+                  and learned early that software only counts when real people
+                  can rely on it every day—whether it is an internal banking
+                  service, a public examination archive, or a commuter transit
+                  app working offline.
+                </p>
+                <p>
+                  Outside client and banking work, I run a self-hosted
+                  Kubernetes and Docker homelab, build open-source developer
+                  tools, and mentor junior developers in Dar es Salaam{" "}
+                  <span>[ADD: favorite offline hobby or sport]</span>.
+                </p>
+              </div>
+            </section>
+
+            <div className="cv-cta" id="contact">
+              <div>
+                <h2>Want the full picture?</h2>
+                <p>Download my CV, or tell me about your project.</p>
+              </div>
+              <div className="acts">
+                <a
+                  className="btn p"
+                  href={cvMeta.url}
+                  download={cvMeta.downloadName}
+                >
+                  Download CV (PDF)
+                </a>
+                <a className="btn s" href={`mailto:${CONTACT_EMAIL}`}>
                   Get in touch
                 </a>
               </div>
             </div>
-
-            <div className="arched-photo">
-              <div className="arched-photo-inner">
-                <Image
-                  src="/about-me.png"
-                  alt="Portrait of Nelson Frank"
-                  width={480}
-                  height={600}
-                  priority
-                  sizes="(max-width: 820px) 224px, 380px"
-                  className="w-full h-full object-cover object-center select-none"
-                />
-              </div>
-            </div>
-          </header>
-
-          <section id="story" className="site-section">
-            <div className="split-sec">
-              <h2>My story</h2>
-              <div className="serif-copy">
-                <p>
-                  I studied Computer Science at the University of Dar es Salaam
-                  and started my career building high-usage React and Node.js
-                  product surfaces alongside AWS infrastructure at Id8 Space.
-                  Seeing real teams rely on the tools I deployed taught me early
-                  that software is only done when it runs reliably in
-                  production.
-                </p>
-                <p>
-                  Over the last seven years, I’ve worked across full-stack
-                  Next.js and NestJS analytics platforms at Kalen Limited, led
-                  frontend delivery across five concurrent enterprise client
-                  projects at MUST Company in Seoul, and built distributed
-                  Spring Boot banking backend services for Mwangahakika Bank and
-                  NBC Bank.
-                </p>
-                <p>
-                  Alongside client and banking work, I build open-source systems
-                  that solve concrete engineering problems—from{" "}
-                  <strong>
-                    biometric WebAuthn passkey engines and Go RAPTOR transit
-                    routers
-                  </strong>{" "}
-                  to Babel AST localization pipelines. I write technical deep
-                  dives to document how those systems work under the hood.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <section id="values" className="site-section">
-            <div className="split-sec">
-              <h2>How I work</h2>
-              <div className="decisions-grid">
-                {VALUES.map((val) => (
-                  <div key={val.title} className="surface-card">
-                    <h3>{val.title}</h3>
-                    <p>{val.detail}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section id="experience" className="site-section">
-            <div className="split-sec">
-              <h2>Experience</h2>
-              <div>
-                {experiences.map((exp) => (
-                  <article key={exp.slug} className="job-row">
-                    <time>{exp.period}</time>
-                    <div>
-                      <h3>{exp.title}</h3>
-                      <p className="co">
-                        {exp.companyUrl && exp.companyUrl !== "#" ? (
-                          <a
-                            href={exp.companyUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {exp.company}
-                          </a>
-                        ) : (
-                          exp.company
-                        )}
-                        {exp.location ? `, ${exp.location}` : ""}
-                      </p>
-                      {exp.bullets.length > 0 ? (
-                        <ul>
-                          {exp.bullets.map((bullet, idx) => (
-                            <li key={idx}>{highlightBulletMetrics(bullet)}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p style={{ marginBottom: "0.8rem" }}>
-                          {exp.description}
-                        </p>
-                      )}
-                      <div>
-                        {exp.technologies.map((tech) => (
-                          <span key={tech} className="tag">
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section id="skills" className="site-section">
-            <div className="split-sec">
-              <h2>Skills</h2>
-              <div className="decisions-grid">
-                {SKILL_GROUPS.map((group) => (
-                  <div key={group.title} className="surface-card">
-                    <h3 style={{ marginBottom: "0.7rem" }}>{group.title}</h3>
-                    <div>
-                      {group.skills.map((skill) => (
-                        <span key={skill} className="tag">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section id="education" className="site-section">
-            <div className="split-sec">
-              <h2>Education</h2>
-              <ul className="edu-list">
-                <li>
-                  <span>
-                    BSc in Computer Science, University of Dar es Salaam
-                  </span>
-                  <small>2017 to 2020</small>
-                </li>
-              </ul>
-            </div>
-          </section>
-
-          <section id="outside" className="site-section">
-            <div className="split-sec">
-              <h2>Outside work</h2>
-              <div className="outside-grid">
-                <div className="surface-card">
-                  <h3>Homelab &amp; self-hosting</h3>
-                  <p>
-                    Running a self-hosted Kubernetes and Docker media and
-                    GitOps cluster at home to test infrastructure patterns.
-                  </p>
-                </div>
-                <div className="surface-card">
-                  <h3>Open source &amp; writing</h3>
-                  <p>
-                    Building developer CLIs, authentication demos, and writing
-                    ground-up engineering guides.
-                  </p>
-                </div>
-                <div className="surface-card">
-                  <h3>Mentoring &amp; life</h3>
-                  <p>
-                    Mentoring junior developers in Dar es Salaam{" "}
-                    <span>[ADD: favorite offline hobby or sport]</span>.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
+          </main>
         </div>
-
-        <Contact heading="Let’s work together" />
-      </main>
+      </div>
 
       <Footer />
     </>

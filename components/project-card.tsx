@@ -83,7 +83,18 @@ export function ProjectCard({
 
       <div className="pj-body">
         <p className="pj-role">
-          {project.role}
+          <Link
+            href="/experience"
+            className="pj-sec-role"
+            style={{
+              position: "relative",
+              zIndex: 1,
+              color: "var(--slate)",
+              textDecoration: "none",
+            }}
+          >
+            {project.role}
+          </Link>
           {project.year ? `, ${project.year}` : ""}
         </p>
 
