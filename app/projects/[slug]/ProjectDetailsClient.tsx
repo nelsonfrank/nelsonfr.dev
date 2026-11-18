@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { ArrowLeft, Github, ExternalLink, ArrowUpRight, FolderGit2 } from "lucide-react"
 import { Header } from "@/components/header"
@@ -132,9 +133,10 @@ export default function ProjectDetailsClient({
         : []
   const hasLinks = hasLiveUrl || githubLinks.length > 0
   const hasTldr = Boolean(project.problem || project.result || project.myPart)
+  const hasArchitecture = Boolean(project.architectureImage || project.diagram)
 
   const tocHeadings: TocHeading[] = [
-    ...(project.diagram ? [{ id: "architecture", text: "Architecture", level: 2 }] : []),
+    ...(hasArchitecture ? [{ id: "architecture", text: "Architecture", level: 2 }] : []),
     ...headings,
   ]
 
@@ -275,17 +277,32 @@ export default function ProjectDetailsClient({
               )}
 
               {/* 4. Architecture (early on the page) */}
-              {project.diagram && (
+              {hasArchitecture && (
                 <section id="architecture" className="space-y-3">
                   <h2 className="text-[28px] font-semibold tracking-tight text-foreground">
                     Architecture
                   </h2>
-                  <div className="rounded-md border border-border bg-card p-4 sm:p-6">
-                    <ArchDiagram
-                      nodes={project.diagram.nodes}
-                      className="w-full max-w-[480px] h-auto aspect-[20/3] block text-foreground select-none"
-                    />
-                  </div>
+                  {project.architectureImage ? (
+                    <div className="rounded-md border border-border bg-card overflow-hidden">
+                      <Image
+                        src={project.architectureImage}
+                        alt={`${project.title} system architecture diagram`}
+                        width={1024}
+                        height={489}
+                        className="w-full h-auto block"
+                        priority
+                      />
+                    </div>
+                  ) : (
+                    project.diagram && (
+                      <div className="rounded-md border border-border bg-card p-4 sm:p-6">
+                        <ArchDiagram
+                          nodes={project.diagram.nodes}
+                          className="w-full max-w-[480px] h-auto aspect-[20/3] block text-foreground select-none"
+                        />
+                      </div>
+                    )
+                  )}
                 </section>
               )}
 

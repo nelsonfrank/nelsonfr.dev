@@ -82,6 +82,7 @@ export function getProject(slug: string): Project | undefined {
         githubLinks: parseProjectLinks(data.githubLinks) ?? staticProject.githubLinks,
         category: nonEmptyString(data.category) ?? staticProject.category,
         outcome: nonEmptyString(data.outcome) ?? staticProject.outcome,
+        architectureImage: nonEmptyString(data.architectureImage) ?? staticProject.architectureImage,
         diagram,
         role: nonEmptyString(data.role) ?? staticProject.role,
         year: nonEmptyString(data.year) ?? staticProject.year,

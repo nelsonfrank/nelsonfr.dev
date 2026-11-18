@@ -8,6 +8,7 @@ githubLinks:
     url: "https://github.com/nelsonfrank/city-connector-backend"
   - label: "Mobile"
     url: "https://github.com/nelsonfrank/city-connector-mobile"
+architectureImage: "/projects/city-connector-architecture.jpg"
 category: "Distributed Systems"
 role: "Fullstack, Mobile & Infrastructure Engineer"
 year: "2026"
@@ -59,10 +60,12 @@ To protect backend capacity and ensure graceful mobile UX under degraded transit
 - **Per-Agency Feed Isolation:** Opaque agency-prefixed IDs (`{agency_code}:{entity_id}`) are never merged across operators. When an individual operator's GTFS-RT feed degrades, the app renders a targeted `<FeedStatusBanner />` and falls back to scheduled GTFS arrivals for that agency while maintaining live tracking for healthy agencies.
 
 #### 4. Decoupled Real-Time Tracking, PostGIS Search & GTFS Ingestion
-- **Realtime Service (`services/realtime/`):** Manages live vehicle locations, trip progress, and delay propagation in Go using **Redis** ephemeral geospatial caches (60–120s TTL).
-- **Search Service (`services/search/`):** Provides instant radius-based and full-text stop/route discovery backed by **PostgreSQL / PostGIS** spatial indexes.
-- **GTFS & GTFS-RT Ingestion (`services/ingestion/`):** Python pipeline performing atomic transactional upserts and validation gates across static timetables and real-time protobuf streams.
-- **Gateway & Cloud-Native Tooling:** **Kong Gateway** handles routing and rate-limiting at the edge; local development is orchestrated via **Tilt**, Docker Compose, **MSW v2** mock handlers, and **Maestro** E2E mobile flows.
+- **Realtime Service (`services/realtime/`):** Go 1.24 service managing live vehicle positions and delay propagation backed by a **Redis 7** TTL cache (`60–120s`), which also feeds live delay adjustments directly into the RAPTOR Routing Service.
+- **Search Service (`services/search/`):** Go 1.24 service providing instant radius-based and full-text stop/route discovery backed by **PostgreSQL + PostGIS** spatial queries.
+- **Static & Live Ingestion Pipelines (`services/ingestion/`):**
+  - **GTFS Static Ingestion:** Python 3.12 + `pandas` pipeline parsing agency GTFS ZIP archives into PostgreSQL and executing atomic `load + swap` refreshes into the Routing Service's in-memory timetable.
+  - **GTFS-RT Pollers:** Dedicated per-agency Go 1.24 workers polling live GTFS-RT protobuf feeds and writing vehicle positions and trip delays into Redis 7.
+- **Gateway & Cloud-Native Tooling:** **Kong Gateway** handles HTTPS ingress, rate-limiting, and route dispatching (`/journey`, `/stops`, `/search`, `/realtime`); local development is orchestrated via **Tilt**, Docker Compose, **MSW v2** mock handlers, and **Maestro** E2E mobile flows.
 
 ---
 

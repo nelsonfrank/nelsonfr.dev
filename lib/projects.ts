@@ -20,6 +20,7 @@ export interface Project {
   featured: boolean
   category?: string
   outcome?: string
+  architectureImage?: string
   diagram?: {
     nodes: [string, string, string]
   }
@@ -66,10 +67,11 @@ export const projects: Project[] = [
       "Full-stack multi-agency transit platform pairing an offline-first React Native (Expo) mobile app with Go RAPTOR routing microservices, GTFS/GTFS-RT ingestion, and Kong API gateway.",
     outcome:
       "Computes Pareto-optimal multimodal transit routes in milliseconds via Go RAPTOR and Redis, rendered on an offline-first React Native MapLibre client.",
+    architectureImage: "/projects/city-connector-architecture.jpg",
     diagram: {
       nodes: ["RN Mobile", "Go RAPTOR", "Redis/GTFS"],
     },
-    image: "/projects/city-connector-backend.png",
+    image: "/projects/city-connector-architecture.jpg",
     technologies: [
       "React Native",
       "Expo",
