@@ -1,60 +1,85 @@
-import type { Metadata } from 'next'
-import { Analytics } from '@vercel/analytics/next'
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
-import './globals.css'
-import { cn } from '@/lib/utils';
+import type { Metadata, Viewport } from "next"
+import { Analytics } from "@vercel/analytics/next"
+import { Bricolage_Grotesque, Newsreader } from "next/font/google"
+import "./globals.css"
 import { Toaster } from "@/components/ui/sonner"
-import { ThemeProvider } from '@/components/theme-provider'
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: ["400", "600", "800"],
+  display: "swap",
+  variable: "--font-display",
+})
+
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-serif",
+})
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? (process.env.NEXT_PUBLIC_APP_URL.startsWith('http') ? process.env.NEXT_PUBLIC_APP_URL : `https://${process.env.NEXT_PUBLIC_APP_URL}`)
-  : 'https://nelsonfrank.dev'
+  ? process.env.NEXT_PUBLIC_APP_URL.startsWith("http")
+    ? process.env.NEXT_PUBLIC_APP_URL
+    : `https://${process.env.NEXT_PUBLIC_APP_URL}`
+  : "https://nelsonfrank.dev"
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   alternates: {
-    canonical: '/',
+    canonical: "/",
     types: {
-      'application/rss+xml': '/feed.xml',
+      "application/rss+xml": "/feed.xml",
     },
   },
   title: {
-    default: 'Nelson Frank - Fullstack Software Developer',
-    template: '%s | Nelson Frank',
+    default: "Nelson Frank · Full-stack software engineer",
+    template: "%s · Nelson Frank",
   },
-  description: 'Fullstack software developer interested in tech and building robust software using latest technology.',
+  description:
+    "Full-stack software engineer in Dar es Salaam building reliable backend systems, web platforms, and mobile apps in TypeScript, Go, Java, and Next.js.",
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://nelsonfrank.dev',
-    siteName: 'Nelson Frank',
-    title: 'Nelson Frank - Fullstack Software Developer',
-    description: 'Fullstack software developer interested in tech and building robust software using latest technology.',
+    type: "website",
+    locale: "en_US",
+    url: "https://nelsonfrank.dev",
+    siteName: "Nelson Frank",
+    title: "Nelson Frank · Full-stack software engineer",
+    description:
+      "Full-stack software engineer in Dar es Salaam building reliable backend systems, web platforms, and mobile apps in TypeScript, Go, Java, and Next.js.",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Nelson Frank - Fullstack Software Developer',
-    description: 'Fullstack software developer interested in tech and building robust software using latest technology.',
+    card: "summary_large_image",
+    title: "Nelson Frank · Full-stack software engineer",
+    description:
+      "Full-stack software engineer in Dar es Salaam building reliable backend systems, web platforms, and mobile apps in TypeScript, Go, Java, and Next.js.",
   },
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
+        url: "/icon-light-32x32.png",
+        media: "(prefers-color-scheme: light)",
       },
       {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
+        url: "/icon-dark-32x32.png",
+        media: "(prefers-color-scheme: dark)",
       },
       {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: "/icon.svg",
+        type: "image/svg+xml",
       },
     ],
-    apple: '/apple-icon.png',
+    apple: "/apple-icon.png",
   },
 }
+
+const themeInitScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}})();`
 
 export default function RootLayout({
   children,
@@ -62,18 +87,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={cn("bg-background", GeistSans.variable, GeistMono.variable)} suppressHydrationWarning>
-      <body className={cn("antialiased relative font-sans")}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-          {process.env.NODE_ENV === 'production' && <Analytics />}
-        </ThemeProvider>
+    <html
+      lang="en"
+      className={`${bricolage.variable} ${newsreader.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body>
+        {children}
+        <Toaster />
+        {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
   )

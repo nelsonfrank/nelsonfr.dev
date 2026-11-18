@@ -1,96 +1,99 @@
 "use client"
 
 import { useEffect } from "react"
-import { useTheme } from "next-themes"
 
 function getMermaidThemeVariables(isDark: boolean) {
   if (isDark) {
     return {
       darkMode: true,
       background: "transparent",
-      fontFamily: "var(--font-geist-sans), 'Geist', sans-serif",
+      fontFamily: "var(--display), system-ui, sans-serif",
       fontSize: "13px",
-      // Core / Flowchart tokens
-      primaryColor: "#0b0f14",
-      primaryTextColor: "#e6edf3",
-      primaryBorderColor: "#2b3744",
-      secondaryColor: "#131b24",
-      secondaryTextColor: "#e6edf3",
-      secondaryBorderColor: "#2b3744",
-      tertiaryColor: "#0f151c",
-      tertiaryTextColor: "#e6edf3",
-      tertiaryBorderColor: "#1f2933",
-      lineColor: "#9aa7b4",
-      textColor: "#e6edf3",
-      mainBkg: "#0b0f14",
-      nodeBorder: "#2b3744",
-      nodeTextColor: "#e6edf3",
-      clusterBkg: "#121922",
-      clusterBorder: "#2b3744",
-      titleColor: "#3ddbc8",
-      edgeLabelBackground: "#0f151c",
-      // Sequence diagram tokens
-      actorBkg: "#0b0f14",
-      actorBorder: "#3ddbc8",
-      actorTextColor: "#e6edf3",
-      actorLineColor: "#2b3744",
-      signalColor: "#9aa7b4",
-      signalTextColor: "#e6edf3",
-      labelBoxBkgColor: "#131b24",
-      labelBoxBorderColor: "#2b3744",
-      labelTextColor: "#3ddbc8",
-      loopTextColor: "#e6edf3",
-      noteBkgColor: "#131b24",
-      noteBorderColor: "#2b3744",
-      noteTextColor: "#e6edf3",
-      activationBkgColor: "#131b24",
-      activationBorderColor: "#3ddbc8",
-      sequenceNumberColor: "#06201c",
+      primaryColor: "#0F1426",
+      primaryTextColor: "#EDF0F7",
+      primaryBorderColor: "#2A3354",
+      secondaryColor: "#171E36",
+      secondaryTextColor: "#EDF0F7",
+      secondaryBorderColor: "#2A3354",
+      tertiaryColor: "#173A47",
+      tertiaryTextColor: "#EDF0F7",
+      tertiaryBorderColor: "#2A3354",
+      lineColor: "#9AA3BA",
+      textColor: "#EDF0F7",
+      mainBkg: "#0F1426",
+      nodeBorder: "#2A3354",
+      nodeTextColor: "#EDF0F7",
+      clusterBkg: "#171E36",
+      clusterBorder: "#2A3354",
+      titleColor: "#6CC4CC",
+      edgeLabelBackground: "#171E36",
+      actorBkg: "#0F1426",
+      actorBorder: "#6CC4CC",
+      actorTextColor: "#EDF0F7",
+      actorLineColor: "#2A3354",
+      signalColor: "#9AA3BA",
+      signalTextColor: "#EDF0F7",
+      labelBoxBkgColor: "#171E36",
+      labelBoxBorderColor: "#2A3354",
+      labelTextColor: "#6CC4CC",
+      loopTextColor: "#EDF0F7",
+      noteBkgColor: "#171E36",
+      noteBorderColor: "#2A3354",
+      noteTextColor: "#EDF0F7",
+      activationBkgColor: "#173A47",
+      activationBorderColor: "#6CC4CC",
+      sequenceNumberColor: "#18203A",
     }
   }
 
   return {
     darkMode: false,
     background: "transparent",
-    fontFamily: "var(--font-geist-sans), 'Geist', sans-serif",
+    fontFamily: "var(--display), system-ui, sans-serif",
     fontSize: "13px",
-    // Core / Flowchart tokens
-    primaryColor: "#fafaf7",
-    primaryTextColor: "#11181c",
-    primaryBorderColor: "#c9c9c2",
-    secondaryColor: "#f2f2ec",
-    secondaryTextColor: "#11181c",
-    secondaryBorderColor: "#c9c9c2",
-    tertiaryColor: "#ffffff",
-    tertiaryTextColor: "#11181c",
-    tertiaryBorderColor: "#e2e2dc",
-    lineColor: "#4a5560",
-    textColor: "#11181c",
-    mainBkg: "#fafaf7",
-    nodeBorder: "#c9c9c2",
-    nodeTextColor: "#11181c",
-    clusterBkg: "#f4f4ef",
-    clusterBorder: "#c9c9c2",
-    titleColor: "#0b7a6e",
-    edgeLabelBackground: "#ffffff",
-    // Sequence diagram tokens
-    actorBkg: "#fafaf7",
-    actorBorder: "#0b7a6e",
-    actorTextColor: "#11181c",
-    actorLineColor: "#c9c9c2",
-    signalColor: "#4a5560",
-    signalTextColor: "#11181c",
-    labelBoxBkgColor: "#f2f2ec",
-    labelBoxBorderColor: "#c9c9c2",
-    labelTextColor: "#0b7a6e",
-    loopTextColor: "#11181c",
-    noteBkgColor: "#f2f2ec",
-    noteBorderColor: "#c9c9c2",
-    noteTextColor: "#11181c",
-    activationBkgColor: "#f2f2ec",
-    activationBorderColor: "#0b7a6e",
-    sequenceNumberColor: "#ffffff",
+    primaryColor: "#F4F6F8",
+    primaryTextColor: "#18203A",
+    primaryBorderColor: "#D9DEE6",
+    secondaryColor: "#FFFFFF",
+    secondaryTextColor: "#18203A",
+    secondaryBorderColor: "#D9DEE6",
+    tertiaryColor: "#DCEFF0",
+    tertiaryTextColor: "#18203A",
+    tertiaryBorderColor: "#D9DEE6",
+    lineColor: "#586179",
+    textColor: "#18203A",
+    mainBkg: "#F4F6F8",
+    nodeBorder: "#D9DEE6",
+    nodeTextColor: "#18203A",
+    clusterBkg: "#FFFFFF",
+    clusterBorder: "#D9DEE6",
+    titleColor: "#1F6F78",
+    edgeLabelBackground: "#FFFFFF",
+    actorBkg: "#F4F6F8",
+    actorBorder: "#1F6F78",
+    actorTextColor: "#18203A",
+    actorLineColor: "#D9DEE6",
+    signalColor: "#586179",
+    signalTextColor: "#18203A",
+    labelBoxBkgColor: "#FFFFFF",
+    labelBoxBorderColor: "#D9DEE6",
+    labelTextColor: "#1F6F78",
+    loopTextColor: "#18203A",
+    noteBkgColor: "#DCEFF0",
+    noteBorderColor: "#D9DEE6",
+    noteTextColor: "#18203A",
+    activationBkgColor: "#DCEFF0",
+    activationBorderColor: "#1F6F78",
+    sequenceNumberColor: "#FFFFFF",
   }
+}
+
+function isDocumentDark(): boolean {
+  if (typeof document === "undefined") return false
+  const attr = document.documentElement.getAttribute("data-theme")
+  if (attr === "dark") return true
+  if (attr === "light") return false
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
 }
 
 export function useMermaid(
@@ -98,8 +101,6 @@ export function useMermaid(
   htmlContent: string,
   onDiagramClick?: (svgHtml: string) => void
 ) {
-  const { resolvedTheme } = useTheme()
-
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
@@ -110,9 +111,9 @@ export function useMermaid(
     if (blocks.length === 0) return
 
     let cancelled = false
-    const isDark = resolvedTheme !== "light"
 
     async function render() {
+      const isDark = isDocumentDark()
       const mermaid = (await import("mermaid")).default
 
       mermaid.initialize({
@@ -139,8 +140,6 @@ export function useMermaid(
         if (cancelled) break
         const block = blocks[i]
 
-        // Cache raw mermaid source on dataset before first innerHTML replacement
-        // so theme toggles can re-render from the original definition.
         let definition = block.dataset.mermaidDef
         if (!definition) {
           const scriptEl = block.querySelector<HTMLScriptElement>(
@@ -177,15 +176,23 @@ export function useMermaid(
           }
         } catch (err) {
           console.error("Mermaid render error:", err)
-          block.innerHTML = `<pre class="text-xs font-mono text-destructive whitespace-pre-wrap text-left p-2">${String(err)}</pre>`
         }
       }
     }
 
     render()
+
+    const observer = new MutationObserver(() => {
+      render()
+    })
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    })
+
     return () => {
       cancelled = true
+      observer.disconnect()
     }
-  }, [containerRef, htmlContent, resolvedTheme, onDiagramClick])
+  }, [containerRef, htmlContent, onDiagramClick])
 }
-
