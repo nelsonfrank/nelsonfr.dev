@@ -140,25 +140,25 @@ export const projects: Project[] = [
         title: "Modeled multi-agency GTFS & PostGIS schemas",
         period: "Phase 1",
         detail:
-          "Built Python 3.12 ingestion workers to normalize static GTFS timetables into PostgreSQL/PostGIS with agency-prefixed IDs ({agency_code}:{entity_id}).",
+          "I built Python 3.12 ingestion workers to normalize static GTFS timetables into PostgreSQL/PostGIS with isolated agency-prefixed IDs ({agency_code}:{entity_id}).",
       },
       {
         title: "Engineered the Go RAPTOR routing service",
         period: "Phase 2",
         detail:
-          "Implemented Round-Based Public Transit Routing over contiguous stop-route arrays in memory, avoiding priority-queue graph overhead.",
+          "I implemented round-based transit routing over contiguous in-memory arrays, avoiding Dijkstra priority-queue overhead.",
       },
       {
-        title: "Added Redis 7 GTFS-RT telemetry & stale eviction",
+        title: "Added Redis 7 live telemetry & stale eviction",
         period: "Phase 3",
         detail:
-          "Created per-agency Go pollers for live vehicle positions and trip delays with 30-second stale GPS eviction to prevent ghost buses.",
+          "I added per-agency Go pollers for live vehicle positions and trip delays with a 30-second stale GPS cutoff to eliminate ghost buses.",
       },
       {
-        title: "Shipped the offline-first Expo & MapLibre mobile app",
+        title: "Shipped the offline-first Expo & MapLibre app",
         period: "Phase 4",
         detail:
-          "Paired React Native 0.88 and MapLibre vector maps with synchronous MMKV offline cache hydration, Zod v4 boundary checks, and English/Swahili localization.",
+          "I built the React Native client with MapLibre vector maps, synchronous MMKV offline caching, Zod v4 payload checks, and English/Swahili localization.",
       },
     ],
     decisions: [
@@ -258,19 +258,19 @@ export const projects: Project[] = [
         title: "Designed credential & challenge schemas in PostgreSQL",
         period: "Step 1",
         detail:
-          "Modeled one-to-many passkey credentials with timezone-aware timestamptz challenge expiration and signature counter columns in TypeORM.",
+          "I modeled one-to-many passkey credentials with timezone-safe timestamptz challenge expiry and signature counter columns in TypeORM.",
       },
       {
         title: "Built NestJS attestation & assertion verification",
         period: "Step 2",
         detail:
-          "Integrated @simplewebauthn/server v13.3.0 with strict Relying Party ID (rpID) and origin validation plus 5-minute challenge TTLs.",
+          "I wired @simplewebauthn/server with strict Relying Party ID (rpID) origin checks and 5-minute single-use challenges.",
       },
       {
         title: "Implemented React browser authenticator flows",
         period: "Step 3",
         detail:
-          "Connected @simplewebauthn/browser for TouchID, FaceID, Windows Hello, and hardware security key registration and user-nameless login.",
+          "I connected @simplewebauthn/browser for TouchID, FaceID, Windows Hello, and hardware key registration plus user-nameless sign-in.",
       },
     ],
     decisions: [
@@ -378,25 +378,25 @@ export const projects: Project[] = [
         title: "Audited legacy NECTA HTML hierarchies",
         period: "Step 1",
         detail:
-          "Mapped inconsistent table layouts across multi-year national, regional, and school-centre examination pages.",
+          "I mapped inconsistent table layouts across multi-year national, regional, and school-centre examination pages.",
       },
       {
-        title: "Built the async Python httpx & BeautifulSoup4 crawler",
+        title: "Built the async Python httpx crawler CLI",
         period: "Step 2",
         detail:
-          "Created a modular CLI (`necta-crawler start --exam csee --year 2025`) with non-blocking I/O, rate limiting, and automatic retries.",
+          "I created a modular CLI (necta-crawler start --exam csee --year 2025) with non-blocking I/O, rate-limit backoff, and automatic retries.",
       },
       {
-        title: "Designed indexed Prisma & PostgreSQL analytics schemas",
+        title: "Designed indexed Prisma & PostgreSQL schemas",
         period: "Step 3",
         detail:
-          "Linked exam levels, regions, school centres, and candidate grade distributions with composite indexes for fast aggregation.",
+          "I normalized exam levels, regions, school centres, and candidate grade tallies with composite indexes for fast multi-year queries.",
       },
       {
         title: "Shipped the Next.js 15 & React 19 dashboard",
         period: "Step 4",
         detail:
-          "Rendered server-side regional rankings, school comparisons, and pass-rate distributions with Recharts.",
+          "I moved regional rankings and school comparisons into React Server Components and rendered interactive pass-rate charts with Recharts.",
       },
     ],
     decisions: [
@@ -502,25 +502,25 @@ export const projects: Project[] = [
         title: "Built the Babel AST extraction phase",
         period: "Phase 1",
         detail:
-          "Used @babel/parser and @babel/traverse to separate rendered JSX text from internal state keys, props, and object literals.",
+          "I used @babel/parser and @babel/traverse to separate rendered JSX text from internal state keys, props, and object literals.",
       },
       {
         title: "Added multi-provider structured LLM translation",
         period: "Phase 2",
         detail:
-          "Created provider adapters for Gemini, OpenAI, DeepL, and local Ollama with glossary constraints and interpolation variable masking.",
+          "I wrote provider adapters for Gemini, OpenAI, DeepL, and local Ollama with glossary constraints and interpolation variable masking.",
       },
       {
         title: "Engineered AST codemod injection & review queue",
         period: "Phase 3",
         detail:
-          "Automated useTranslation hook injection, AST round-trip syntax verification, and an interactive i18n-review.json queue for ambiguous strings.",
+          "I automated useTranslation hook injection, AST round-trip syntax checks, and an interactive i18n-review.json queue for ambiguous strings.",
       },
       {
         title: "Hardened with atomic signal rollbacks & 218 tests",
         period: "Phase 4",
         detail:
-          "Trapped SIGINT/SIGTERM to roll back partial file writes and verified edge cases across 30 Vitest suites.",
+          "I trapped SIGINT/SIGTERM to roll back partial file writes and verified edge cases across 30 Vitest suites.",
       },
     ],
     decisions: [
@@ -626,19 +626,19 @@ export const projects: Project[] = [
         title: "Level 1: Declarative Kubernetes manifest translation",
         period: "Stage 1",
         detail:
-          "Split monolithic Docker Compose stacks into isolated Kubernetes Deployments, Services, ConfigMaps, and PersistentVolumeClaims.",
+          "I split monolithic Docker Compose stacks into isolated Deployments, Services, ConfigMaps, and PersistentVolumeClaims.",
       },
       {
         title: "Level 2: Unified Ingress & Kustomize overlays",
         period: "Stage 2",
         detail:
-          "Eliminated port sprawl with domain-based Traefik/NGINX Ingress routing (*.homelab.internal), DRY Kustomize bases, and liveness/readiness probes.",
+          "I eliminated port sprawl with domain-based Traefik/NGINX Ingress routing (*.homelab.internal), DRY Kustomize bases, and health probes.",
       },
       {
         title: "Level 3: Argo CD GitOps, cert-manager TLS & VPN sidecars",
         period: "Stage 3",
         detail:
-          "Automated continuous Git reconciliation with Argo CD, Let's Encrypt TLS via cert-manager, GPU passthrough, and fail-closed Gluetun VPN sidecars.",
+          "I automated Git reconciliation with Argo CD, Let's Encrypt TLS via cert-manager, GPU passthrough, and fail-closed Gluetun VPN sidecars.",
       },
     ],
     decisions: [

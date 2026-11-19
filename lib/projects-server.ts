@@ -43,8 +43,9 @@ function parseDecisions(val: unknown): ProjectDecision[] | undefined {
       const rec = raw as Record<string, unknown>
       const decision = nonEmptyString(rec.decision)
       const tradeoff = nonEmptyString(rec.tradeoff)
+      const summary = nonEmptyString(rec.summary)
       if (decision && tradeoff) {
-        items.push({ decision, tradeoff })
+        items.push(summary ? { decision, summary, tradeoff } : { decision, tradeoff })
       }
     }
   }

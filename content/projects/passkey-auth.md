@@ -1,52 +1,66 @@
 ---
 title: "Passkey Authentication Engine"
-description: "A secure, biometric-based passwordless and multi-factor authentication system utilizing WebAuthn and SimpleWebAuthn, designed to prevent credential phishing."
+description: "Phishing-resistant biometric sign-in and MFA system built on WebAuthn, NestJS, React, and PostgreSQL."
 technologies: ["TypeScript", "NestJS", "React", "TypeORM", "PostgreSQL", "WebAuthn"]
 liveUrl: "#"
 githubUrl: "https://github.com/nelsonfrank/passkey-auth-demo"
 category: "Web App"
 role: "Lead Engineer"
 year: "2026"
-problem: "Password and OTP authentication flows remain vulnerable to real-time reverse-proxy phishing and credential replay attacks while adding sign-in friction."
-result: "Phishing-resistant biometric authentication engine with strict Relying Party domain scoping, isoBase64URL public-key storage, and cloned-authenticator signature counter checks."
-myPart: "End-to-end architecture and implementation across the NestJS WebAuthn verification backend, PostgreSQL/TypeORM credential store, and React browser authenticator flows."
+problem: "Passwords and SMS/TOTP codes still fail against real-time reverse-proxy phishing kits—an attacker simply forwards the user's code to the real site in milliseconds. Teams want phishing-resistant WebAuthn passkeys, but wiring up cryptographic challenges, binary key storage, and synced-device quirks is easy to get wrong."
+result: "Built a WebAuthn authentication engine with strict domain-bound origin checks, 5-minute single-use challenges, and signature counter validation for both hardware keys and synced passkeys."
+myPart: "I architected and implemented the NestJS WebAuthn verification service, PostgreSQL/TypeORM credential and challenge schemas, and the React browser enrollment and sign-in flows."
 relatedPosts: ["passkey-auth-as-multi-factor-auth-option", "TOTP-authentication"]
 nextProject: "city-connector-backend"
 ---
 
-### Project Overview
+### Authentication Ceremony Flow
 
-The **Passkey Authentication Engine** is a production-ready, biometric-driven authentication platform designed to replace legacy password and OTP systems. By implementing the WebAuthn standard, the application enables secure, single-gesture sign-ins and multi-factor verification utilizing browser-native APIs and local device authenticators (such as TouchID, FaceID, or hardware keys). The project features a NestJS backend and a React-based frontend to deliver a sleek, phishing-resistant security pipeline.
+WebAuthn (Web Authentication, part of the FIDO2 standard) replaces shared secrets with asymmetric key pairs locked inside the user's device. The private key never leaves TouchID, FaceID, Windows Hello, or a hardware security key; my PostgreSQL database only ever sees the public key.
 
----
+```mermaid
+sequenceDiagram
+  participant B as Browser
+  participant A as NestJS API
+  participant DB as PostgreSQL
+  B->>A: Request sign-in challenge
+  A->>DB: Save 5-min random challenge
+  A-->>B: Challenge + rpID
+  B->>B: Device signs challenge + origin
+  B->>A: Signed assertion
+  A->>DB: Load public key & delete challenge
+  A-->>B: Verified JWT session
+```
 
-### The Challenge
-
-Implementing WebAuthn introduces complex cryptographic handshakes and serialization differences between client-side array buffers and backend-compatible JSON objects. A core engineering challenge is ensuring secure, replay-immune registration and authentication flows by generating, validating, and persisting high-entropy challenges, while enforcing strict credential signature counters to prevent token-cloning attacks.
-
-Other hurdles included:
-- Handling the schema requirements for storing WebAuthn public keys, credential IDs, and transport list states in a relational PostgreSQL database via TypeORM.
-- Accommodating the signature counter mismatch quirks of synced passkeys (e.g., iCloud Keychain) without compromising security or causing user lockouts.
-- Handling WebAuthn browser constraints, such as origin validation restrictions and secure context requirements that can disrupt frontend scripts.
-
----
-
-### Technical Architecture & Decisions
-
-#### 1. Decoupled Attestation & Assertion Verification
-We structured the authentication system into discrete challenge-response loops. The NestJS backend coordinates challenge generation and verification using `@simplewebauthn/server` (v13.3.0), storing transient challenges in the user record. This decoupled lifecycle guarantees that only clients possessing the private key matching the verified challenge can generate valid JWT signatures.
-
-#### 2. Strict Relying Party (RP) Domain Scoping
-To mitigate credential-phishing attacks, the authentication engine strictly enforces Relying Party ID (`rpID`) verification. The backend dynamically verifies that the client's assertion origin matches the configured server hostname. If a request is proxied through an unauthorized origin, the verification fails instantly on the backend, rendering intercepted credentials useless to attackers.
-
-#### 3. Optimized Asymmetric Key Storage
-Instead of relying on heavy third-party storage formats, we map credential payloads to lightweight database records. We serialize WebAuthn `Uint8Array` public keys into URL-safe Base64 strings (`isoBase64URL`) before saving them in the `passkey_credentials` table. During login, the server retrieves the key, decodes it back to a binary buffer, and executes native cryptographic signature checks, minimizing database query overhead and CPU utilization.
+Because the browser itself embeds the active page's origin into the signed payload, a phishing site running on `evil-login.com` cannot replay the signature against the real Relying Party ID (`rpID`). The NestJS backend rejects the origin mismatch immediately.
 
 ---
 
-### Key Features
+### Key Implementation Details
 
-- **Biometric Passwordless Login:** Password-free entry utilizing TouchID/FaceID via native WebAuthn integrations.
-- **Dynamic Device Registration Exclusions:** Prevents registration of already enrolled authenticators by checking existing credentials on challenge requests.
-- **Cloned Token Protection:** Real-time checking of the signature counter to detect and block cloned authenticator replays.
-- **Automatic Fallback State Handling:** Clean visual error states and feedback when WebAuthn APIs are invoked in non-secure or unsupported contexts.
+#### 1. Replay-Proof Challenges & Timezone Hygiene
+To support user-nameless login (where a user taps a passkey before typing an email), I store active cryptographic challenges in a dedicated table with a 5-minute TTL rather than coupling them to a user row. One production trap I hit early: using plain `timestamp` columns in PostgreSQL caused challenges to expire prematurely whenever the app server and database ran in different timezones. Switching to `timestamptz` and deleting each challenge immediately on verification eliminated both clock-drift lockouts and replay windows.
+
+#### 2. Compact Public-Key Storage (`isoBase64URL`)
+Browser WebAuthn APIs return binary `Uint8Array` public keys, while JSON APIs and relational tables prefer strings. I serialize each public key using `@simplewebauthn/server`'s `isoBase64URL` helper before storing it in `passkey_credentials`, then decode it back to bytes during verification:
+
+```ts
+const verification = await verifyAuthenticationResponse({
+  response: assertionPayload,
+  expectedChallenge: storedChallenge.value,
+  expectedOrigin: this.config.origin,
+  expectedRPID: this.config.rpID,
+  credential: {
+    id: cred.credentialId,
+    publicKey: isoBase64URL.toBuffer(cred.publicKey),
+    counter: cred.counter,
+  },
+})
+```
+
+Passing `expectedOrigin` and `expectedRPID` explicitly here is what enforces phishing resistance—any proxied domain fails cryptographic verification before a session token is ever minted.
+
+#### 3. Handling Synced Passkeys vs. Hardware Keys
+Hardware security keys increment a monotonic signature counter on every sign-in, which lets the backend detect cloned tokens if a counter ever goes backward. Cloud-synced passkeys (like iCloud Keychain or Google Password Manager) often return `0` across devices instead of incrementing.
+
+To avoid locking out legitimate Apple/Android users while still catching cloned hardware tokens, the verifier enforces strict counter increments only when both the stored counter and incoming counter are non-zero. During registration, I also pass `excludeCredentials` containing the user's existing credential IDs so the browser prevents enrolling the same device twice.

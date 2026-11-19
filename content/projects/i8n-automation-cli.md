@@ -1,65 +1,56 @@
 ---
 title: "i18n-cli — AI-Native Localization Engine"
-description: "An AI-native CLI pipeline that safely internationalizes React & TypeScript codebases through AST parsing, context-aware machine translation, and strict verification gates."
+description: "Babel AST codemod and multi-provider LLM pipeline that safely internationalizes React and TypeScript apps with 218 automated tests."
 technologies: ["TypeScript", "Node.js", "Babel AST", "Gemini 3.8", "OpenAI", "react-i18next", "Vitest", "CLI"]
 githubUrl: "https://github.com/nelsonfrank/i8n-automation-cli"
 category: "Developer Tools"
 role: "Creator & Lead Engineer"
 year: "2026"
-problem: "Regex and raw LLM localization scripts corrupt JSX hierarchies, drop interpolation variables, and mistakenly translate internal state comparison keys."
-result: "3-phase Babel AST extraction, multi-provider LLM translation, and codemod verification pipeline backed by 218 passing automated tests across 30 suites and atomic signal rollbacks."
-myPart: "Architected and implemented the Babel AST parser/codemod engine, multi-provider LLM adapters (Gemini, OpenAI, DeepL, Ollama), pseudo-localization verifier, and interactive CLI review queue."
+problem: "Retrofitting internationalization into an existing React app by hand takes weeks, yet naive regex or raw LLM scripts silently break production code. They corrupt nested JSX, drop interpolation variables, and translate string literals that double as internal state keys."
+result: "Built a 3-phase Babel AST + LLM CLI pipeline with an interactive review queue for ambiguous strings, atomic rollback on Ctrl+C, and 218 passing Vitest tests across 30 suites."
+myPart: "I designed and implemented the Babel AST extractor and codemod injector, pluggable LLM provider adapters (Gemini, OpenAI, DeepL, Ollama), pseudo-localization verifier, and interactive review CLI."
 relatedPosts: ["typescript-generics"]
 nextProject: "homelab"
 ---
 
-### Project Overview
+### The 3-Phase AST → LLM → AST Pipeline
 
-**i18n-cli** is a production-grade, AI-native command-line pipeline engineered to safely internationalize existing React and TypeScript codebases. Built on the core principle of **correctness and honesty over coverage**, the engine replaces brittle regex search-and-replace patterns with deep Abstract Syntax Tree (AST) analysis, context-aware LLM translation, and multi-tier verification gates.
+The core rule behind `i18n-cli` is simple: **never let an LLM rewrite source code directly**. LLMs are great at translating natural language with context, while an Abstract Syntax Tree (AST) compiler is deterministic at editing JSX and TypeScript.
 
-The tool extracts hardcoded UI strings, rewrites JSX to leverage `react-i18next` bundles, preserves template expressions and plurals, verifies syntax integrity with zero regressions, and automatically routes ambiguous strings to an interactive review queue.
+```mermaid
+flowchart LR
+  TSX["React TSX Files"] --> Extract["1. Babel AST Extract"]
+  Extract --> Ambig{"Ambiguous?"}
+  Ambig -->|Yes| Queue["i18n-review.json"]
+  Ambig -->|No| LLM["2. LLM Translate"]
+  LLM --> Codemod["3. AST Codemod"]
+  Codemod --> Verify["Round-Trip Verify & Write"]
+```
 
----
-
-### The Challenge
-
-Automating codebase internationalization through naive regex or raw text LLM prompts leads to catastrophic, silent application breakage:
-
-- **The Dual-Use Trap:** In JavaScript/TypeScript, string literals often serve dual roles simultaneously—acting as user-visible UI labels while also functioning as internal state comparison keys (e.g. `property.location === selectedCity`). Blindly translating state keys breaks filters, form validations, and conditional logic.
-- **Dynamic JSX & Component Hierarchy:** Template literals with expressions, nested JSX tags, and ternary operators get corrupted when fed into isolated machine translation APIs without structural boundaries.
-- **AI Hallucinations & Syntactic Drift:** Generic LLM rewrites often alter punctuation, drop interpolation variables (`{{count}}`), or introduce invalid TypeScript syntax that breaks compilation.
-
----
-
-### Technical Architecture & Decisions
-
-#### 1. Decoupled AST $\rightarrow$ AI $\rightarrow$ AST Pipeline
-The architecture completely decouples code extraction and rewriting from language translation:
-- **Phase 1 (AST Extraction):** Utilizing `@babel/parser` and `@babel/traverse`, the CLI parses JSX/TSX syntax trees to distinguish actual rendered UI text from object keys, imported constants, and variable identifiers.
-- **Phase 2 (Context-Rich AI Translation):** Strings are extracted alongside surrounding structural metadata, component hierarchies, and sibling strings. The tool prompts LLM providers with strict structural schemas, glossary constraints, and variable masking rules.
-- **Phase 3 (AST Codemod Generation):** Babel generator transforms the source file by injecting `useTranslation` hooks, replacing raw literals with `t('key')` calls, and formatting outputs to match existing project `.prettierrc` standards.
-
-#### 2. Multi-Provider Translation Engine
-`i18n-cli` incorporates a provider-agnostic translation layer supporting:
-- **Google Gemini 3.8 Flash:** High-throughput, cost-effective structured output generation.
-- **OpenAI (GPT-4o):** Multi-language semantic precision with structured outputs.
-- **DeepL & Ollama:** Local and specialized machine translation for offline or privacy-compliant workflows.
-
-#### 3. Multi-Tier Verification Gates & Review Queue
-Before committing changes to disk, the pipeline enforces strict verification:
-- **AST Round-Trip Validation:** Verifies that the transformed file parses without syntax or semantic errors.
-- **Pseudo-Localization Stress Testing:** Replaces text with accented, extended characters (e.g. `[~Hëllö Wörld~]`) to test for layout clipping, string concatenation issues, and missing translations.
-- **Review Queue Resolution:** When encountering ambiguous strings or dual-use variables, the CLI halts automatic transformation and writes to an interactive review queue (`i18n-review.json`) for explicit developer approval.
-
-#### 4. Signal Safety & Atomic Rollbacks
-To prevent partial file corruption if a process is interrupted (e.g., `Ctrl+C` or uncaught network failure), `i18n-cli` traps OS termination signals (`SIGINT`, `SIGTERM`). It writes outputs to a temporary staging buffer and executes an atomic rollback if any step fails.
+1. **Extract (`@babel/parser` + `@babel/traverse`):** Walks every TSX file and collects only user-visible JSX text, attributes (`aria-label`, `placeholder`, `title`), and template literals—ignoring object keys, imports, and type unions.
+2. **Translate (Pluggable Providers):** Sends extracted strings with surrounding component context, sibling labels, and masked interpolation tokens (`{{count}}`) to Google Gemini, OpenAI, DeepL, or a local Ollama model.
+3. **Rewrite (Deterministic Codemod):** Injects `useTranslation()`, replaces literals with `t('key')` calls, and preserves the repository's Prettier formatting.
 
 ---
 
-### Key Features
+### Solving the Dual-Use String Trap
 
-- **AST-Powered Safety:** Precision extraction that ignores internal object keys, props, and business logic tokens.
-- **Preserved Dynamic Interpolations:** Intelligently handles plurals, nested ternary expressions, and template literals into `react-i18next` parameters.
-- **Zero-Regression Test Suite:** Over 218 passing automated tests across 30 test suites ensuring bulletproof transforms across edge cases.
-- **Multi-Provider Flexibility:** Seamless switching between Gemini, OpenAI, DeepL, and local Ollama models.
-- **Safe Review Queue & Rollbacks:** Transactional file writes with atomic signal rollback and an interactive CLI approval loop.
+In real React codebases, strings frequently pull double duty as both UI labels and internal logic comparisons:
+
+```tsx
+// "Dar es Salaam" is both a visible chip and a state filter key
+const filtered = listings.filter((item) => item.city === selectedCity)
+return <button onClick={() => setSelectedCity("Dar es Salaam")}>Dar es Salaam</button>
+```
+
+Translating the string inside `setSelectedCity(...)` silently breaks filtering in every non-English locale. Whenever the AST analyzer detects a literal used in a state setter, equality check, or object lookup, it refuses to guess and routes that entry to `i18n-review.json` for a quick human confirmation.
+
+---
+
+### Verification Gates & Atomic Rollbacks
+
+Before any file is modified on disk, `i18n-cli` runs two checks:
+- **AST round-trip verification:** Re-parses every generated file with Babel to guarantee zero syntax regressions or dropped interpolation variables.
+- **Pseudo-localization mode:** Replaces strings with accented, expanded text (`[~Hëllö Wörld~]`) so teams can spot layout clipping and hardcoded concatenations before spending money on LLM translation tokens.
+
+All transformed files are written into a temporary staging buffer first. If the developer hits `Ctrl+C` (`SIGINT`) or a provider call fails mid-run (`SIGTERM`), the signal handler restores every original file atomically so the working tree is never left half-migrated.

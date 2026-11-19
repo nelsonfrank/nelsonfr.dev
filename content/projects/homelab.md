@@ -1,63 +1,62 @@
 ---
 title: "Homelab & Kubernetes Architecture"
-description: "Enterprise-grade self-hosted infrastructure with Docker Compose, Portainer, and a 3-level progressive migration path to Kubernetes with GitOps and automated TLS."
+description: "Progressive 3-level blueprint taking self-hosted Docker Compose stacks to Kubernetes GitOps with Argo CD, automated TLS, and fail-closed VPN sidecars."
 technologies: ["Kubernetes", "Docker", "Portainer", "Kustomize", "Argo CD", "cert-manager", "Linux", "Networking"]
 githubUrl: "https://github.com/nelsonfrank/homelab"
 category: "DevOps & Cloud"
 role: "Infrastructure Engineer"
 year: "2026"
-problem: "Migrating multi-service self-hosted Docker Compose stacks to Kubernetes often fails due to monolithic pod anti-patterns, port sprawl, storage mismatches (RWO vs RWX), and VPN leaks."
-result: "3-level progressive Kubernetes migration architecture featuring Kustomize overlays, Traefik/NGINX Ingress, Argo CD GitOps, cert-manager TLS, GPU passthrough, and fail-closed Gluetun VPN sidecars."
-myPart: "Designed and documented the 3-level migration blueprint, Kubernetes manifests, Kustomize overlays, VPN kill-switch pod networking, and Argo CD GitOps automation."
+problem: "Moving a working self-hosted Docker Compose setup to Kubernetes usually breaks in four predictable ways: stuffing an entire stack into one giant pod, juggling dozens of colliding ports, corrupting SQLite databases on network shares, and leaking real IP addresses when a VPN tunnel drops."
+result: "Built a 3-level migration blueprint and live infrastructure repo covering Kustomize overlays, Traefik/NGINX Ingress, Argo CD GitOps, cert-manager TLS, GPU passthrough, and fail-closed Gluetun VPN sidecars."
+myPart: "I designed and documented the 3-level migration path, wrote the Kubernetes manifests and Kustomize overlays, configured the Gluetun VPN kill-switch pods, and automated reconciliation with Argo CD."
 relatedPosts: []
 nextProject: "passkey-auth"
 ---
 
-### Project Overview
+### Progressive 3-Level Migration Topology
 
-The **Homelab & Kubernetes Architecture** project documents the design, operational automation, and progressive evolution of a self-hosted private cloud infrastructure. Starting from containerized application stacks managed via **Docker Compose** and **Portainer**, the project details an architectural transition to production-grade **Kubernetes**.
+Jumping straight from Docker Compose to full GitOps overwhelms most self-hosters. I structured the repository as three runnable stages so each layer solves one specific operational pain point:
 
-The repository functions as both a living infrastructure codebase and a master 3-level migration blueprint (Beginner $\rightarrow$ Intermediate $\rightarrow$ Advanced), demonstrating how to run self-hosted media pipelines, private DNS, VPN kill-switch sidecars, GitOps deployments, and automated SSL/TLS management.
+```mermaid
+flowchart LR
+  Git["Git Repo (Kustomize)"] --> Argo["Argo CD"]
+  Argo --> Ingress["Traefik Ingress + TLS"]
+  Ingress --> Apps["Media & Cloud Pods"]
+  Apps --> NVMe[("Local NVMe RWO")]
+  Apps --> NAS[("NAS Share RWX")]
+  Apps --> VPN["Gluetun VPN Sidecar"]
+```
 
----
-
-### The Challenge
-
-Transitioning complex self-hosted environments from single-host Docker Compose to distributed Kubernetes often derails due to anti-patterns and operational overhead:
-
-- **The "One Giant Pod" Anti-Pattern:** Naively dumping multi-service compose stacks into monolithic Kubernetes pods, creating coupled lifecycles and storage bottlenecks.
-- **Port Sprawl & Ingress Routing:** Managing dozens of disparate port allocations across homelab services without port collisions or exposed management interfaces.
-- **Persistent Storage Topologies:** Resolving differences between local ReadWriteOnce (RWO) volumes and distributed ReadWriteMany (RWX) network shares (NFS/SMB) needed for concurrent media ingestion and streaming.
-- **Security & Network Isolation:** Ensuring that torrent and automated downloaders are strictly routed through encrypted VPN tunnels with fail-closed kill switches to prevent IP leakage.
-
----
-
-### Technical Architecture & Decisions
-
-#### 1. Level 1 (Beginner): Direct Manifest Translation
-The baseline phase maps existing Docker Compose stacks into core Kubernetes primitives:
-- Translates container definitions into declarative `Deployments`, `Services`, `ConfigMaps`, and `Secrets`.
-- Isolates application environments into dedicated namespaces (`media-stack`), eliminating container naming clashes and isolating resource usage.
-- Uses explicit `PersistentVolumeClaims` (PVCs) for stateful data retention across pod restarts.
-
-#### 2. Level 2 (Intermediate): Ingress & Kustomize Architecture
-Eliminates port sprawl and repetitive manifest boilerplate through clean structural patterns:
-- **Unified Ingress Controller:** Implements domain-based reverse routing via Traefik / NGINX Ingress (`*.homelab.internal`), routing services over standard HTTP/HTTPS ports without manual port mappings.
-- **DRY Deployments via Kustomize:** Employs Kustomize base manifests with selective environment overlays (`base/` and `overlays/`), allowing dynamic adjustments to replicas, storage classes, and environment variables without code duplication.
-- **Production Health Checks:** Configures liveness and readiness HTTP probes to automatically restart hung containers and prevent routing traffic to unready pods.
-
-#### 3. Level 3 (Advanced): GitOps, Hardened Sidecars & Hardware Acceleration
-The pinnacle tier incorporates enterprise cloud-native patterns:
-- **VPN Kill-Switch Pod Sidecars:** Pairs automated download clients (e.g., qBittorrent) with a **Gluetun** VPN container inside a shared network namespace. If the VPN tunnel drops, the entire network namespace halts, guaranteeing zero IP leakage.
-- **GPU Hardware Transcoding:** Configures container security contexts and driver passthrough for Intel QuickSync and NVIDIA GPUs, enabling real-time 4K hardware-accelerated video transcoding in media streaming servers (Emby/Plex).
-- **GitOps with Argo CD:** Full declarative state reconciliation, syncing cluster workloads continuously with the Git repository and automating Let's Encrypt TLS issuance via **cert-manager**.
+- **Level 1 (Clean Primitives):** Breaks monolithic Compose files into isolated `Deployments`, `Services`, `ConfigMaps`, and `PersistentVolumeClaims` inside a dedicated `media-stack` namespace—eliminating the "one giant pod" anti-pattern.
+- **Level 2 (Ingress & Kustomize):** Replaces port sprawl (`:8080`, `:8989`, `:7878`) with domain-based routing (`*.homelab.internal`) via Traefik/NGINX Ingress, adds HTTP liveness/readiness probes, and moves shared manifests into `base/` with per-environment `overlays/`.
+- **Level 3 (GitOps & Hardening):** Hands reconciliation to **Argo CD**, automates Let's Encrypt certificates with **cert-manager**, enables Intel QuickSync / NVIDIA GPU passthrough for 4K transcoding, and locks down egress with VPN sidecars.
 
 ---
 
-### Key Features
+### Fail-Closed VPN Sidecar Networking
 
-- **3-Level Migration Blueprint:** Comprehensive engineering documentation detailing pitfalls, storage choices, and progressive Kubernetes adoption.
-- **Automated Media Automation Suite:** Declarative deployment manifests for Sonarr, Radarr, Prowlarr, Jellyseerr, Bazarr, Dashy, and qBittorrent.
-- **Hardened Gluetun VPN Sidecar:** Fail-safe pod networking preventing unencrypted traffic leaks during tunnel reconnections.
-- **Dynamic Storage Management:** Clean separation between high-speed local NVMe volumes (for app databases) and large RWX network storage (for media libraries).
-- **Declarative GitOps & SSL:** Continuous deployment configuration with Argo CD and automated certificate renewal via cert-manager.
+Running a download client (like qBittorrent) with an app-level proxy leaves a window for real-IP leaks whenever the VPN reconnects. Instead, I co-locate the downloader and a **Gluetun** VPN container inside the same Kubernetes Pod so they share a single Linux network namespace:
+
+```yaml
+# Both containers share one network namespace; all egress routes through tun0
+containers:
+  - name: gluetun
+    image: qmcgaw/gluetun:latest
+    securityContext:
+      capabilities:
+        add: ["NET_ADMIN"]
+  - name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+```
+
+Because `gluetun` owns the pod's firewall rules and `tun0` interface, a dropped VPN tunnel immediately halts all egress traffic from `qbittorrent` until the tunnel recovers—zero unencrypted packets can escape.
+
+---
+
+### Respecting Storage Semantics (RWO vs. RWX)
+
+The fastest way to corrupt self-hosted apps (*Sonarr, Radarr, Prowlarr, Jellyseerr, Bazarr*) on Kubernetes is mounting their SQLite config databases over NFS or SMB. Network filesystems struggle with SQLite file locking under concurrent writes.
+
+I split storage into two explicit `StorageClass` tiers:
+- **Local NVMe (`ReadWriteOnce`):** Holds all application configs and SQLite/PostgreSQL databases for low-latency, lock-safe writes.
+- **Network NAS (`ReadWriteMany`):** Holds bulk media libraries so downloaders, indexers, and media servers (Emby/Plex) can read and write concurrently without blocking each other.

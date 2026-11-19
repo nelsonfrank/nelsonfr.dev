@@ -1,6 +1,6 @@
 ---
 title: "City Connector — Transit Platform & Mobile App"
-description: "Full-stack multi-agency public transit platform pairing an offline-first React Native (Expo) mobile application with Go RAPTOR routing microservices, GTFS/GTFS-RT ingestion, and Kong API Gateway."
+description: "Offline-first React Native transit app paired with a Go RAPTOR routing engine, live GTFS-RT vehicle feeds, and Kong API Gateway."
 technologies: ["React Native", "Expo", "TypeScript", "MapLibre", "TanStack Query", "MMKV", "Go", "Python", "RAPTOR", "GTFS-RT", "Kong Gateway", "PostGIS", "Redis", "Kubernetes"]
 githubUrl: "https://github.com/nelsonfrank/city-connector-backend"
 githubLinks:
@@ -12,67 +12,68 @@ architectureImage: "/projects/city-connector-architecture.jpg"
 category: "Distributed Systems"
 role: "Fullstack, Mobile & Infrastructure Engineer"
 year: "2026"
-problem: "Multi-agency metropolitan transit riders face fragmented schedules, ghost vehicle telemetry, and spotty connectivity, while traditional graph searches fail sub-100ms routing targets."
-result: "End-to-end transit platform combining an offline-first React Native (Expo SDK 58) MapLibre app with decoupled Go RAPTOR and Python GTFS-RT microservices behind Kong Gateway."
-myPart: "Architected and built both the React Native mobile client (MapLibre, MMKV offline cache, token-bucket rate limiters, Zod v4 contracts) and the Go/Python backend microservices, PostGIS search, Redis telemetry, and Kubernetes/Tilt workflows."
+problem: "Commuters in multi-operator cities get stuck with fragmented schedules, 'ghost' buses that vanished minutes ago, and blank screens the moment their phone loses signal underground. On the backend, classic shortest-path graph searches struggle to compute multi-transfer routes under 100ms."
+result: "Built an offline-first mobile client and decoupled routing backend that computes multi-criteria transit itineraries in single-digit milliseconds and evicts stale vehicle GPS feeds after 30 seconds."
+myPart: "I designed and built both repositories end to end—the Expo/MapLibre mobile app with MMKV offline caching, the Go RAPTOR routing and real-time services, the Python GTFS ingestion pipeline, and the Kubernetes/Kong setup."
 relatedPosts: []
 nextProject: "necta-explorer"
 ---
 
-### Project Overview
+### System Architecture
 
-**City Connector** is a production-grade, multi-agency public transit platform engineered for high-throughput multimodal urban journey planning across commuter rail, buses, and shared transit operators. The platform spans two decoupled repositories:
+City Connector splits static timetable routing from live vehicle telemetry so a flaky operator feed never slows down or breaks journey planning.
 
-- **[City Connector Mobile](https://github.com/nelsonfrank/city-connector-mobile):** A cross-platform mobile application built on **Expo SDK 58** and **React Native 0.88** (New Architecture + Hermes) featuring native **MapLibre** vector maps, synchronous **MMKV** offline caching, client-side token-bucket rate limiters, and bilingual English/Swahili (`en`/`sw`) localization.
-- **[City Connector Backend](https://github.com/nelsonfrank/city-connector-backend):** A cloud-native monorepo of specialized **Go** microservices and **Python** ingestion pipelines orchestrated behind **Kong API Gateway**, **PostgreSQL/PostGIS**, **Redis**, and **Kubernetes**.
+```mermaid
+flowchart LR
+  App["RN Mobile (MMKV)"] --> Kong["Kong Gateway"]
+  Kong --> Route["Go RAPTOR"]
+  Kong --> Search["PostGIS Search"]
+  Kong --> Live["Realtime API"]
+  GTFS["Python GTFS Loader"] --> Route
+  RT["GTFS-RT Pollers"] --> Redis[("Redis 7 TTL")]
+  Redis --> Live
+  Redis --> Route
+```
 
-Together, they empower riders to compute Pareto-optimal itineraries (fastest, fewest transfers, least walking), discover nearby stops geographically, browse cached schedules offline, and track live vehicle positions without ghost telemetry.
-
----
-
-### The Challenge
-
-Metropolitan transit networks across multiple independent operators introduce compounding challenges across both backend graph computation and mobile client resiliency:
-
-- **Graph Traversal at Scale:** Running point-to-point journey searches across thousands of transit stops and timetables with sub-100ms response deadlines, where traditional shortest-path algorithms (like Dijkstra) incur prohibitive priority queue overhead.
-- **High-Frequency Real-Time Ingestion & Ghost Vehicles:** Ingesting static GTFS bundles alongside continuous GTFS-RT protocol buffer feeds without lock contention, while immediately evicting stale GPS telemetry on mobile maps so riders never wait for "ghost" buses.
-- **Multi-Agency Isolation & Offline Commuters:** Preserving distinct agency stop identities (`{agency_code}:{entity_id}`), isolating partial agency feed outages without failing whole screens, and keeping schedules and recent journeys accessible underground or in poor network conditions.
-
----
-
-### Technical Architecture & Decisions
-
-#### 1. RAPTOR Journey Planning Algorithm (`services/routing/`)
-Rather than treating transit networks as static weighted graphs, the Go routing service implements **RAPTOR (Round-Based Public Transit Routing Algorithm)**:
-- Computes Pareto-optimal arrival times by operating in rounds (where round $k$ discovers routes with at most $k$ transfers) balancing duration, transfer counts, and walking distances.
-- Operates directly over contiguous stop-route arrays in memory without graph edge expansion, cutting memory footprints and keeping itinerary queries in the single-digit millisecond range.
-
-#### 2. Offline-First React Native & MapLibre Mobile Client (`city-connector-mobile`)
-The mobile client is built with **Expo Router v58** (typed file-based routing) and Continuous Native Generation (`expo prebuild`):
-- **Vector Transit Mapping:** Wraps `@maplibre/maplibre-react-native` v11 inside an abstract `<TransitMap />` component for high-FPS stop and live vehicle rendering without proprietary map licensing lock-in.
-- **Synchronous Offline Hydration:** Pairs **TanStack Query v5** with `@tanstack/query-async-storage-persister` backed by `react-native-mmkv` for server state, and **Zustand v5** (with MMKV persistence) for client preferences and recent searches.
-- **Runtime Schema Enforcement:** Validates 100% of gateway payloads at the network boundary using **Zod v4**, preventing malformed multi-agency responses from crashing the UI.
-
-#### 3. Client-Side Rate Limiting & Per-Agency Degradation Isolation
-To protect backend capacity and ensure graceful mobile UX under degraded transit feeds:
-- **Proactive Token Bucket Limiters:** Guards Kong Gateway quotas on the client before requests leave the device (`4 req/min` for `/journey`, `15 req/min` for `/stops/nearby`, `30 req/min` for `/search`), paired with a **Ky** HTTP `429 Retry-After` interceptor and live countdown UI.
-- **Ghost Vehicle Prevention:** Vehicle telemetry snapshots older than 30 seconds (`EXPO_PUBLIC_REALTIME_STALE_THRESHOLD_MS`) or omitted from the latest poll are evicted immediately from the map.
-- **Per-Agency Feed Isolation:** Opaque agency-prefixed IDs (`{agency_code}:{entity_id}`) are never merged across operators. When an individual operator's GTFS-RT feed degrades, the app renders a targeted `<FeedStatusBanner />` and falls back to scheduled GTFS arrivals for that agency while maintaining live tracking for healthy agencies.
-
-#### 4. Decoupled Real-Time Tracking, PostGIS Search & GTFS Ingestion
-- **Realtime Service (`services/realtime/`):** Go 1.24 service managing live vehicle positions and delay propagation backed by a **Redis 7** TTL cache (`60–120s`), which also feeds live delay adjustments directly into the RAPTOR Routing Service.
-- **Search Service (`services/search/`):** Go 1.24 service providing instant radius-based and full-text stop/route discovery backed by **PostgreSQL + PostGIS** spatial queries.
-- **Static & Live Ingestion Pipelines (`services/ingestion/`):**
-  - **GTFS Static Ingestion:** Python 3.12 + `pandas` pipeline parsing agency GTFS ZIP archives into PostgreSQL and executing atomic `load + swap` refreshes into the Routing Service's in-memory timetable.
-  - **GTFS-RT Pollers:** Dedicated per-agency Go 1.24 workers polling live GTFS-RT protobuf feeds and writing vehicle positions and trip delays into Redis 7.
-- **Gateway & Cloud-Native Tooling:** **Kong Gateway** handles HTTPS ingress, rate-limiting, and route dispatching (`/journey`, `/stops`, `/search`, `/realtime`); local development is orchestrated via **Tilt**, Docker Compose, **MSW v2** mock handlers, and **Maestro** E2E mobile flows.
+Every agency's identifiers are prefixed at ingestion time (`{agency_code}:{entity_id}`) and never merged. When one operator's live feed drops, the app flags only that operator with a `<FeedStatusBanner />` and falls back to its scheduled timetable while healthy feeds keep updating.
 
 ---
 
-### Key Features
+### How RAPTOR Keeps Routing Under 10ms
 
-- **RAPTOR Pareto-Optimal Itineraries:** Multi-criteria journey planning (Fastest, Fewest Transfers, Least Walking) with interactive multi-leg transit and walking timelines.
-- **Native MapLibre Vector Maps & Live Telemetry:** Real-time vehicle tracking with 30-second stale eviction and per-agency degradation banners.
-- **Offline-First MMKV Persistence:** Instant synchronous cache hydration allowing commuters to browse recent journeys, stops, and departures without connectivity.
-- **End-to-End Type & Contract Safety:** Strict Go `internal/` module encapsulation on the backend paired with Zod v4 runtime validation, Jest + MSW v2 integration suites, and Maestro E2E flows on mobile.
-- **Bilingual & Accessible UI:** Full English (`en`) and Swahili (`sw`) localization via `i18next` with 44pt minimum touch targets and screen-reader live announcements.
+Most road-navigation apps use Dijkstra or A* over a weighted graph, which spends most of its time managing priority queues and expanding edges. Public transit doesn't need that—it runs on fixed routes and repeating timetables.
+
+I implemented **RAPTOR** (Round-Based Public Transit Routing) in Go (`services/routing/`). Instead of walking a graph, RAPTOR scans contiguous in-memory arrays of routes and stops in rounds:
+
+- **Round 0:** Find all stops reachable on foot from the origin.
+- **Round k:** Scan only the routes passing through stops improved in round `k - 1`, recording the earliest arrival at each stop with at most `k` transfers.
+- **Pareto pruning:** Discard any itinerary that is both slower and requires more transfers than an already-found path.
+
+Because the timetable lives in flat slices rather than pointer-heavy graph structs, CPU cache locality stays high and multi-criteria queries (fastest, fewest transfers, least walking) finish in single-digit milliseconds. When the Python 3.12 ingestion worker parses a new static GTFS (General Transit Feed Specification) ZIP archive into PostgreSQL, the routing service loads the new snapshot in the background and swaps a single atomic pointer—zero downtime and zero read locks.
+
+---
+
+### Stopping Ghost Buses & Protecting the Gateway
+
+Stale GPS coordinates destroy rider trust faster than no live data at all. Dedicated per-agency Go pollers read live GTFS-RT (Real-Time) protocol buffer feeds and write vehicle positions and trip delays into Redis 7 with short TTLs (`60–120s`). On the mobile client, any vehicle snapshot older than 30 seconds (`EXPO_PUBLIC_REALTIME_STALE_THRESHOLD_MS`) or missing from the latest poll is evicted immediately from the MapLibre vector map.
+
+To keep mobile clients from overwhelming Kong Gateway quotas during rush hour, I put a proactive token-bucket rate limiter directly in the app before requests leave the device:
+
+```ts
+// Proactive client-side buckets mirror Kong Gateway route quotas
+const ROUTE_BUCKETS = {
+  journey: new TokenBucket({ capacity: 4, refillPerMinute: 4 }),
+  nearby: new TokenBucket({ capacity: 15, refillPerMinute: 15 }),
+  search: new TokenBucket({ capacity: 30, refillPerMinute: 30 }),
+}
+```
+
+If the user still hits a gateway limit, a Ky HTTP interceptor reads the `429 Retry-After` header and renders a live countdown instead of an opaque error.
+
+---
+
+### Offline-First Mobile Sync & Contract Safety
+
+Commuters lose reception in tunnels and basements right when they need to check their next transfer. I paired TanStack Query v5 with synchronous `react-native-mmkv` persistence for schedules and recent journeys, and Zustand v5 (also backed by MMKV) for user preferences and bilingual English/Swahili (`en`/`sw`) state.
+
+Every response crossing the network boundary is parsed through a **Zod v4** schema before touching React state. If an upstream agency feed returns a malformed field, the error is isolated at the boundary instead of crashing the map screen. End-to-end flows are verified with Jest + MSW v2 mocks and Maestro mobile tests.
