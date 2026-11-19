@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { type MouseEvent, useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { captureEvent } from "@/lib/analytics"
@@ -56,6 +56,38 @@ export function Header() {
     }
   }
 
+  const handleNavClick =
+    (href: string) => (event: MouseEvent<HTMLAnchorElement>) => {
+      if (
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey ||
+        event.button !== 0
+      ) {
+        return
+      }
+
+      if (pathname !== href) {
+        return
+      }
+
+      if (!window.location.search) {
+        event.preventDefault()
+        if (window.location.hash) {
+          window.history.replaceState(null, "", href)
+        }
+      }
+
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches
+      window.scrollTo({
+        top: 0,
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+      })
+    }
+
   return (
     <>
       <a href="#main-content" className="skip-link">
@@ -67,24 +99,28 @@ export function Header() {
           className="me"
           aria-label="Nelson Frank — Home"
           aria-current={pathname === "/" ? "page" : undefined}
+          onClick={handleNavClick("/")}
         >
           NF
         </Link>
         <Link
           href="/projects"
           aria-current={isWork ? "page" : undefined}
+          onClick={handleNavClick("/projects")}
         >
           Work
         </Link>
         <Link
           href="/writing"
           aria-current={isWriting ? "page" : undefined}
+          onClick={handleNavClick("/writing")}
         >
           Writing
         </Link>
         <Link
           href="/experience"
           aria-current={isAbout ? "page" : undefined}
+          onClick={handleNavClick("/experience")}
         >
           About
         </Link>

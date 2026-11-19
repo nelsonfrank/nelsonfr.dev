@@ -160,7 +160,7 @@ body {
   background: var(--paper);
   color: var(--ink);
   font: 400 1rem/1.6 var(--display);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 a {
