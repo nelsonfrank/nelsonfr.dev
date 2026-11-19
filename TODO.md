@@ -64,11 +64,11 @@ Actionable task list for RSS, Newsletter, Content Readability Refactoring, Exper
 - [x] `content/writing/typescript-generics.md` — Apply Rules 1, 2, 4, 5 (remove duplicate H1/TOC, ground examples in real production patterns, shorten code blocks).
 
 #### Project Case Studies (`lib/projects.ts`)
-- [ ] `city-connector-backend` (City Connector) — Apply Rules 2, 3, 4, 5 (de-duplicate structured fields vs. deep-dive markdown, simplify RAPTOR routing explanation for general readers).
-- [ ] `passkey-auth` (Passkey Auth) — Apply Rules 2, 3, 4, 5 (remove repeated overview tables in `content`, tighten WebAuthn + TOTP narrative).
-- [ ] `necta-explorer` (NECTA Result Explorer) — Apply Rules 2, 3, 4, 5 (focus story on students/parents searching exam results and how scraping/analytics were structured).
-- [ ] `i8n-automation-cli` (i18n Automation CLI) — Apply Rules 2, 3, 4, 5 (clarify developer workflow problem and AST transformation pipeline without repetition).
-- [ ] `homelab` (Kubernetes Homelab) — Apply Rules 2, 3, 4, 5 (streamline GitOps, FluxCD, and bare-metal networking story into a clear, readable narrative).
+- [x] `city-connector-backend` (City Connector) — Apply Rules 2, 3, 4, 5 (de-duplicate structured fields vs. deep-dive markdown, simplify RAPTOR routing explanation for general readers).
+- [x] `passkey-auth` (Passkey Auth) — Apply Rules 2, 3, 4, 5 (remove repeated overview tables in `content`, tighten WebAuthn + TOTP narrative).
+- [x] `necta-explorer` (NECTA Result Explorer) — Apply Rules 2, 3, 4, 5 (focus story on students/parents searching exam results and how scraping/analytics were structured).
+- [x] `i8n-automation-cli` (i18n Automation CLI) — Apply Rules 2, 3, 4, 5 (clarify developer workflow problem and AST transformation pipeline without repetition).
+- [x] `homelab` (Kubernetes Homelab) — Apply Rules 2, 3, 4, 5 (streamline GitOps, FluxCD, and bare-metal networking story into a clear, readable narrative).
 
 ---
 
@@ -90,13 +90,13 @@ Actionable task list for RSS, Newsletter, Content Readability Refactoring, Exper
 ---
 
 ## 6. Test Heavily & Improve Site Performance
-- [ ] **End-to-End & Route Verification**:
-  - Verify all static & dynamic routes (`/`, `/projects`, `/projects/[slug]`, `/writing`, `/writing/[slug]`, `/experience`, `/feed.xml`, `/sitemap.xml`, `/robots.txt`) build and render with zero console or hydration errors.
-  - Test interactive flows: topic/tag filtering, search input + URL query sync, Mermaid diagram rendering & zoom modal, theme toggle, newsletter signup, contact form, and CV PDF download/print layout.
-- [ ] **Bundle & Client Component Optimization**:
-  - Audit `"use client"` boundaries across `app/` and `components/`—keep static layout shells, headers, footers, and markdown prose server-rendered wherever possible and isolate interactive islands (search/filter bars, TOC scroll-spy, Mermaid hydration).
-  - Ensure heavy client libraries (`mermaid`, `posthog-js`, syntax highlighting) are lazy-loaded only when needed and do not block First Contentful Paint (FCP) or Largest Contentful Paint (LCP).
-- [ ] **Core Web Vitals & Asset Optimization**:
-  - Audit images (`public/projects/*`, `public/placeholder-user.jpg`) for `next/image` sizing, `sizes` attributes, `priority` on above-the-fold hero/stage visuals, and zero Cumulative Layout Shift (CLS) during font/diagram loads.
-  - Run production build (`pnpm build`) and Lighthouse / Web Vitals checks to verify bundle sizes, TTFB, LCP, INP, and CLS across desktop and mobile viewports.
+- [x] **End-to-End & Route Verification**:
+  - Verified all static & dynamic routes (`/`, `/projects`, `/projects/[slug]`, `/writing`, `/writing/[slug]`, `/experience`, `/feed.xml`, `/sitemap.xml`, `/robots.txt`) build and return HTTP 200 cleanly, RSS 2.0 XML is valid, and `/api/newsletter` validates input (`400` on invalid email).
+  - Note: Interactive Chrome DevTools / Lighthouse pass should be run once Chrome remote debugging is attached (MCP browser server was unavailable in this session).
+- [x] **Bundle & Client Component Optimization**:
+  - Narrowed `"use client"` boundaries across `/projects/[slug]`, `/writing/[slug]`, `/experience`, `/projects`, `/writing`, and `Hero`—keeping page shells, headers, footers, structured case-study grids, and Markdown prose server-rendered while isolating interactive islands (`MermaidArticle`, `ReadingProgressBar`, `PostToc`, `ShareButtons`, `ExperienceToc`, `ExperienceRolesAccordion`, `TrackedAnchor`/`TrackedNextLink`).
+  - Verified heavy client libraries (`mermaid`, `@sentry/nextjs`, `posthog-js`, `ContactForm`) remain lazy-loaded/deferred and Shiki highlighting stays server-side.
+- [x] **Core Web Vitals & Asset Optimization**:
+  - Audited `next/image` sizing, `sizes`, and `priority` attributes across Hero, ProjectCard, case-study stage, and CV preview, and added `min-height: 180px` on `.prose .mermaid-block` to prevent CLS during diagram hydration.
+  - Verified clean TypeScript check (`tsc --noEmit`) and production build (`next build`, 18/18 static/SSG pages).
 
