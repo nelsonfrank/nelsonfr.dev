@@ -1,9 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 
 export function NewsletterPanel({ compact = false }: { compact?: boolean }) {
   const [email, setEmail] = useState("")
+  const [website, setWebsite] = useState("")
   const [state, setState] = useState<"idle" | "submitting" | "success" | "error">("idle")
   const [message, setMessage] = useState<string>("")
 
@@ -23,9 +25,12 @@ export function NewsletterPanel({ compact = false }: { compact?: boolean }) {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: trimmed }),
+        body: JSON.stringify({ email: trimmed, website }),
       })
-      const data = await res.json()
+      const data = (await res.json().catch(() => ({}))) as {
+        message?: string
+        error?: string
+      }
 
       if (res.ok) {
         setState("success")
@@ -58,10 +63,31 @@ export function NewsletterPanel({ compact = false }: { compact?: boolean }) {
         )}
         <p>
           Lessons from real projects on authentication, backend systems, and
-          TypeScript. Unsubscribe any time.
+          TypeScript. Unsubscribe any time, or{" "}
+          <Link href="/feed.xml" style={{ textDecoration: "underline", textUnderlineOffset: "3px" }}>
+            subscribe via RSS
+          </Link>
+          .
         </p>
       </div>
       <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="website"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            left: "-9999px",
+            width: "1px",
+            height: "1px",
+            opacity: 0,
+            pointerEvents: "none",
+          }}
+        />
         <input
           type="email"
           placeholder="you@example.com"

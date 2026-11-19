@@ -14,6 +14,15 @@ function escapeXml(str: string): string {
 export async function GET() {
   const posts = getAllPosts()
 
+  const latestTimestamp = posts.reduce((max, post) => {
+    const t = new Date(post.date).getTime()
+    return !isNaN(t) && t > max ? t : max
+  }, 0)
+  const lastBuildDate =
+    latestTimestamp > 0
+      ? new Date(latestTimestamp).toUTCString()
+      : new Date().toUTCString()
+
   const itemsXml = posts
     .map((post) => {
       const link = `${SITE_URL}/writing/${post.slug}`
@@ -21,13 +30,16 @@ export async function GET() {
       const pubDate = isNaN(parsedDate.getTime())
         ? new Date().toUTCString()
         : parsedDate.toUTCString()
+      const categoriesXml = post.tags
+        .map((tag) => `      <category>${escapeXml(tag)}</category>`)
+        .join("\n")
 
       return `    <item>
       <title>${escapeXml(post.title)}</title>
       <link>${escapeXml(link)}</link>
       <guid isPermaLink="true">${escapeXml(link)}</guid>
       <description>${escapeXml(post.excerpt)}</description>
-      <pubDate>${escapeXml(pubDate)}</pubDate>
+      <pubDate>${escapeXml(pubDate)}</pubDate>${categoriesXml ? `\n${categoriesXml}` : ""}
     </item>`
     })
     .join("\n")
@@ -39,6 +51,7 @@ export async function GET() {
     <link>${SITE_URL}/writing</link>
     <description>Technical articles and engineering write-ups by Nelson Frank.</description>
     <language>en-us</language>
+    <lastBuildDate>${escapeXml(lastBuildDate)}</lastBuildDate>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />
 ${itemsXml}
   </channel>
@@ -52,4 +65,3 @@ ${itemsXml}
     },
   })
 }
-
