@@ -5,21 +5,21 @@ Actionable task list for RSS, Newsletter, Content Readability Refactoring, Exper
 ---
 
 ## 1. Make RSS Work
-- [ ] **Create RSS Route Handler (`app/feed.xml/route.ts`)**:
+- [x] **Create RSS Route Handler (`app/feed.xml/route.ts`)**:
   - Generate a valid RSS 2.0 XML document (`application/rss+xml; charset=utf-8`) from `getAllPosts()` in `lib/posts.ts`.
   - Include channel metadata (`title`, `link`, `description`, `language`, `lastBuildDate`, and `atom:link` self-reference).
   - Map each post to an `<item>` with `title`, `link`, `guid`, `pubDate` (RFC 822), `description` (escaped excerpt), and `<category>` tags.
-- [ ] **Wire Feed Discovery & Links**:
+- [x] **Wire Feed Discovery & Links**:
   - Ensure `alternates.types["application/rss+xml"] = "/feed.xml"` is set in `app/layout.tsx` and `app/writing/page.tsx`.
   - Verify the "Subscribe with RSS" link in `app/writing/WritingClient.tsx` and RSS references in `components/newsletter-panel.tsx` resolve cleanly to `/feed.xml`.
 
 ---
 
 ## 2. Make Newsletter Work
-- [ ] **Create Newsletter API Endpoint (`app/api/newsletter/route.ts`)**:
+- [x] **Create Newsletter API Endpoint (`app/api/newsletter/route.ts`)**:
   - Accept `POST { email }` requests, validate the email address format, and forward subscriptions to the configured provider (e.g., Resend Audiences, Buttondown, or Loops via environment variables).
   - Return clear JSON status responses (`200 OK` on subscribe/already-subscribed, `400` on invalid email, `500` on upstream error).
-- [ ] **Enable `NewsletterPanel` (`components/newsletter-panel.tsx`)**:
+- [x] **Enable `NewsletterPanel` (`components/newsletter-panel.tsx`)**:
   - Remove `disabled` attributes on the email `<input>` and submit `<button>`.
   - Add `idle`, `submitting`, `success`, and `error` UI states with accessible `aria-live` feedback.
   - Remove the `[ADD: newsletter provider]` and `[ADD: newsletter provider endpoint]` placeholder copy.
@@ -59,9 +59,9 @@ Actionable task list for RSS, Newsletter, Content Readability Refactoring, Exper
 ### Content Refactor Checklist
 
 #### Blog Posts (`content/writing/`)
-- [ ] `content/writing/TOTP-authentication.md` — Apply Rules 1, 2, 4, 5 (remove duplicate H1/TOC, tighten RFC 4226/6238 walkthrough, trim NestJS/React code blocks to core logic).
-- [ ] `content/writing/passkey-auth-as-multi-factor-auth-option.md` — Apply Rules 1, 2, 4, 5 (remove duplicate H1/TOC, lead with why passkeys beat SMS/TOTP, streamline WebAuthn ceremony diagrams and code).
-- [ ] `content/writing/typescript-generics.md` — Apply Rules 1, 2, 4, 5 (remove duplicate H1/TOC, ground examples in real production patterns, shorten code blocks).
+- [x] `content/writing/TOTP-authentication.md` — Apply Rules 1, 2, 4, 5 (remove duplicate H1/TOC, tighten RFC 4226/6238 walkthrough, trim NestJS/React code blocks to core logic).
+- [x] `content/writing/passkey-auth-as-multi-factor-auth-option.md` — Apply Rules 1, 2, 4, 5 (remove duplicate H1/TOC, lead with why passkeys beat SMS/TOTP, streamline WebAuthn ceremony diagrams and code).
+- [x] `content/writing/typescript-generics.md` — Apply Rules 1, 2, 4, 5 (remove duplicate H1/TOC, ground examples in real production patterns, shorten code blocks).
 
 #### Project Case Studies (`lib/projects.ts`)
 - [ ] `city-connector-backend` (City Connector) — Apply Rules 2, 3, 4, 5 (de-duplicate structured fields vs. deep-dive markdown, simplify RAPTOR routing explanation for general readers).
