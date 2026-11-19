@@ -1,163 +1,140 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
-import gsap from "gsap"
-import { useMagnetic } from "@/hooks/use-gsap"
-
-const navLinks = [
-  { href: "#about", label: "About" },
-  { href: "/experience", label: "Experience" },
-  { href: "#projects", label: "Projects" },
-  { href: "#writing", label: "Writing" },
-  { href: "#contact", label: "Contact" },
-]
-
-function MagneticLink({ href, label, onClick }: { href: string; label: string; onClick?: () => void }) {
-  const magneticRef = useMagnetic<HTMLAnchorElement>(0.3)
-  
-  return (
-    <Link
-      ref={magneticRef}
-      href={href}
-      onClick={onClick}
-      className="relative text-sm text-muted-foreground hover:text-primary transition-colors group"
-    >
-      <span className="relative z-10">{label}</span>
-      <span className="absolute bottom-0 left-0 w-0 h-px bg-primary group-hover:w-full transition-all duration-300" />
-    </Link>
-  )
-}
+import { usePathname } from "next/navigation"
+import { captureEvent } from "@/lib/analytics"
 
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const headerRef = useRef<HTMLElement>(null)
-  const logoRef = useMagnetic<HTMLAnchorElement>(0.2)
-  const mobileMenuRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
+  const [isDark, setIsDark] = useState(false)
+
+  const isWork = pathname === "/projects" || pathname.startsWith("/projects/")
+  const isWriting = pathname === "/writing" || pathname.startsWith("/writing/")
+  const isAbout = pathname === "/experience" || pathname === "/about"
 
   useEffect(() => {
-    const header = headerRef.current
-    if (!header) return
-
-    const preloaderShown = typeof window !== "undefined" && sessionStorage.getItem("preloader-shown") === "true"
-    const startDelay = preloaderShown ? 0.2 : 2.8
-
-    // Initial animation
-    gsap.fromTo(
-      header,
-      { y: -100, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, delay: startDelay, ease: "power3.out" }
-    )
-
-    // Scroll listener for header background
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+    const syncTheme = () => {
+      try {
+        const root = document.documentElement
+        const attr = root.getAttribute("data-theme")
+        const dark =
+          attr === "dark" ||
+          (!attr && window.matchMedia("(prefers-color-scheme: dark)").matches)
+        setIsDark(dark)
+      } catch {
+        // Ignore errors
+      }
     }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+
+    syncTheme()
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+    const handleChange = () => syncTheme()
+    mediaQuery.addEventListener("change", handleChange)
+    return () => mediaQuery.removeEventListener("change", handleChange)
   }, [])
 
-  // Mobile menu animation
-  useEffect(() => {
-    if (!mobileMenuRef.current) return
-
-    if (isOpen) {
-      gsap.fromTo(
-        mobileMenuRef.current,
-        { height: 0, opacity: 0 },
-        { height: "auto", opacity: 1, duration: 0.4, ease: "power3.out" }
-      )
-      gsap.fromTo(
-        mobileMenuRef.current.querySelectorAll("a"),
-        { x: -20, opacity: 0 },
-        { x: 0, opacity: 1, stagger: 0.05, duration: 0.3, delay: 0.1, ease: "power2.out" }
-      )
+  const toggleTheme = () => {
+    try {
+      const root = document.documentElement
+      const attr = root.getAttribute("data-theme")
+      const currentlyDark =
+        attr === "dark" ||
+        (!attr && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      const next = currentlyDark ? "light" : "dark"
+      root.setAttribute("data-theme", next)
+      setIsDark(next === "dark")
+      try {
+        localStorage.setItem("theme", next)
+      } catch {
+        // Ignore storage errors
+      }
+      captureEvent("theme_toggled", { theme: next })
+    } catch {
+      // Ignore errors
     }
-  }, [isOpen])
+  }
 
   return (
-    <header
-      ref={headerRef}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-background/90 backdrop-blur-md border-b border-border py-3"
-          : "bg-transparent py-5"
-      }`}
-    >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6">
+    <>
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
+      <nav aria-label="Main" className="site-nav">
         <Link
-          ref={logoRef}
           href="/"
-          className="text-xl font-semibold text-foreground relative overflow-hidden group"
+          className="me"
+          aria-label="Nelson Frank — Home"
+          aria-current={pathname === "/" ? "page" : undefined}
         >
-          <span className="relative z-10">Nelson Frank</span>
-          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+          NF
         </Link>
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <MagneticLink key={link.href} href={link.href} label={link.label} />
-          ))}
-        </div>
-
-        {/* Mobile Controls */}
-        <div className="flex md:hidden items-center gap-2">
-          <Link
-            href="/#contact"
-            className="px-3.5 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary hover:text-background transition-all duration-300 active:scale-95 shadow-sm shadow-primary/10"
-          >
-            Contact
-          </Link>
-
-          <button
-            className="text-foreground relative z-50 p-2"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            <div className="relative w-6 h-6 flex items-center justify-center">
-              <span
-                className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
-                  isOpen ? "rotate-45" : "-translate-y-1.5"
-                }`}
-              />
-              <span
-                className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
-                  isOpen ? "opacity-0" : "opacity-100"
-                }`}
-              />
-              <span
-                className={`absolute h-0.5 w-full bg-foreground transition-all duration-300 ${
-                  isOpen ? "-rotate-45" : "translate-y-1.5"
-                }`}
-              />
-            </div>
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Navigation */}
-      {isOpen && (
-        <div
-          ref={mobileMenuRef}
-          className="md:hidden bg-background/95 backdrop-blur-md border-b border-border overflow-hidden"
+        <Link
+          href="/projects"
+          aria-current={isWork ? "page" : undefined}
         >
-          <div className="flex flex-col px-6 py-6 gap-5">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-lg text-muted-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-    </header>
+          Work
+        </Link>
+        <Link
+          href="/writing"
+          aria-current={isWriting ? "page" : undefined}
+        >
+          Writing
+        </Link>
+        <Link
+          href="/experience"
+          aria-current={isAbout ? "page" : undefined}
+        >
+          About
+        </Link>
+        <a href="#contact">Contact</a>
+        <button
+          id="t"
+          type="button"
+          className="theme-btn"
+          onClick={toggleTheme}
+          aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+          title={isDark ? "Switch to light theme" : "Switch to dark theme"}
+        >
+          <svg
+            className="theme-icon icon-sun"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+          <svg
+            className="theme-icon icon-moon"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </button>
+      </nav>
+    </>
   )
 }

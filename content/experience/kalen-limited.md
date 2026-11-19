@@ -1,16 +1,16 @@
 ---
-title: "Fullstack Nextjs/Nestjs Developer"
+title: "Fullstack Next.js/NestJS Developer"
 company: "Kalen Limited"
-companyUrl: "#"
-period: "2022 — 2024"
+companyUrl: "https://kalen.co.tz/"
+period: "Oct 2022 — Sept 2024"
 location: "Dar es Salaam, Tanzania"
 type: "Full-time"
 technologies: ["Next.js", "NestJS", "PostgreSQL", "Tailwind CSS", "Recharts", "GraphQL", "REST APIs"]
-order: 2
+order: 4
 ---
 
-Developed scalable full-stack web applications and data visualization dashboards using Next.js and NestJS, optimizing database queries and API endpoints.
+Developed scalable full-stack web applications and data visualization dashboards using Next.js and NestJS, optimizing PostgreSQL database queries and API endpoints.
 
-- Built scalable Next.js frontends with SSR/SSG and data visualization dashboards using Recharts
-- Led database optimization (PostgreSQL) reducing query times by 60%, improving dashboard performance
-- Designed REST & GraphQL APIs and established component library standards with Tailwind CSS
+- Built scalable Next.js frontends (SSR/SSG) backed by NestJS services, turning rough product specs into shipped features and data-visualization dashboards with Recharts
+- Diagnosed and resolved PostgreSQL performance bottlenecks, cutting query times by 60% and materially improving dashboard responsiveness under growing load
+- Designed REST & GraphQL APIs and established component-library and coding standards (Tailwind CSS) used across the team, working within Git-based code review practices

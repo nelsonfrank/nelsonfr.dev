@@ -1,298 +1,129 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback, memo } from "react"
+import { useEffect, useRef, useState, memo } from "react"
 import Link from "next/link"
-import { ArrowLeft, Clock, Calendar, ArrowUpRight } from "lucide-react"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { useMagnetic } from "@/hooks/use-gsap"
-import { CustomCursor } from "@/components/custom-cursor"
-import { SmoothScroll } from "@/components/smooth-scroll"
+import { Header } from "@/components/header"
+import { NewsletterPanel } from "@/components/newsletter-panel"
+import { Contact } from "@/components/contact"
+import { Footer } from "@/components/footer"
+import { useMermaid } from "@/hooks/use-mermaid"
 import type { PostMeta } from "@/lib/posts"
+import type { Project } from "@/lib/projects"
 import type { TocHeading } from "@/lib/markdown"
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger)
-}
-
-// ─── Mermaid renderer ─────────────────────────────────────────────────────────
-
-let mermaidInitialized = false
-
-/**
- * After the article HTML is injected, find every div.mermaid-block containing a
- * <script type="application/mermaid"> and render it into an SVG.
- *
- * We read the definition from the script's textContent, NOT from a data
- * attribute — HTML parsers normalize newlines in attribute values to spaces,
- * which breaks multi-line mermaid syntax completely.
- */
-function useMermaid(
-  containerRef: React.RefObject<HTMLDivElement | null>,
-  htmlContent: string,
-  onDiagramClick: (svgHtml: string) => void
-) {
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const blocks = Array.from(
-      container.querySelectorAll<HTMLDivElement>("div.mermaid-block")
+function renderHighlightedTitle(title: string, highlightPhrase?: string) {
+  if (!highlightPhrase) {
+    const words = title.split(" ")
+    if (words.length <= 2) {
+      return <span className="hl-word">{title}</span>
+    }
+    const lastTwo = words.slice(-2).join(" ")
+    const prefix = words.slice(0, -2).join(" ")
+    return (
+      <>
+        {prefix} <span className="hl-word">{lastTwo}</span>
+      </>
     )
-    if (blocks.length === 0) return
+  }
 
-    let cancelled = false
+  const idx = title.toLowerCase().indexOf(highlightPhrase.toLowerCase())
+  if (idx === -1) {
+    return <span className="hl-word">{title}</span>
+  }
 
-    async function render() {
-      const mermaid = (await import("mermaid")).default
-
-      if (!mermaidInitialized) {
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: "dark",
-          themeVariables: {
-            darkMode: true,
-            background: "transparent",
-            primaryColor: "hsl(142 71% 45%)",
-            primaryTextColor: "hsl(0 0% 95%)",
-            primaryBorderColor: "hsl(142 71% 35%)",
-            lineColor: "hsl(0 0% 50%)",
-            secondaryColor: "hsl(0 0% 12%)",
-            tertiaryColor: "hsl(0 0% 9%)",
-            edgeLabelBackground: "hsl(0 0% 9%)",
-            clusterBkg: "hsl(0 0% 10%)",
-            titleColor: "hsl(0 0% 90%)",
-            nodeTextColor: "hsl(0 0% 90%)",
-            fontFamily: "'Geist', 'Inter', sans-serif",
-            fontSize: "14px",
-          },
-          flowchart: { htmlLabels: true, curve: "basis" },
-          sequence: { useMaxWidth: true },
-        })
-        mermaidInitialized = true
-      }
-
-      for (let i = 0; i < blocks.length; i++) {
-        if (cancelled) break
-        const block = blocks[i]
-
-        // Read definition from the <script type="application/mermaid"> child.
-        // textContent is never HTML-parsed, so newlines are preserved as-is.
-        const scriptEl = block.querySelector<HTMLScriptElement>(
-          "script[type='application/mermaid']"
-        )
-        const definition = scriptEl?.textContent ?? ""
-        if (!definition.trim()) continue
-
-        try {
-          const id = `mermaid-svg-${Date.now()}-${i}`
-          const { svg } = await mermaid.render(id, definition)
-          if (cancelled) break
-          block.innerHTML = svg
-          block.style.cursor = "zoom-in"
-          block.onclick = () => {
-            onDiagramClick(block.innerHTML)
-          }
-        } catch (err) {
-          console.error("Mermaid render error:", err)
-          block.innerHTML =
-            `<pre style="color:hsl(0 80% 60%);font-size:0.75rem;white-space:pre-wrap;text-align:left">${String(err)}</pre>`
-        }
-      }
-    }
-
-    render()
-    return () => { cancelled = true }
-  // htmlContent changing means a new post was loaded — re-run
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [htmlContent])
-}
-
-// ─── Reading Progress Bar ─────────────────────────────────────────────────────
-
-function ReadingProgress() {
-  const barRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const bar = barRef.current
-    if (!bar) return
-    const update = () => {
-      const scrolled = window.scrollY
-      const total = document.documentElement.scrollHeight - window.innerHeight
-      bar.style.width = total > 0 ? `${(scrolled / total) * 100}%` : "0%"
-    }
-    window.addEventListener("scroll", update, { passive: true })
-    return () => window.removeEventListener("scroll", update)
-  }, [])
+  const before = title.slice(0, idx)
+  const match = title.slice(idx, idx + highlightPhrase.length)
+  const after = title.slice(idx + highlightPhrase.length)
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-60 h-0.5 bg-border/30">
-      <div ref={barRef} className="h-full bg-primary transition-none" style={{ width: "0%" }} />
-    </div>
+    <>
+      {before}
+      <span className="hl-word">{match}</span>
+      {after}
+    </>
   )
 }
 
-// ─── Table of Contents Sidebar ────────────────────────────────────────────────
+const BlogPostHtml = memo(
+  ({
+    htmlContent,
+    articleRef,
+    onDiagramClick,
+  }: {
+    htmlContent: string
+    articleRef: React.RefObject<HTMLElement | null>
+    onDiagramClick: (svgHtml: string) => void
+  }) => {
+    useMermaid(articleRef, htmlContent, onDiagramClick)
 
-function TableOfContents({ headings }: { headings: TocHeading[] }) {
-  const [activeId, setActiveId] = useState<string>("")
-  const isScrollingRef = useRef(false)
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    e.preventDefault()
-    const el = document.getElementById(id)
-    if (!el) return
-
-    // Immediately highlight the clicked item
-    setActiveId(id)
-    isScrollingRef.current = true
-
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
-
-    // Offset for the fixed header (~68px)
-    const top = el.getBoundingClientRect().top + window.scrollY - 80
-    window.scrollTo({ top, behavior: "smooth" })
-
-    // Re-enable observer updates after smooth scroll completes (typically 800ms)
-    scrollTimeoutRef.current = setTimeout(() => {
-      isScrollingRef.current = false
-    }, 800)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (headings.length === 0) return
-
-    const observers: IntersectionObserver[] = []
-    const visibleIds = new Set<string>()
-
-    headings.forEach(({ id }) => {
-      const el = document.getElementById(id)
-      if (!el) return
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          // If actively scrolling from a click, ignore observer updates
-          if (isScrollingRef.current) return
-
-          if (entry.isIntersecting) {
-            visibleIds.add(id)
-          } else {
-            visibleIds.delete(id)
-          }
-          // Pick the first visible heading in document order
-          const firstVisible = headings.find((h) => visibleIds.has(h.id))
-          if (firstVisible) setActiveId(firstVisible.id)
-        },
-        {
-          rootMargin: "-80px 0px -60% 0px",
-          threshold: 0,
-        }
-      )
-      observer.observe(el)
-      observers.push(observer)
-    })
-
-    return () => observers.forEach((o) => o.disconnect())
-  }, [headings])
-
-  if (headings.length === 0) return null
-
-  return (
-    <nav
-      aria-label="Table of contents"
-      className="fixed right-6 lg:right-10 top-1/2 -translate-y-1/2 z-40 hidden md:block"
-    >
-      <ul className="flex flex-col gap-3.5 items-end">
-        {headings.map((heading) => {
-          const isActive = activeId === heading.id
-          return (
-            <li key={heading.id} className="group relative flex items-center justify-end">
-              {/* Tooltip for smaller screens (revealed on hover) */}
-              <span className="absolute right-full mr-3.5 px-2.5 py-1 rounded-md text-[11px] font-medium font-sans whitespace-nowrap bg-card text-card-foreground border border-border shadow-sm opacity-0 translate-x-2 pointer-events-none group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 xl:hidden">
-                {heading.text}
-              </span>
-
-              {/* Clickable link wrapping both the title and the indicator pill */}
-              <a
-                href={`#${heading.id}`}
-                onClick={(e) => handleClick(e, heading.id)}
-                className="flex items-center justify-end w-full cursor-pointer group/link"
-              >
-                {/* Full Title for large screens (xl+) */}
-                <span
-                  className={[
-                    "hidden xl:inline text-[11px] font-medium uppercase tracking-wider mr-3.5 transition-colors duration-300 truncate max-w-[200px] text-right font-sans",
-                    isActive ? "text-primary font-semibold" : "text-muted-foreground group-hover/link:text-foreground",
-                  ].join(" ")}
-                >
-                  {heading.text}
-                </span>
-
-                {/* Interactive pill indicator */}
-                <span
-                  className={[
-                    "h-1 rounded-full transition-all duration-300",
-                    // Sub-headings are shorter/transparent; active headings extend into a wider pill
-                    heading.level === 3 ? "w-2 opacity-50 group-hover/link:opacity-100" : "w-4",
-                    isActive
-                      ? "bg-primary w-6 opacity-100"
-                      : "bg-muted-foreground/30 group-hover/link:bg-muted-foreground/70",
-                  ].join(" ")}
-                />
-              </a>
-            </li>
-          )
-        })}
-      </ul>
-    </nav>
-  )
-}
-
-// ─── Memoized Blog Post HTML Component ────────────────────────────────────────
-
-const BlogPostHtml = memo(({
-  htmlContent,
-  onDiagramClick
-}: {
-  htmlContent: string
-  onDiagramClick: (svgHtml: string) => void
-}) => {
-  const bodyRef = useRef<HTMLDivElement>(null)
-  useMermaid(bodyRef, htmlContent, onDiagramClick)
-
-  return (
-    <article
-      ref={bodyRef}
-      className="prose"
-      dangerouslySetInnerHTML={{ __html: htmlContent }}
-    />
-  )
-})
+    return (
+      <article
+        ref={articleRef}
+        id="art"
+        className="prose"
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+      />
+    )
+  }
+)
 BlogPostHtml.displayName = "BlogPostHtml"
-
-// ─── Post Client ──────────────────────────────────────────────────────────────
 
 interface PostClientProps {
   post: PostMeta
   htmlContent: string
   headings: TocHeading[]
-  prevPost: PostMeta | null
-  nextPost: PostMeta | null
+  relatedProject: Project | null
+  relatedPosts: PostMeta[]
 }
 
-export default function PostClient({ post, htmlContent, headings, prevPost, nextPost }: PostClientProps) {
-  const headerRef = useRef<HTMLElement>(null)
-  const heroRef   = useRef<HTMLDivElement>(null)
-  const backRef   = useMagnetic<HTMLAnchorElement>(0.3)
-
+export default function PostClient({
+  post,
+  htmlContent,
+  headings,
+  relatedProject,
+  relatedPosts,
+}: PostClientProps) {
+  const articleRef = useRef<HTMLElement | null>(null)
+  const progressBarRef = useRef<HTMLDivElement | null>(null)
+  const [activeId, setActiveId] = useState<string>(headings[0]?.id ?? "")
+  const [copied, setCopied] = useState(false)
   const [modalSvg, setModalSvg] = useState<string | null>(null)
+
+  useEffect(() => {
+    function updateProgressAndSpy() {
+      const art = articleRef.current
+      const bar = progressBarRef.current
+      if (art && bar) {
+        const rect = art.getBoundingClientRect()
+        const h = Math.max(1, rect.height - window.innerHeight * 0.6)
+        const p = Math.min(
+          1,
+          Math.max(0, (-rect.top + window.innerHeight * 0.2) / h)
+        )
+        bar.style.transform = `scaleX(${p})`
+      }
+
+      if (headings.length > 0) {
+        let cur = headings[0].id
+        for (const h of headings) {
+          const el = document.getElementById(h.id)
+          if (el && el.getBoundingClientRect().top < window.innerHeight * 0.35) {
+            cur = h.id
+          }
+        }
+        setActiveId(cur)
+      }
+    }
+
+    window.addEventListener("scroll", updateProgressAndSpy, { passive: true })
+    window.addEventListener("resize", updateProgressAndSpy)
+    updateProgressAndSpy()
+
+    return () => {
+      window.removeEventListener("scroll", updateProgressAndSpy)
+      window.removeEventListener("resize", updateProgressAndSpy)
+    }
+  }, [headings])
 
   useEffect(() => {
     if (!modalSvg) return
@@ -303,176 +134,250 @@ export default function PostClient({ post, htmlContent, headings, prevPost, next
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [modalSvg])
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headerRef.current,
-        { y: -40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
-      )
-
-      if (heroRef.current) {
-        gsap.fromTo(
-          Array.from(heroRef.current.children),
-          { y: 50, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.9, stagger: 0.12, delay: 0.1, ease: "power3.out" }
-        )
+  const handleCopyLink = () => {
+    const finish = () => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard
+          .writeText(window.location.href)
+          .then(finish, finish)
+      } else {
+        finish()
       }
-    })
+    } catch {
+      finish()
+    }
+  }
 
-    return () => ctx.revert()
-  }, [post.slug])
+  const shareUrl = `https://nelsonfrank.dev/writing/${post.slug}`
+  const shareText = encodeURIComponent(`${post.title} by Nelson Frank`)
+  const encodedUrl = encodeURIComponent(shareUrl)
 
   return (
     <>
-      <ReadingProgress />
-      <CustomCursor />
-      <SmoothScroll>
-        {/* Header */}
-        <header
-          ref={headerRef}
-          className="fixed top-0.5 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border py-4 px-6"
-        >
-          <div className="mx-auto max-w-6xl flex items-center justify-between">
-            <Link
-              ref={backRef}
-              href="/writing"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
-              data-cursor="Back"
-            >
-              <ArrowLeft className="size-4 group-hover:-translate-x-1 transition-transform duration-300" />
-              Writing
+      <div className="reading-progress-track" aria-hidden="true">
+        <div ref={progressBarRef} id="bar" className="reading-progress-bar" />
+      </div>
+
+      <Header />
+
+      <main id="main-content">
+        <div className="wrap">
+          <header className="post-head">
+            <Link className="back-link" href="/writing">
+              ← Back to all posts
             </Link>
-            <Link
-              href="/"
-              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-            >
-              Nelson Frank
-            </Link>
-          </div>
-        </header>
 
-        <main className="pt-28 pb-24 px-6 min-h-screen">
-          {/* Centered post column */}
-          <div className="mx-auto max-w-3xl relative">
-            <div className="w-full min-w-0">
+            <h1>{renderHighlightedTitle(post.title, post.highlightPhrase)}</h1>
 
+            <p className="post-dek">{post.excerpt}</p>
 
-              {/* Hero */}
-              <div ref={heroRef} className="mb-14">
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {post.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2.5 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full border border-primary/20"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-foreground leading-tight text-balance mb-6">
-                  {post.title}
-                </h1>
-
-                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5">
-                    <Calendar className="size-3.5" />
-                    {post.date}
-                  </span>
-                  <span className="w-1 h-1 rounded-full bg-border" />
-                  <span className="inline-flex items-center gap-1.5">
-                    <Clock className="size-3.5" />
-                    {post.readTime}
-                  </span>
-                </div>
-
-                <div className="mt-10 h-px bg-gradient-to-r from-primary/40 via-border to-transparent" />
+            <div className="byline">
+              <div className="avatar-circle" aria-hidden="true">
+                NF
               </div>
-
-              {/* Rendered memoized markdown body */}
-              <BlogPostHtml htmlContent={htmlContent} onDiagramClick={setModalSvg} />
-
-              <div className="mt-16 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-
-              {/* Prev / Next navigation */}
-              <nav className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {prevPost ? (
-                  <Link
-                    href={`/writing/${prevPost.slug}`}
-                    className="group flex flex-col gap-1 p-5 rounded-xl border border-border hover:border-primary/40 hover:bg-secondary/30 transition-all duration-300"
-                  >
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <ArrowLeft className="size-3 group-hover:-translate-x-1 transition-transform duration-300" />
-                      Previous
-                    </span>
-                    <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                      {prevPost.title}
-                    </span>
-                  </Link>
-                ) : <div />}
-
-                {nextPost ? (
-                  <Link
-                    href={`/writing/${nextPost.slug}`}
-                    className="group flex flex-col items-end gap-1 p-5 rounded-xl border border-border hover:border-primary/40 hover:bg-secondary/30 transition-all duration-300"
-                  >
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      Next
-                      <ArrowUpRight className="size-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
-                    </span>
-                    <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors text-right line-clamp-2">
-                      {nextPost.title}
-                    </span>
-                  </Link>
-                ) : <div />}
-              </nav>
+              <div>
+                <b>Nelson Frank</b>
+                {post.date} · {post.readTime}
+              </div>
             </div>
 
-            {/* Sticky TOC sidebar — only visible on xl+ */}
-            <TableOfContents headings={headings} />
-          </div>
-        </main>
+            {post.tags.length > 0 && (
+              <div style={{ marginTop: "1.2rem" }}>
+                {post.tags.map((tag) => (
+                  <Link
+                    key={tag}
+                    className="tag"
+                    href={`/writing?topic=${encodeURIComponent(tag.toLowerCase())}`}
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </header>
 
-        {/* Footer */}
-        <footer className="border-t border-border/40 py-8 px-6">
-          <div className="mx-auto max-w-6xl flex items-center justify-between">
-            <Link
-              href="/writing"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5 group"
-            >
-              <ArrowLeft className="size-3.5 group-hover:-translate-x-1 transition-transform duration-300" />
-              All posts
-            </Link>
-            <p className="text-xs text-muted-foreground/50">Nelson Frank · {new Date().getFullYear()}</p>
+          <div
+            className="post-cover"
+            role="img"
+            aria-label={`Visual overview for ${post.title}`}
+          >
+            <div className="post-cover-inner" aria-hidden="true">
+              <div>
+                <span className="mock-bar hl" />
+                <span className="mock-bar" />
+                <span className="mock-bar" style={{ width: "68%" }} />
+              </div>
+              <div className="mock-nodes">
+                {post.tags.slice(0, 3).map((tag, idx) => (
+                  <span
+                    key={tag}
+                    className={`mock-node${idx === 1 ? " mid" : ""}`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
-        </footer>
-      </SmoothScroll>
 
-      {/* Modal overlay for enlarged diagrams */}
+          <div className="post-layout">
+            {headings.length > 0 && (
+              <aside className="toc-aside" aria-label="On this page">
+                <b>On this page</b>
+                <ol>
+                  {headings.map((h) => (
+                    <li key={h.id}>
+                      <a
+                        href={`#${h.id}`}
+                        className={activeId === h.id ? "on" : undefined}
+                      >
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </aside>
+            )}
+
+            <div>
+              <BlogPostHtml
+                htmlContent={htmlContent}
+                articleRef={articleRef}
+                onDiagramClick={setModalSvg}
+              />
+
+              <div className="share-row">
+                <span>Share this post</span>
+                <button
+                  className="btn s"
+                  id="copy"
+                  type="button"
+                  onClick={handleCopyLink}
+                >
+                  {copied ? "Link copied" : "Copy link"}
+                </button>
+                <a
+                  className="btn s"
+                  href={`https://x.com/intent/tweet?text=${shareText}&url=${encodedUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Post on X
+                </a>
+                <a
+                  className="btn s"
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LinkedIn
+                </a>
+              </div>
+
+              <div className="author-box">
+                <div className="avatar-circle" aria-hidden="true">
+                  NF
+                </div>
+                <div>
+                  <b>Nelson Frank</b>
+                  Full-stack software engineer in Dar es Salaam. I write about
+                  authentication, distributed backend services, and TypeScript.{" "}
+                  <Link href="/experience">More about me</Link>
+                </div>
+              </div>
+
+              {relatedProject && (
+                <div style={{ margin: "2rem 0" }}>
+                  <article className="next-card">
+                    <div>
+                      <small>Related case study</small>
+                      <h3>
+                        <Link href={`/projects/${relatedProject.slug}`}>
+                          {relatedProject.title}
+                        </Link>
+                      </h3>
+                      <p>{relatedProject.description}</p>
+                    </div>
+                    <span className="tag">Case study</span>
+                  </article>
+                </div>
+              )}
+
+              <NewsletterPanel compact />
+            </div>
+          </div>
+
+          {relatedPosts.length > 0 && (
+            <section className="related-sec">
+              <h2>Keep reading</h2>
+              <div className="related-grid">
+                {relatedPosts.map((rel) => (
+                  <article key={rel.slug} className="related-card">
+                    <small>
+                      {rel.date} · {rel.readTime}
+                    </small>
+                    <h3>
+                      <Link href={`/writing/${rel.slug}`}>{rel.title}</Link>
+                    </h3>
+                    <p>{rel.excerpt}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        <Contact />
+      </main>
+
+      <Footer />
+
       {modalSvg && (
         <div
-          className="fixed inset-0 z-70 bg-black/90 backdrop-blur-md flex items-center justify-center p-6 cursor-zoom-out"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 50,
+            background: "var(--glass)",
+            backdropFilter: "blur(8px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "1.5rem",
+          }}
           onClick={() => setModalSvg(null)}
-          style={{ animation: "fade-in 0.2s ease-out forwards" }}
         >
-          {/* Close button (forced dark style for high contrast) */}
           <button
+            type="button"
             onClick={() => setModalSvg(null)}
-            className="absolute top-6 right-6 p-2.5 rounded-full border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 transition-colors text-zinc-400 hover:text-zinc-100 cursor-pointer z-80"
+            className="btn s"
+            style={{
+              position: "absolute",
+              top: "1.25rem",
+              right: "1.25rem",
+              background: "var(--surface)",
+            }}
             aria-label="Close diagram"
           >
-            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            Close
           </button>
-          
-          {/* Main content container (forced dark bg for SVG contrast) */}
           <div
-            className="bg-zinc-950 border border-zinc-800 p-6 md:p-10 rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-auto flex items-center justify-center shadow-2xl relative cursor-default"
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--line)",
+              borderRadius: "14px",
+              padding: "1.5rem",
+              maxWidth: "64rem",
+              width: "100%",
+              maxHeight: "85vh",
+              overflow: "auto",
+            }}
             onClick={(e) => e.stopPropagation()}
             data-mermaid-modal
-            style={{ animation: "scale-up 0.2s ease-out forwards" }}
             dangerouslySetInnerHTML={{ __html: modalSvg }}
           />
         </div>

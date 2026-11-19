@@ -1,38 +1,33 @@
-# Nelson Frank — Fullstack Software Developer
+# Nelson Frank — Fullstack Engineer
 
-Nelson Frank is a fullstack software developer interested in tech and building robust software using modern technologies like React, Next.js, TypeScript, Node.js, and PostgreSQL.
+Nelson Frank is a fullstack engineer building secure auth, transit backends, and cloud infrastructure with TypeScript, Go, and Python on Kubernetes. Based in Dar es Salaam, Tanzania, working with teams worldwide.
 
 ## Core Profile
 - **Website URL**: https://nelsonfrank.dev
-- **Main Stack**: React, Next.js, TypeScript, Tailwind CSS, Node.js, PostgreSQL, AWS, GSAP, D3.js.
-- **Interests**: Clean code, design systems, performance optimization, and robust web applications.
+- **Main Stack**: TypeScript, Go, Python, Next.js, NestJS, React, PostgreSQL, Redis, Docker, Kubernetes.
+- **RSS Feed**: https://nelsonfrank.dev/feed.xml
 
 ## Site Structure
 
-- [Home](https://nelsonfrank.dev/) — Portfolio landing page, welcome intro, main tech stack, and contact details.
-- [Experience](https://nelsonfrank.dev/experience) — Timeline of professional roles, projects, and key contributions.
-- [Projects](https://nelsonfrank.dev/projects) — Detailed showcase of built web platforms and open-source contributions.
-- [Writing / Blog](https://nelsonfrank.dev/writing) — List of technical articles, deep dives, and tutorials.
+- [Home](https://nelsonfrank.dev/) — Overview, selected work, recent writing, experience summary, and contact.
+- [Projects](https://nelsonfrank.dev/projects) — Engineering case studies and architecture write-ups.
+- [Writing](https://nelsonfrank.dev/writing) — Technical articles and deep dives.
+- [Experience](https://nelsonfrank.dev/experience) — Work history and engineering roles.
 
 ## Featured Projects
 
-- [City Connector Backend](https://nelsonfrank.dev/projects/city-connector-backend) — High-performance transit routing (RAPTOR) and real-time GTFS engine built with Go, Python, Kong Gateway, and Kubernetes.
-- [i18n Automation CLI](https://nelsonfrank.dev/projects/i8n-automation-cli) — AI-native AST parsing and localization pipeline for React & TypeScript with multi-provider LLM verification.
-- [Homelab & Kubernetes Architecture](https://nelsonfrank.dev/projects/homelab) — Self-hosted private cloud infrastructure with Portainer and 3-level progressive Kubernetes migration via Argo CD GitOps.
-- [Passkey Authentication Engine](https://nelsonfrank.dev/projects/passkey-auth) — Biometric passwordless authentication using WebAuthn, NestJS, and PostgreSQL.
-- [NECTA Explorer](https://nelsonfrank.dev/projects/necta-explorer) — Asynchronous Python web crawler and interactive Next.js analytics dashboard for national examination results.
+- [Passkey Authentication Engine](https://nelsonfrank.dev/projects/passkey-auth) — Biometric passwordless and multi-factor authentication system built with WebAuthn, NestJS, React, and PostgreSQL (`Browser -> NestJS API -> Postgres`).
+- [City Connector](https://nelsonfrank.dev/projects/city-connector-backend) — Full-stack multi-agency transit platform pairing an offline-first React Native (Expo SDK 58, MapLibre, MMKV) mobile app ([city-connector-mobile](https://github.com/nelsonfrank/city-connector-mobile)) with a high-performance Go RAPTOR routing and Python GTFS-RT backend ([city-connector-backend](https://github.com/nelsonfrank/city-connector-backend)) behind Kong Gateway, PostGIS, Redis, and Kubernetes (`RN Mobile -> Go RAPTOR -> Redis/GTFS`).
+- [NECTA Explorer](https://nelsonfrank.dev/projects/necta-explorer) — Asynchronous Python web crawler and interactive Next.js analytics dashboard for Tanzania NECTA examination results (`Scraper -> Postgres -> Next.js`).
 
-## Articles & Deep Dives
+## Latest Articles
 
-- [Understanding Next.js App Router](https://nelsonfrank.dev/writing/nextjs-app-router) — Layouts, loading states, error boundaries, and server components explained.
-- [CSS Grid vs Flexbox: When to Use Which](https://nelsonfrank.dev/writing/grid-vs-flexbox) — Structural layouts vs dynamic content positioning.
-- [Setting Up Node.js with Express and TypeScript](https://nelsonfrank.dev/writing/nodejs-express-typescript) — Step-by-step developer guide.
-- [GraphQL Queries and Mutations](https://nelsonfrank.dev/writing/graphql-query-mutation) — Detailed guide to queries, mutations, schemas, and API integration.
-- [Building Scalable React Applications](https://nelsonfrank.dev/writing/scalable-react) — Folder structure, state management, and design patterns.
-- [Demystifying TypeScript Generics](https://nelsonfrank.dev/writing/typescript-generics) — Writing flexible, type-safe reusable components.
+- [TOTP Authentication: How It Works and How It's Built](https://nelsonfrank.dev/writing/TOTP-authentication) — A ground-up explanation of OTP, HOTP, and TOTP with a full walkthrough of a production NestJS + React implementation.
+- [Using Passkeys for Multi-Factor Authentication](https://nelsonfrank.dev/writing/passkey-auth-as-multi-factor-auth-option) — A deep dive into using passkeys and WebAuthn for phishing-resistant multi-factor authentication.
+- [Mastering TypeScript Generics](https://nelsonfrank.dev/writing/typescript-generics) — How generics make TypeScript code flexible, reusable, and type-safe.
 
 ## Crawl & Indexing Resources
 
 - [Sitemap](https://nelsonfrank.dev/sitemap.xml) — XML Sitemap for search engines and crawlers.
-- [Robots Directives](https://nelsonfrank.dev/robots.txt) — Web crawler policies and instruction sets.
-
+- [RSS Feed](https://nelsonfrank.dev/feed.xml) — RSS 2.0 feed of technical articles.
+- [Robots Directives](https://nelsonfrank.dev/robots.txt) — Web and AI crawler policies.

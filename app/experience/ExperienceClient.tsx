@@ -1,315 +1,650 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, ArrowUpRight, Download, MapPin, Briefcase } from "lucide-react"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { useMagnetic } from "@/hooks/use-gsap"
-import { CustomCursor } from "@/components/custom-cursor"
-import { SmoothScroll } from "@/components/smooth-scroll"
+import { Header } from "@/components/header"
+import { Contact } from "@/components/contact"
+import { Footer } from "@/components/footer"
 import type { Experience } from "@/lib/experience"
+import type { Project } from "@/lib/projects"
+import type { PostMeta } from "@/lib/posts"
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger)
+export interface CvFileMeta {
+  url: string
+  downloadName: string
+  fileType: string
+  pages: number
+  sizeKb: string
+  updated: string
+  hasPreviewImage: boolean
 }
 
-// ─── Experience Card ──────────────────────────────────────────────────────────
+const METRIC_PATTERNS = [
+  "32% of commits",
+  "5 concurrent",
+  "3 enterprise",
+  "60%",
+  "99.9% uptime",
+  "sub-1s",
+  "50%",
+  "3 junior developers",
+]
 
-function ExperienceCard({
-  exp,
-  index,
-  isLast,
-}: {
-  exp: Experience
-  index: number
-  isLast: boolean
-}) {
-  const cardRef = useRef<HTMLDivElement>(null)
+function highlightBulletMetrics(text: string): React.ReactNode {
+  let matchedPattern: string | null = null
+  let matchedIndex = -1
 
-  useEffect(() => {
-    const card = cardRef.current
-    if (!card) return
-    gsap.set(card, { opacity: 0, y: 48 })
-    ScrollTrigger.create({
-      trigger: card,
-      start: "top 87%",
-      onEnter: () => {
-        gsap.to(card, {
-          opacity: 1,
-          y: 0,
-          duration: 0.85,
-          delay: (index % 3) * 0.1,
-          ease: "power3.out",
-        })
-      },
-    })
-  }, [index])
-
-  return (
-    <div ref={cardRef} className="relative flex gap-0">
-
-      {/* ── Timeline gutter ── */}
-      <div className="hidden md:flex flex-col items-center w-14 shrink-0 pt-1">
-        {/* Dot */}
-        <div className="relative z-10 flex items-center justify-center w-3 h-3 rounded-full bg-primary ring-4 ring-primary/15 mt-1" />
-        {/* Vertical line below dot */}
-        {!isLast && (
-          <div className="flex-1 w-px bg-border/60 mt-2" />
-        )}
-      </div>
-
-      {/* ── Card body ── */}
-      <div className="flex-1 pb-12 pl-2 md:pl-6">
-        <div className="group rounded-2xl border border-border/50 bg-secondary/20 hover:bg-secondary/40 hover:border-primary/25 transition-all duration-400 p-6 md:p-8">
-
-          {/* Top row: title + period */}
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-            <div>
-              <h2 className="text-lg md:text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300 leading-snug">
-                {exp.title}
-              </h2>
-              <Link
-                href={exp.companyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:text-primary/70 transition-colors text-sm mt-0.5"
-              >
-                {exp.company}
-                <ArrowUpRight className="size-3.5 opacity-70 group-hover:opacity-100 transition-opacity" />
-              </Link>
-            </div>
-
-            {/* Meta chips */}
-            <div className="flex flex-wrap gap-2 shrink-0">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/8 border border-primary/20 text-[11px] font-mono font-medium text-primary/80 uppercase tracking-wide whitespace-nowrap">
-                {exp.period}
-              </span>
-            </div>
-          </div>
-
-          {/* Location + type row */}
-          <div className="flex flex-wrap gap-4 mb-5 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin className="size-3 shrink-0" />
-              {exp.location}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Briefcase className="size-3 shrink-0" />
-              {exp.type}
-            </span>
-          </div>
-
-          {/* Divider */}
-          <div className="h-px bg-border/40 mb-5" />
-
-          {/* Description */}
-          <p className="text-muted-foreground text-sm leading-relaxed mb-5">
-            {exp.description}
-          </p>
-
-          {/* Bullet achievements */}
-          {exp.bullets.length > 0 && (
-            <ul className="space-y-2.5 mb-6">
-              {exp.bullets.map((bullet, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-3 text-sm text-foreground/80 leading-relaxed"
-                >
-                  <span className="mt-[7px] shrink-0 w-1.5 h-1.5 rounded-full bg-primary/50" />
-                  {bullet}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {/* Tech stack */}
-          <div className="flex flex-wrap gap-1.5">
-            {exp.technologies.map((tech) => (
-              <span
-                key={tech}
-                className="px-2.5 py-1 text-[11px] font-medium bg-background/60 text-muted-foreground rounded-md border border-border/60 hover:border-primary/30 hover:text-primary hover:bg-primary/5 transition-all duration-200"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ─── Experience Client Page ───────────────────────────────────────────────────
-
-interface ExperienceClientProps {
-  experiences: Experience[]
-}
-
-export default function ExperienceClient({ experiences }: ExperienceClientProps) {
-  const headerRef  = useRef<HTMLElement>(null)
-  const heroRef    = useRef<HTMLDivElement>(null)
-  const backRef    = useMagnetic<HTMLAnchorElement>(0.3)
-  const resumeRef  = useMagnetic<HTMLAnchorElement>(0.3)
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headerRef.current,
-        { y: -40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
-      )
-      if (heroRef.current) {
-        gsap.fromTo(
-          Array.from(heroRef.current.children),
-          { y: 36, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.85, stagger: 0.1, delay: 0.15, ease: "power3.out" }
-        )
-      }
-    })
-    return () => ctx.revert()
-  }, [])
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://nelsonfrank.dev"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Experience",
-      "item": "https://nelsonfrank.dev/experience"
+  for (const pattern of METRIC_PATTERNS) {
+    const idx = text.indexOf(pattern)
+    if (idx !== -1 && (matchedIndex === -1 || idx < matchedIndex)) {
+      matchedPattern = pattern
+      matchedIndex = idx
     }
-  ]
-}
+  }
+
+  if (!matchedPattern || matchedIndex === -1) {
+    return text
+  }
+
+  const before = text.slice(0, matchedIndex)
+  const match = text.slice(matchedIndex, matchedIndex + matchedPattern.length)
+  const after = text.slice(matchedIndex + matchedPattern.length)
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-      <CustomCursor />
-      <SmoothScroll>
+      {before}
+      <b>{match}</b>
+      {after}
+    </>
+  )
+}
 
-        {/* ── Header ── */}
-        <header
-          ref={headerRef}
-          className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border py-4 px-6"
-        >
-          <div className="mx-auto max-w-4xl flex items-center justify-between">
-            <Link
-              ref={backRef}
-              href="/"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
-            >
-              <ArrowLeft className="size-4 group-hover:-translate-x-1 transition-transform duration-300" />
-              Nelson Frank
-            </Link>
-            <span className="text-sm font-medium text-primary">Experience</span>
+const ROLE_TEAM_SIZE: Record<string, string> = {
+  "nbc-bank": "Cross-functional banking team of 5–10 engineers",
+  "mwangahakika-bank": "Cross-functional banking team of 5–10 engineers (independent freelance delivery)",
+  "must-company": "Cross-functional product team of 5–10 engineers across 5 concurrent client projects",
+  "kalen-limited": "Cross-functional product & data engineering team of 5–10 engineers",
+  "id8-space": "Cross-functional engineering team of 5–10 engineers, mentored 3 junior developers",
+}
+
+interface SkillRow {
+  name: string
+  level: 1 | 2 | 3 | 4 | 5
+  years: string
+  usedInLabel: string
+  usedInHref?: string
+}
+
+interface SkillGroup {
+  group: string
+  items: SkillRow[]
+}
+
+const SKILL_GROUPS: SkillGroup[] = [
+  {
+    group: "Core & Backend",
+    items: [
+      {
+        name: "TypeScript",
+        level: 5,
+        years: "6 yrs",
+        usedInLabel: "Passkey Authentication Engine",
+        usedInHref: "/projects/passkey-auth",
+      },
+      {
+        name: "Go (Golang)",
+        level: 4,
+        years: "2 yrs",
+        usedInLabel: "City Connector RAPTOR engine",
+        usedInHref: "/projects/city-connector-backend",
+      },
+      {
+        name: "Java & Spring Boot",
+        level: 4,
+        years: "1 yr",
+        usedInLabel: "NBC Bank & Mwangahakika Bank",
+        usedInHref: "#experience",
+      },
+      {
+        name: "NestJS & Node.js",
+        level: 5,
+        years: "6 yrs",
+        usedInLabel: "TOTP Authentication deep dive",
+        usedInHref: "/writing/TOTP-authentication",
+      },
+      {
+        name: "Python",
+        level: 4,
+        years: "3 yrs",
+        usedInLabel: "NECTA Explorer async crawler",
+        usedInHref: "/projects/necta-explorer",
+      },
+    ],
+  },
+  {
+    group: "Frontend & Mobile",
+    items: [
+      {
+        name: "React & Next.js",
+        level: 5,
+        years: "6 yrs",
+        usedInLabel: "NECTA Explorer dashboard",
+        usedInHref: "/projects/necta-explorer",
+      },
+      {
+        name: "React Native (Expo)",
+        level: 4,
+        years: "2 yrs",
+        usedInLabel: "City Connector mobile app",
+        usedInHref: "/projects/city-connector-backend",
+      },
+      {
+        name: "Tailwind CSS",
+        level: 5,
+        years: "5 yrs",
+        usedInLabel: "Kalen Limited & NECTA Explorer",
+        usedInHref: "/projects/necta-explorer",
+      },
+      {
+        name: "Zustand & React Query",
+        level: 4,
+        years: "3 yrs",
+        usedInLabel: "MUST Company & City Connector",
+        usedInHref: "/projects/city-connector-backend",
+      },
+    ],
+  },
+  {
+    group: "Data, Cloud & Testing",
+    items: [
+      {
+        name: "PostgreSQL & PostGIS",
+        level: 4,
+        years: "4 yrs",
+        usedInLabel: "Passkey Auth & City Connector",
+        usedInHref: "/projects/passkey-auth",
+      },
+      {
+        name: "Redis & Elasticsearch",
+        level: 4,
+        years: "2 yrs",
+        usedInLabel: "City Connector GTFS-RT telemetry",
+        usedInHref: "/projects/city-connector-backend",
+      },
+      {
+        name: "Kubernetes & Docker",
+        level: 4,
+        years: "3 yrs",
+        usedInLabel: "Homelab & Kubernetes Architecture",
+        usedInHref: "/projects/homelab",
+      },
+      {
+        name: "AWS (EC2, CloudFront)",
+        level: 4,
+        years: "3 yrs",
+        usedInLabel: "Id8 Space production infra",
+        usedInHref: "#experience",
+      },
+      {
+        name: "Jest, Vitest & Cypress",
+        level: 4,
+        years: "4 yrs",
+        usedInLabel: "i18n Automation CLI (218 tests)",
+        usedInHref: "/projects/i8n-automation-cli",
+      },
+    ],
+  },
+]
+
+function LevelBar({ level }: { level: 1 | 2 | 3 | 4 | 5 }) {
+  return (
+    <span className="lv" role="img" aria-label={`${level} of 5`}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <i key={n} className={n <= level ? "on" : undefined} />
+      ))}
+    </span>
+  )
+}
+
+function getRelatedLinksForRole(
+  exp: Experience,
+  projects: Project[],
+  posts: PostMeta[]
+): { label: string; href: string }[] {
+  const techSet = new Set(exp.technologies.map((t) => t.toLowerCase()))
+  const links: { label: string; href: string }[] = []
+
+  for (const project of projects) {
+    const overlap = project.technologies.some((t) =>
+      techSet.has(t.toLowerCase())
+    )
+    if (overlap) {
+      links.push({
+        label: `${project.title} case study`,
+        href: `/projects/${project.slug}`,
+      })
+    }
+    if (links.length >= 2) break
+  }
+
+  for (const post of posts) {
+    const overlap = post.tags.some((t) => techSet.has(t.toLowerCase()))
+    if (overlap) {
+      links.push({
+        label: post.title,
+        href: `/writing/${post.slug}`,
+      })
+    }
+    if (links.length >= 3) break
+  }
+
+  return links
+}
+
+const MENU_ITEMS = [
+  { id: "experience", label: "Experience" },
+  { id: "skills", label: "Skills" },
+  { id: "education", label: "Education" },
+  { id: "more", label: "Talks and open source" },
+  { id: "about", label: "About me" },
+] as const
+
+interface ExperienceClientProps {
+  experiences: Experience[]
+  projects: Project[]
+  posts: PostMeta[]
+  cvMeta: CvFileMeta
+}
+
+export default function ExperienceClient({
+  experiences,
+  projects,
+  posts,
+  cvMeta,
+}: ExperienceClientProps) {
+  const detailsRefs = useRef<(HTMLDetailsElement | null)[]>([])
+  const [allExpanded, setAllExpanded] = useState(false)
+  const [activeSection, setActiveSection] = useState<string>("experience")
+
+  const syncExpandState = () => {
+    const els = detailsRefs.current.filter(
+      (el): el is HTMLDetailsElement => el !== null
+    )
+    if (els.length === 0) return
+    setAllExpanded(els.every((el) => el.open))
+  }
+
+  const handleToggleAll = () => {
+    const els = detailsRefs.current.filter(
+      (el): el is HTMLDetailsElement => el !== null
+    )
+    const nextOpen = !els.every((el) => el.open)
+    els.forEach((el) => {
+      el.open = nextOpen
+    })
+    setAllExpanded(nextOpen)
+  }
+
+  useEffect(() => {
+    syncExpandState()
+
+    function spy() {
+      let current: string = MENU_ITEMS[0].id
+      for (const item of MENU_ITEMS) {
+        const el = document.getElementById(item.id)
+        if (el && el.getBoundingClientRect().top < window.innerHeight * 0.35) {
+          current = item.id
+        }
+      }
+      setActiveSection(current)
+    }
+
+    window.addEventListener("scroll", spy, { passive: true })
+    spy()
+    return () => window.removeEventListener("scroll", spy)
+  }, [])
+
+  return (
+    <>
+      <Header />
+
+      <div className="wrap">
+        <header className="cv-head">
+          <h1>
+            Nelson Frank, <span className="hl-word">full-stack</span> engineer
+          </h1>
+          <p className="role-lead">
+            Backend Developer at NBC Bank, Dar es Salaam. Seven-plus years
+            building distributed banking services, transit platforms, and web
+            applications.
+          </p>
+
+          <div className="cv-panel">
+            {cvMeta.hasPreviewImage ? (
+              <div className="cv-doc-thumb">
+                <Image
+                  src="/cv-preview.webp"
+                  alt="First page of my CV"
+                  width={340}
+                  height={480}
+                  sizes="(max-width: 520px) 80px, 120px"
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+            ) : (
+              <div className="cv-doc-thumb is-mock" aria-hidden="true">
+                <i className="h" />
+                <i className="m" />
+                <i className="w" />
+                <i />
+                <i className="w" />
+                <i />
+                <i className="w" />
+                <i />
+              </div>
+            )}
+
+            <div>
+              <h2>My CV</h2>
+              <p className="cv-meta">
+                {cvMeta.fileType} · {cvMeta.pages}{" "}
+                {cvMeta.pages === 1 ? "page" : "pages"} · {cvMeta.sizeKb} ·{" "}
+                {cvMeta.updated}
+              </p>
+              <div className="cv-acts">
+                <a
+                  className="btn p"
+                  href={cvMeta.url}
+                  download={cvMeta.downloadName}
+                >
+                  Download CV (PDF)
+                </a>
+                <a
+                  className="btn s"
+                  href={cvMeta.url}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Open in a new tab
+                </a>
+              </div>
+            </div>
           </div>
+
+          <dl className="cv-facts">
+            <div>
+              <dt>Experience</dt>
+              <dd>7+ years</dd>
+            </div>
+            <div>
+              <dt>Location</dt>
+              <dd>Dar es Salaam (UTC+3)</dd>
+            </div>
+            <div>
+              <dt>Languages</dt>
+              <dd>English, Swahili</dd>
+            </div>
+            <div>
+              <dt>Work type</dt>
+              <dd>Full-time, freelance</dd>
+            </div>
+            <div>
+              <dt>Availability</dt>
+              <dd>Open to roles</dd>
+            </div>
+          </dl>
         </header>
 
-        <main className="pt-24 pb-28 px-6 min-h-screen">
-          <div className="mx-auto max-w-4xl">
+        <div className="cv-layout">
+          <nav className="cv-menu" aria-label="On this page">
+            <b>On this page</b>
+            <ol>
+              {MENU_ITEMS.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={`#${item.id}`}
+                    className={activeSection === item.id ? "on" : undefined}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
 
-            {/* ── Hero ── */}
-            <div ref={heroRef} className="mb-16 md:mb-20">
-              <p className="text-xs font-mono text-primary/70 uppercase tracking-widest mb-4">
-                Professional history
-              </p>
-              <h1 className="text-4xl md:text-[3.5rem] font-semibold tracking-tight text-foreground leading-tight mb-5">
-                Experience
-              </h1>
-              <p className="text-muted-foreground text-base md:text-lg max-w-lg leading-relaxed mb-8">
-                A timeline of my professional journey — the roles, teams, and problems that shaped how I build software.
-              </p>
-
-              <Link
-                ref={resumeRef}
-                href="/resume.pdf"
-                download="nelson-frank-software-developer.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-primary text-background text-sm font-semibold hover:bg-primary/90 active:scale-95 transition-all duration-200 group shadow-lg shadow-primary/20"
-                data-cursor="Download"
-              >
-                <Download className="size-4 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                Download Resume
-              </Link>
-            </div>
-
-            {/* ── Timeline ── */}
-            <div>
-              {/* Label row for the timeline */}
-              <div className="hidden md:flex items-center gap-0 mb-8">
-                <div className="w-14 shrink-0" />
-                <div className="pl-6">
-                  <p className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground/50">
-                    — Timeline
+          <main id="main-content" className="cv-main">
+            <section id="experience">
+              <div className="xph">
+                <div>
+                  <h2 className="sh">Experience</h2>
+                  <p className="cv-lead" style={{ margin: 0 }}>
+                    {experiences.length} roles, newest first. Open a role for
+                    the full detail.
                   </p>
                 </div>
+                <button id="all" type="button" onClick={handleToggleAll}>
+                  {allExpanded ? "Collapse all" : "Expand all"}
+                </button>
               </div>
 
-              <div>
-                {experiences.map((exp, i) => (
-                  <ExperienceCard
+              {experiences.map((exp, index) => {
+                const related = getRelatedLinksForRole(exp, projects, posts)
+                const teamText =
+                  ROLE_TEAM_SIZE[exp.slug] ??
+                  "Cross-functional engineering team of 5–10 engineers"
+
+                return (
+                  <details
                     key={exp.slug}
-                    exp={exp}
-                    index={i}
-                    isLast={i === experiences.length - 1}
-                  />
-                ))}
-              </div>
-            </div>
+                    className="job"
+                    open={index === 0}
+                    ref={(el) => {
+                      detailsRefs.current[index] = el
+                    }}
+                    onToggle={syncExpandState}
+                  >
+                    <summary>
+                      <div>
+                        <h3>{exp.title}</h3>
+                        <span className="co">
+                          {exp.company}
+                          {exp.location ? `, ${exp.location}` : ""}
+                        </span>
+                      </div>
+                      <div className="when">
+                        {exp.period}
+                        <span className="chev" aria-hidden="true">
+                          ›
+                        </span>
+                      </div>
+                    </summary>
 
-            {/* ── Bottom CTA ── */}
-            <div className="mt-6 ml-0 md:ml-20 rounded-2xl border border-border/50 bg-secondary/20 p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-              <div>
-                <p className="text-sm font-medium text-foreground">Want the full picture?</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Includes education, certifications, and additional side projects.
+                    <div className="in">
+                      <dl>
+                        <dt>Team</dt>
+                        <dd>{teamText}</dd>
+
+                        {exp.description && (
+                          <>
+                            <dt>Owned</dt>
+                            <dd>{exp.description}</dd>
+                          </>
+                        )}
+
+                        {exp.bullets.length > 0 && (
+                          <>
+                            <dt>Results</dt>
+                            <dd>
+                              <ul>
+                                {exp.bullets.map((bullet, bIdx) => (
+                                  <li key={bIdx}>
+                                    {highlightBulletMetrics(bullet)}
+                                  </li>
+                                ))}
+                              </ul>
+                            </dd>
+                          </>
+                        )}
+
+                        {exp.technologies.length > 0 && (
+                          <>
+                            <dt>Stack</dt>
+                            <dd>
+                              {exp.technologies.map((tech) => (
+                                <span key={tech} className="tag">
+                                  {tech}
+                                </span>
+                              ))}
+                            </dd>
+                          </>
+                        )}
+
+                        {related.length > 0 && (
+                          <>
+                            <dt>Related</dt>
+                            <dd>
+                              {related.map((rel, rIdx) => (
+                                <span key={rel.href}>
+                                  {rIdx > 0 && " · "}
+                                  <Link href={rel.href}>{rel.label}</Link>
+                                </span>
+                              ))}
+                            </dd>
+                          </>
+                        )}
+                      </dl>
+                    </div>
+                  </details>
+                )
+              })}
+            </section>
+
+            <section id="skills">
+              <h2 className="sh">Skills</h2>
+              <p className="cv-lead">
+                Level is my honest self-rating out of 5, with years of use and
+                where you can see the work on this site.
+              </p>
+
+              {SKILL_GROUPS.map((group, gIdx) => (
+                <div key={group.group}>
+                  <h3 className="grp">{group.group}</h3>
+                  <div className="sk">
+                    {gIdx === 0 && (
+                      <div className="r h" aria-hidden="true">
+                        <span>Skill</span>
+                        <span>Level</span>
+                        <span>Years</span>
+                        <span>Used in</span>
+                      </div>
+                    )}
+                    {group.items.map((sk) => (
+                      <div key={sk.name} className="r">
+                        <b>{sk.name}</b>
+                        <LevelBar level={sk.level} />
+                        <span className="u">{sk.years}</span>
+                        <span className="w">
+                          {sk.usedInHref ? (
+                            <Link href={sk.usedInHref}>{sk.usedInLabel}</Link>
+                          ) : (
+                            sk.usedInLabel
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </section>
+
+            <section id="education">
+              <h2 className="sh">Education</h2>
+              <ul className="cv-list" style={{ marginTop: "1rem" }}>
+                <li>
+                  <span>
+                    BSc in Computer Science
+                    <span>University of Dar es Salaam, Dar es Salaam.</span>
+                  </span>
+                  <small>Nov 2017 to Oct 2020</small>
+                </li>
+              </ul>
+            </section>
+
+            <section id="more">
+              <h2 className="sh">Talks and open source</h2>
+              <ul className="cv-list" style={{ marginTop: "1rem" }}>
+                {projects.map((project) => (
+                  <li key={project.slug}>
+                    <span>
+                      <Link href={`/projects/${project.slug}`}>
+                        {project.title}
+                      </Link>
+                      <span>
+                        {project.role}. {project.outcome ?? project.description}
+                        {project.githubUrl && project.githubUrl !== "#" && (
+                          <>
+                            {" · "}
+                            <a
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              GitHub repository
+                            </a>
+                          </>
+                        )}
+                      </span>
+                    </span>
+                    <small>{project.year}</small>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section id="about">
+              <h2 className="sh">About me</h2>
+              <div className="cv-sm" style={{ marginTop: "1rem" }}>
+                <p>
+                  I studied Computer Science at the University of Dar es Salaam
+                  and learned early that software only counts when real people
+                  can rely on it every day—whether it is an internal banking
+                  service, a public examination archive, or a commuter transit
+                  app working offline.
+                </p>
+                <p>
+                  Outside client and banking work, I run a self-hosted
+                  Kubernetes and Docker homelab, build open-source developer
+                  tools, and mentor junior developers in Dar es Salaam.
                 </p>
               </div>
-              <Link
-                href="/resume.pdf"
-                download="nelson-frank-software-developer.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:border-primary/40 hover:bg-primary/5 hover:text-primary text-sm font-medium text-foreground transition-all duration-200 group shrink-0"
-                data-cursor="Download"
-              >
-                <Download className="size-3.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                Download PDF
-              </Link>
+            </section>
+
+            <div className="cv-cta">
+              <div>
+                <h2>Want the full picture?</h2>
+                <p>Download my CV, or tell me about your project.</p>
+              </div>
+              <div className="acts">
+                <a
+                  className="btn p"
+                  href={cvMeta.url}
+                  download={cvMeta.downloadName}
+                >
+                  Download CV (PDF)
+                </a>
+                <a className="btn s" href="#contact">
+                  Get in touch
+                </a>
+              </div>
             </div>
+          </main>
+        </div>
+      </div>
 
-          </div>
-        </main>
+      <Contact heading="Let’s work together" />
 
-        {/* ── Footer ── */}
-        <footer className="border-t border-border/40 py-8 px-6">
-          <div className="mx-auto max-w-4xl flex items-center justify-between">
-            <Link
-              href="/"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5 group"
-            >
-              <ArrowLeft className="size-3.5 group-hover:-translate-x-1 transition-transform duration-300" />
-              Back home
-            </Link>
-            <p className="text-xs text-muted-foreground/50">
-              Nelson Frank · {new Date().getFullYear()}
-            </p>
-          </div>
-        </footer>
-
-      </SmoothScroll>
+      <Footer />
     </>
   )
 }

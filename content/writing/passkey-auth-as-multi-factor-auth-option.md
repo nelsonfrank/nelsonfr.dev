@@ -1,24 +1,31 @@
 ---
-title: "Using Passkeys for Multi-Factor Authentication"
-excerpt: "A deep dive into using passkeys for multi-factor authentication"
+title: "How to Build Passkeys for Multi-Factor Authentication (And 4 Production Traps to Avoid)"
+excerpt: "SMS and TOTP codes can be phished in real time. Learn how to implement passkeys for multi-factor authentication with WebAuthn, TypeORM, and NestJS."
 date: "June 24, 2026"
-readTime: "6 min read"
+readTime: "9 min read"
 tags: ["WebAuthn", "Passkeys", "MFA"]
+project: "passkey-auth"
 ---
 
-Traditional multi-factor authentication (MFA) mechanisms like SMS and TOTP codes fail to protect users against modern, reverse-proxy phishing kits that capture session tokens in real-time. Passkeys, built on the WebAuthn standard, eliminate this vulnerability by binding public-key cryptography directly to the application's domain. By integrating passkeys as an MFA factor, you replace vulnerable out-of-band codes with phishing-resistant, biometric-triggered cryptographic assertions. This article explores WebAuthn, its benefits over traditional MFA, and how to implement it in your application.
+A user clicks a convincing login link, types their password, opens their authenticator app, and enters a valid 6-digit TOTP code. Seconds later, an attacker has their session cookie—because a reverse-proxy phishing kit (like Evilginx) sat in the middle and replayed everything in real time.
 
-## The Limits of Traditional Second Factors
+That’s the uncomfortable truth about SMS and TOTP: they don’t check *which domain* the user is actually talking to. Using **passkeys for multi-factor authentication** fixes both security and UX at once, replacing copy-pasted codes with phishing-resistant, domain-bound cryptography triggered by FaceID, TouchID, or Windows Hello.
 
-Most applications implement MFA using time-based one-time passwords (TOTP) or SMS verification. These methods fall short because they do not verify the destination domain of the login attempt. A user tricked by a phishing proxy (such as Evilginx) will willingly enter their password and TOTP code, which the proxy intercepts and replays to the legitimate server to steal the session cookie.
+In this walkthrough, you’ll see how WebAuthn works under the hood, how to build a complete passkey MFA flow with **TypeORM, PostgreSQL, NestJS, and `@simplewebauthn`**, and the **4 production gotchas** (including a nasty PostgreSQL timezone bug) that can silently break it.
 
-Traditional MFA also degrades user experience. Requiring a user to locate a phone, open an authenticator app, copy a six-digit code, and enter it before a session expires creates sign-in friction. This friction directly translates to lower MFA adoption rates and increased support tickets for locked-out accounts.
+## 1. Why SMS and TOTP Break—and How WebAuthn Fixes It
 
-Integrating passkeys solves both security and usability concerns. Because WebAuthn authenticators scope credential generation to the browser's origin, they refuse to sign challenges from spoofed domains. This shift to local biometrics (such as TouchID, FaceID, or Windows Hello) simplifies MFA from a multi-device task to a single local gesture.
+Traditional second factors rely on **shared secrets**—a 6-digit code that both the user and the server know. If a user types that code into a spoofed domain, the phishing proxy forwards it straight to your server and steals the session.
 
-## The Mechanics of WebAuthn Cryptography
+On top of that, traditional MFA hurts UX. Hunting for a phone, opening an authenticator app, and racing a 30-second timer creates friction—which leads to lower MFA adoption and more locked-out support tickets.
 
-WebAuthn shifts the burden of credential verification from shared secrets to asymmetric cryptography. During registration, the authenticator generates a public-private key pair on the client device. The private key remains locked inside the device’s hardware-backed secure enclave (e.g., TPM or Secure Enclave), accessible only after local user verification. The server stores only the public key.
+**WebAuthn flips the model to asymmetric cryptography:**
+- During registration, the user’s device generates a **public-private key pair**.
+- The **private key** stays locked inside hardware-backed storage (like a TPM or Secure Enclave) and only unlocks after local biometric or PIN verification.
+- Your server stores **only the public key**.
+- Most importantly, the browser binds every credential to the **exact origin domain**. If a user lands on a spoofed domain, the authenticator simply refuses to sign the challenge.
+
+Here is the full back-and-forth between your frontend, the browser’s WebAuthn API, and your backend:
 
 ```
 +------------+             +------------+             +------------+
@@ -42,11 +49,13 @@ WebAuthn shifts the burden of credential verification from shared secrets to asy
       |<-- 10. Success (JWT) ----|                          |
 ```
 
-## Relational Database Schema Design for Storing Credentials
+## 2. Design Your Passkey Database Schema (TypeORM + PostgreSQL)
 
-To support passkeys, you must model credentials in your database to associate multiple authenticators with a single user account. Each record must store the credential ID, the public key, transport details, and an authentication counter.
+One user will often register multiple devices (a laptop, a phone, a hardware key). That means you need a **one-to-many** relationship between users and passkey credentials.
 
-In this implementation using TypeORM in [passkey-credential.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/passkey-credential.entity.ts), the database schema explicitly maps these fields, using timezone-aware column types to avoid synchronization issues:
+Each credential record stores four key pieces of data: the **credential ID**, the **public key**, **transport hints** (e.g., `internal`, `usb`, `hybrid`), and a **signature counter**.
+
+Here’s the TypeORM entity from [passkey-credential.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/passkey-credential.entity.ts):
 
 ```typescript
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn } from 'typeorm';
@@ -77,7 +86,7 @@ export class PasskeyCredential {
 }
 ```
 
-To support user-nameless flows where we must track active sessions before identifying the user, we also persist generated cryptographic challenges in a dedicated table represented by [challenge.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/challenge.entity.ts):
+If you also want to support **usernameless flows** (where you don't know *which* user is signing in until they present a passkey), store active challenges in a dedicated table like [challenge.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/challenge.entity.ts):
 
 ```typescript
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
@@ -95,7 +104,7 @@ export class Challenge {
 }
 ```
 
-The user entity in [user.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/user.entity.ts) maintains a one-to-many relationship with this credential table and preserves a temporary challenge column, as well as audit timestamps:
+Finally, the [user.entity.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/users/entities/user.entity.ts) entity links to all registered credentials and holds a temporary `currentChallenge` column:
 
 ```typescript
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
@@ -123,11 +132,15 @@ export class User {
 }
 ```
 
-## Backend Challenge Generation and Registration Flow
+> **Notice `type: 'timestamptz'`?** Keep an eye on that—it prevents a subtle PostgreSQL expiration bug we’ll unpack in Section 6.
 
-WebAuthn operations always begin on the server. You must generate a cryptographically random challenge and return it alongside the relying party configuration.
+## 3. Generate the Registration Challenge on the Backend
 
-Using `@simplewebauthn/server` (version `13.3.0`), we construct the registration options within [auth.service.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/auth/auth.service.ts). The `userID` must be passed as a `Uint8Array`, and existing credentials must be excluded so the user does not register the same physical device twice:
+Every WebAuthn flow starts on the server. Your backend generates a fresh, cryptographically random **challenge** and sends it back with your Relying Party (`rpID`) settings.
+
+Using `@simplewebauthn/server` (`v13.3.0`) in [auth.service.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/backend/src/auth/auth.service.ts), two details matter right away:
+- Convert `userID` to a `Uint8Array` using `isoUint8Array.fromUTF8String`.
+- Populate `excludeCredentials` so a user can’t accidentally register the same physical device twice.
 
 ```typescript
 import { generateRegistrationOptions } from '@simplewebauthn/server';
@@ -168,11 +181,11 @@ async function getRegistrationOptions(email: string) {
 }
 ```
 
-## Client-Side Browser Orchestration with WebAuthn
+## 4. Trigger the Biometric Prompt in the Browser
 
-The browser acts as the mediator between the frontend application and the operating system's WebAuthn client. Using `@simplewebauthn/browser` ensures correct base64url conversion when calling the browser APIs.
+On the frontend, the browser mediates between your app and the OS authenticator. Using `@simplewebauthn/browser` handles the messy base64url encoding/decoding required by the native `navigator.credentials` API.
 
-The frontend retrieves options from the backend endpoints, triggers the local authenticator dialog, and submits the signed credential payload back for verification. This sequence in [auth.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/client/src/utils/auth.ts) shows the browser execution:
+The client flow in [auth.ts](https://github.com/nelsonfrank/passkey-auth-demo/blob/main/client/src/utils/auth.ts) is just three steps: fetch options, call `startRegistration`, and send the signed response back to the server.
 
 ```typescript
 import { startRegistration, startAuthentication } from "@simplewebauthn/browser";
@@ -205,11 +218,13 @@ export const registerAndStorePasskey = async (email: string) => {
 };
 ```
 
-## Verification Logic and Preventing Clone Replay Attacks
+## 5. Verify Signatures and Block Replay Attacks
 
-When the client returns the signed attestation (during registration) or assertion (during authentication), the server must verify the cryptographic signatures against the stored challenge.
+Once the browser returns the signed payload, your backend has to prove two things: **the signature matches the stored challenge**, and **the challenge came from your exact origin and `rpID`**.
 
-We verify the client response on the backend. Under `@simplewebauthn/server@13.3.0`, verification results contain a nested `registrationInfo` property. Convert the public key buffer into a base64 string using `isoBase64URL.fromBuffer` before persisting it to the database:
+### Verifying Registration
+
+In `@simplewebauthn/server@13.3.0`, the verified credential lives under `verification.registrationInfo.credential`. Convert the public key buffer with `isoBase64URL.fromBuffer` before saving it, then immediately clear `user.currentChallenge` so it can’t be reused.
 
 ```typescript
 import { verifyRegistrationResponse } from '@simplewebauthn/server';
@@ -251,7 +266,15 @@ async function verifyRegistration(email: string, body: RegistrationResponseJSON)
 }
 ```
 
-During subsequent authentication, you verify the assertion against the stored public key. The server must check the signature counter. If the authenticator returns a counter value lower than or equal to the saved counter, someone has likely cloned the physical token, and you must reject the login:
+### Verifying Subsequent Logins (Assertions)
+
+When the user authenticates later, your backend runs four checks:
+1. **Look up the credential** by `body.id` to find the user.
+2. **Validate and expire the challenge** (5-minute TTL) from the global `challenges` table—then delete it immediately to prevent replay.
+3. **Fall back to `user.currentChallenge`** if you’re running a username-first flow.
+4. **Verify the signature and update the counter** via `verifyAuthenticationResponse`.
+
+*(Note: For hardware-bound keys like YubiKeys, a counter that doesn’t increment signals a cloned token—but synced cloud passkeys behave differently. See Gotcha #3 below before enforcing strict counter blocks.)*
 
 ```typescript
 import { verifyAuthenticationResponse } from '@simplewebauthn/server';
@@ -341,66 +364,94 @@ async function verifyAuthentication(body: AuthenticationResponseJSON) {
 }
 ```
 
-## Edge Cases, Synced Passkeys, and RP_ID Gotchas
+## 6. 4 Production Gotchas That Will Break Passkey MFA
 
-Integrating passkeys introduces specific operational edge cases that differ from traditional authentication systems:
+Getting passkeys working on `localhost` is the easy part. These four edge cases are where real deployments usually trip up:
 
-*   **Relying Party ID (RP_ID) Lock-in**: Authenticators tie the generated credentials to the `rpID` specified during registration. If your application switches domains from `my-app.io` to `my-app.com`, existing passkeys will not work. In local development, configuring `rpID` to anything other than `localhost` or a valid domain (like an IP address) causes browser security exceptions:
-    ```
-    DOMException: The relying party ID is not a valid domain string.
-    ```
-*   **Secure Context Constraints**: WebAuthn requires a secure context (HTTPS). The browser's `navigator.credentials` object will evaluate to `undefined` on non-secure connections, except on `localhost`. If deploying a staging site without TLS, your JS bundle will throw a runtime error:
-    ```
-    TypeError: Cannot read properties of undefined (reading 'create')
-    ```
-*   **Synced Passkey Counter Logic**: Cloud-backed passkeys (like Apple iCloud Keychain or Google Password Manager) sync across multiple client devices. Because these providers distribute copies of the credential, the signature counter does not always increment sequentially between devices. If you enforce strict counter checks (`newCounter <= oldCounter`) on synced passkeys, you will cause false-positive authentication blocks. Restrict strict counter checks to hardware-bound security keys (like YubiKeys) by inspecting the credential's AAGUID or transport types.
-*   **PostgreSQL Timezone Discrepancies and Challenge Expiration**: When checking if a challenge has expired (e.g., `dbChallenge.createdAt.getTime() < Date.now() - 5 * 60 * 1000`), the column type must be timezone-aware. In TypeORM with PostgreSQL, `@CreateDateColumn()` defaults to `timestamp without time zone` columns. When the pg driver queries the database, it parses the timezone-naive string using the Node.js application server's local timezone. If the server runs in a local timezone (e.g., `UTC+3`), the parsed Date object is shifted 3 hours into the past, causing the challenge to immediately trigger expiration exceptions. To prevent this, always specify `type: 'timestamptz'` (timestamp with time zone) in your date-time columns:
-    ```typescript
-    @CreateDateColumn({ type: 'timestamptz' })
-    createdAt: Date;
-    ```
+### 1. Relying Party ID (`rpID`) Lock-In
 
-## An End-to-End Walkthrough of a Passkey MFA Flow
+Credentials are permanently tied to the `rpID` used at registration. If you ever rebrand from `my-app.io` to `my-app.com`, existing passkeys stop working.
 
-This trace logs the payload shapes passed between the browser and NestJS endpoints during registration.
+In local dev, never use a raw IP address as `rpID`—stick to `localhost` or a valid domain, or the browser will throw:
 
-1.  The client initiates registration by posting the email. The server returns options configured with a cryptographic challenge:
-    ```json
-    {
-      "challenge": "U3VwZXJTZWN1cmVDaGFsbGVuZ2VCYXNlNjQ",
-      "rp": { "name": "Passkey Auth App", "id": "localhost" },
-      "user": {
-        "id": "VVNJRC0xMjM0NTY",
-        "name": "developer@example.com",
-        "displayName": "developer@example.com"
-      },
-      "pubKeyCredParams": [
-        { "type": "public-key", "alg": -7 },
-        { "type": "public-key", "alg": -257 }
-      ],
-      "authenticatorSelection": {
-        "residentKey": "required",
-        "userVerification": "preferred"
-      },
-      "excludeCredentials": []
-    }
-    ```
-2.  The client browser intercepts this object and passes it to `startRegistration({ optionsJSON: options })`.
-3.  The user performs biometric verification. The browser then returns the serialized attestation object containing the signature:
-    ```json
-    {
-      "id": "ARuS_3Xv8B-9D...",
-      "rawId": "ARuS_3Xv8B-9D...",
-      "type": "public-key",
-      "response": {
-        "clientDataJSON": "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiVTM...",
-        "attestationObject": "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YVj...",
-        "transports": ["internal"]
-      }
-    }
-    ```
-4.  The server verifies the signature on `clientDataJSON` and `attestationObject`, matches the returned challenge to the database-stored challenge, extracts the public key, and returns `{ verified: true }`.
+```text
+DOMException: The relying party ID is not a valid domain string.
+```
 
-## Actionable Next Steps for Deploying Passkey MFA
+### 2. Missing HTTPS on Staging Environments
 
-Using passkeys as an MFA option removes the threat of real-time reverse-proxy phishing attacks while reducing user login friction. A robust integration requires storing credentials mapped to users, validating challenges on secure origins, and verifying signature counters. Update your TypeORM schemas today to support WebAuthn entities, and configure `@simplewebauthn/server` inside your authentication controller.
+WebAuthn only runs in a **secure context** (HTTPS or `localhost`). Deploy to an HTTP staging server and `navigator.credentials` silently becomes `undefined`, crashing your bundle with:
+
+```text
+TypeError: Cannot read properties of undefined (reading 'create')
+```
+
+### 3. Synced Passkeys Don’t Always Increment Counters
+
+Cloud-synced passkeys (Apple iCloud Keychain, Google Password Manager) replicate credentials across devices, so their signature counter doesn’t always increment sequentially.
+
+If you strictly reject every login where `newCounter <= oldCounter`, **you will lock out legitimate users.** Restrict strict counter checks to hardware-bound keys (like YubiKeys) by checking the credential’s AAGUID or transport types.
+
+### 4. The PostgreSQL Timezone Bug That Instant-Expires Challenges
+
+In TypeORM with PostgreSQL, `@CreateDateColumn()` defaults to `timestamp without time zone`. When the `pg` driver reads that column back, it interprets it in your Node.js server’s local timezone.
+
+If your server runs in `UTC+3`, the parsed `Date` is shifted **3 hours into the past**—so your 5-minute challenge check fails *immediately* on every single login. Always use `timestamptz`:
+
+```typescript
+@CreateDateColumn({ type: 'timestamptz' })
+createdAt: Date;
+```
+
+<!-- TODO: Optional — add 1-2 sentences if you hit this UTC+3 bug firsthand while building the demo -->
+
+## 7. What the Payloads Actually Look Like on the Wire
+
+If you’re debugging a failing WebAuthn request, it helps to see the exact JSON shapes moving between your browser and NestJS endpoints.
+
+1. **Server returns registration options + challenge:**
+   ```json
+   {
+     "challenge": "U3VwZXJTZWN1cmVDaGFsbGVuZ2VCYXNlNjQ",
+     "rp": { "name": "Passkey Auth App", "id": "localhost" },
+     "user": {
+       "id": "VVNJRC0xMjM0NTY",
+       "name": "developer@example.com",
+       "displayName": "developer@example.com"
+     },
+     "pubKeyCredParams": [
+       { "type": "public-key", "alg": -7 },
+       { "type": "public-key", "alg": -257 }
+     ],
+     "authenticatorSelection": {
+       "residentKey": "required",
+       "userVerification": "preferred"
+     },
+     "excludeCredentials": []
+   }
+   ```
+2. **Browser passes those options to `startRegistration({ optionsJSON: options })`.**
+3. **After biometric verification, the browser returns the signed attestation:**
+   ```json
+   {
+     "id": "ARuS_3Xv8B-9D...",
+     "rawId": "ARuS_3Xv8B-9D...",
+     "type": "public-key",
+     "response": {
+       "clientDataJSON": "eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiVTM...",
+       "attestationObject": "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YVj...",
+       "transports": ["internal"]
+     }
+   }
+   ```
+4. **Server verifies the signature** on `clientDataJSON` and `attestationObject`, matches the challenge in PostgreSQL, stores the public key, and returns `{ verified: true }`.
+
+## The Key Takeaway
+
+Adding **passkeys for multi-factor authentication** is one of the rare security upgrades that makes your app **both harder to phish and faster to sign into**.
+
+You don’t need to rip out passwords on day one. Start by adding the `PasskeyCredential` and `Challenge` tables, wire up `@simplewebauthn/server`, and let users opt into biometric MFA alongside their existing login.
+
+You can explore the complete working NestJS + Next.js implementation in the [passkey-auth-demo repository on GitHub](https://github.com/nelsonfrank/passkey-auth-demo).
+
+**Are you still relying on TOTP/SMS for MFA, or have you started rolling out passkeys in production—and what edge case surprised you most?** Share your experience or pass this along to a teammate working on auth.

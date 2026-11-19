@@ -1,61 +1,69 @@
-import type { Metadata } from 'next'
-import { Analytics } from '@vercel/analytics/next'
-import Script from 'next/script'
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
-import { GeistPixelSquare } from "geist/font/pixel";
-import './globals.css'
-import { cn } from '@/lib/utils';
+import type { Metadata, Viewport } from "next"
+import { Analytics } from "@vercel/analytics/next"
+import "./globals.css"
 import { Toaster } from "@/components/ui/sonner"
-import { ThemeProvider } from '@/components/theme-provider'
-import { ThemeToggle } from '@/components/theme-toggle'
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? (process.env.NEXT_PUBLIC_APP_URL.startsWith('http') ? process.env.NEXT_PUBLIC_APP_URL : `https://${process.env.NEXT_PUBLIC_APP_URL}`)
-  : 'https://nelsonfrank.dev'
+  ? process.env.NEXT_PUBLIC_APP_URL.startsWith("http")
+    ? process.env.NEXT_PUBLIC_APP_URL
+    : `https://${process.env.NEXT_PUBLIC_APP_URL}`
+  : "https://nelsonfrank.dev"
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   alternates: {
-    canonical: '/',
+    canonical: "/",
+    types: {
+      "application/rss+xml": "/feed.xml",
+    },
   },
   title: {
-    default: 'Nelson Frank - Fullstack Software Developer',
-    template: '%s | Nelson Frank',
+    default: "Nelson Frank · Full-stack software engineer",
+    template: "%s · Nelson Frank",
   },
-  description: 'Fullstack software developer interested in tech and building robust software using latest technology.',
+  description:
+    "Full-stack software engineer in Dar es Salaam building reliable backend systems, web platforms, and mobile apps in TypeScript, Go, Java, and Next.js.",
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://nelsonfrank.dev',
-    siteName: 'Nelson Frank',
-    title: 'Nelson Frank - Fullstack Software Developer',
-    description: 'Fullstack software developer interested in tech and building robust software using latest technology.',
+    type: "website",
+    locale: "en_US",
+    url: "https://nelsonfrank.dev",
+    siteName: "Nelson Frank",
+    title: "Nelson Frank · Full-stack software engineer",
+    description:
+      "Full-stack software engineer in Dar es Salaam building reliable backend systems, web platforms, and mobile apps in TypeScript, Go, Java, and Next.js.",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Nelson Frank - Fullstack Software Developer',
-    description: 'Fullstack software developer interested in tech and building robust software using latest technology.',
+    card: "summary_large_image",
+    title: "Nelson Frank · Full-stack software engineer",
+    description:
+      "Full-stack software engineer in Dar es Salaam building reliable backend systems, web platforms, and mobile apps in TypeScript, Go, Java, and Next.js.",
   },
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
+        url: "/icon-light-32x32.png",
+        media: "(prefers-color-scheme: light)",
       },
       {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
+        url: "/icon-dark-32x32.png",
+        media: "(prefers-color-scheme: dark)",
       },
       {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: "/icon.svg",
+        type: "image/svg+xml",
       },
     ],
-    apple: '/apple-icon.png',
+    apple: "/apple-icon.png",
   },
 }
 
+const themeInitScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}})();`
 
 export default function RootLayout({
   children,
@@ -63,51 +71,25 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={cn("bg-background", GeistSans.variable, GeistMono.variable, GeistPixelSquare.variable)} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                if (typeof window !== 'undefined' && window.sessionStorage.getItem('preloader-shown') === 'true') {
-                  document.write('<style>.preloader { display: none !important; }</style>');
-                }
-              } catch (e) {}
-            `,
-          }}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
         />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
+          rel="stylesheet"
+        />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className={cn("antialiased relative")} >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {/* Google Analytics Script */}
-          {process.env.NODE_ENV === 'production' && (
-            <>
-              <Script
-                src="https://www.googletagmanager.com/gtag/js?id=G-1EKCMNQFJR"
-                strategy="afterInteractive"
-              />
-              <Script id="google-analytics" strategy="afterInteractive">
-                {`
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', 'G-1EKCMNQFJR');
-                `}
-              </Script>
-            </>
-          )}
-          {children}
-          <ThemeToggle />
-          <Toaster />
-          {process.env.NODE_ENV === 'production' && <Analytics />}
-        </ThemeProvider>
+      <body>
+        {children}
+        <Toaster />
+        {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
   )
 }
-

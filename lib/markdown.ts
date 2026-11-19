@@ -13,14 +13,47 @@ export interface TocHeading {
   level: number // 2 = h2, 3 = h3
 }
 
-/** Extract h2/h3 headings from raw markdown for the sidebar TOC.
- *  Runs the same rehype-slug pipeline as markdownToHtml so the IDs
- *  are guaranteed to match what ends up in the rendered HTML.
+/**
+ * Normalizes heading levels inside markdown content so every page maintains a
+ * strict h1 -> h2 -> h3 hierarchy beneath the page's single h1:
+ * 1. Any h1 inside markdown body is demoted to h2.
+ * 2. If the document has no h2 elements (e.g. starts at h3/h4), h3 becomes h2
+ *    and h4 becomes h3 so heading levels never skip from h1 to h3.
  */
+function rehypeNormalizeHeadings() {
+  return (tree: any) => {
+    let hasH1OrH2 = false
+
+    const scan = (node: any) => {
+      if (node.type === "element" && (node.tagName === "h1" || node.tagName === "h2")) {
+        hasH1OrH2 = true
+      }
+      if (node.children && Array.isArray(node.children)) {
+        node.children.forEach(scan)
+      }
+    }
+    scan(tree)
+
+    const transform = (node: any) => {
+      if (node.type === "element") {
+        if (node.tagName === "h1") {
+          node.tagName = "h2"
+        } else if (!hasH1OrH2) {
+          if (node.tagName === "h3") node.tagName = "h2"
+          else if (node.tagName === "h4") node.tagName = "h3"
+        }
+      }
+      if (node.children && Array.isArray(node.children)) {
+        node.children.forEach(transform)
+      }
+    }
+    transform(tree)
+  }
+}
+
 export async function extractHeadings(markdown: string): Promise<TocHeading[]> {
   const headings: TocHeading[] = []
 
-  // Lightweight plugin — collects heading nodes after rehype-slug has added ids
   function collectHeadings() {
     return (tree: any) => {
       const visit = (node: any) => {
@@ -49,6 +82,7 @@ export async function extractHeadings(markdown: string): Promise<TocHeading[]> {
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype)
+    .use(rehypeNormalizeHeadings)
     .use(rehypeSlug)
     .use(collectHeadings)
     .use(rehypeStringify)
@@ -57,15 +91,11 @@ export async function extractHeadings(markdown: string): Promise<TocHeading[]> {
   return headings
 }
 
-
 const prettyCodeOptions: PrettyCodeOptions = {
   theme: "github-dark-dimmed",
   keepBackground: true,
   defaultLang: "plaintext",
-  // Add language id as a data attribute we can use for the badge
   onVisitLine(node) {
-    // Prevent lines from collapsing in `display: grid` mode, and
-    // allow empty lines to be copy/pasted
     if (node.children.length === 0) {
       node.children = [{ type: "text", value: " " }]
     }
@@ -96,17 +126,6 @@ function rehypeExternalLinks() {
   }
 }
 
-/**
- * Rehype plugin: converts `<pre><code class="language-mermaid">…</code></pre>`
- * into `<div class="mermaid-block"><script type="application/mermaid">…</script></div>`.
- *
- * WHY NOT data-mermaid? HTML parsers normalize newlines in attribute values to
- * spaces, which completely breaks multi-line mermaid definitions. Storing the
- * definition as the textContent of a <script> element avoids that problem —
- * script content is never parsed as HTML.
- *
- * Must run BEFORE rehype-pretty-code so mermaid blocks are never highlighted.
- */
 function rehypeMermaid() {
   return (tree: any) => {
     const visit = (node: any, parent: any, index: number) => {
@@ -122,15 +141,11 @@ function rehypeMermaid() {
             (c.properties?.className ?? []).includes("language-mermaid")
         )
         if (code) {
-          // Extract raw text — this is the unescaped mermaid definition
           const raw = code.children
             .filter((c: any) => c.type === "text")
             .map((c: any) => c.value)
             .join("")
 
-          // Wrap in <div class="mermaid-block"> with a <script> child.
-          // The script textContent is never HTML-parsed, so newlines and
-          // special characters are preserved exactly.
           parent.children[index] = {
             type: "element",
             tagName: "div",
@@ -159,6 +174,7 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeNormalizeHeadings)
     .use(rehypeSlug)
     .use(rehypeMermaid)
     .use(rehypePrettyCode, prettyCodeOptions)

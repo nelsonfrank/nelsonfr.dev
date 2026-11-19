@@ -1,16 +1,16 @@
 ---
-title: "Fullstack React/Nodejs Developer"
+title: "Fullstack React/Node.js Developer"
 company: "Id8 Space"
 companyUrl: "#"
-period: "2021 — 2022"
+period: "Jun 2020 — Aug 2022"
 location: "Dar es Salaam, Tanzania"
 type: "Full-time"
 technologies: ["React", "Node.js", "AWS", "EC2", "CloudFront", "Tailwind CSS"]
-order: 3
+order: 5
 ---
 
-Built responsive user interfaces and robust backend APIs, deploying secure cloud infrastructures and mentoring junior team members.
+Owned high-usage product surfaces and AWS cloud infrastructure, delivering responsive React and Node.js applications and mentoring junior engineers.
 
-- Developed pixel-perfect UIs and interactive data tables with advanced filtering, sorting, and inline editing
-- Deployed on AWS (EC2 + CloudFront) achieving 99.9% uptime and sub-1s load times
-- Mentored 3 junior developers and wrote technical documentation reducing onboarding time by 50%
+- Owned complex, high-usage product surfaces — interactive data tables with advanced filtering, sorting and inline editing
+- Deployed and operated AWS cloud infrastructure (EC2 + CloudFront), achieving 99.9% uptime and sub-1s load times
+- Proactively found and fixed production issues; mentored 3 junior developers and wrote documentation that cut onboarding time by 50%

@@ -3,13 +3,47 @@ import { projects } from "@/lib/projects"
 import ProjectsClient from "./ProjectsClient"
 
 export const metadata: Metadata = {
-  title: "Projects — Nelson Frank",
-  description: "A showcase of web applications, mobile platforms, and open-source software designed, architected, and built by Nelson Frank.",
+  title: "Work",
+  description:
+    "Selected web, mobile, backend, and open-source engineering projects by Nelson Frank, each with the problem, the result, and how it was built.",
   alternates: {
-    canonical: "./",
+    canonical: "/projects",
+  },
+  openGraph: {
+    title: "Work · Nelson Frank",
+    description:
+      "Selected web, mobile, backend, and open-source engineering projects by Nelson Frank, each with the problem, the result, and how it was built.",
+    url: "https://nelsonfrank.dev/projects",
+    type: "website",
   },
 }
 
 export default function ProjectsPage() {
-  return <ProjectsClient initialProjects={projects} />
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Work · Nelson Frank",
+    url: "https://nelsonfrank.dev/projects",
+    description:
+      "Selected web, mobile, backend, and open-source engineering projects by Nelson Frank.",
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: projects.map((project, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: project.title,
+        url: `https://nelsonfrank.dev/projects/${project.slug}`,
+      })),
+    },
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+      />
+      <ProjectsClient initialProjects={projects} />
+    </>
+  )
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { projects } from "@/lib/projects"
 import { getProject } from "@/lib/projects-server"
+import { getAllPosts } from "@/lib/posts"
 import { markdownToHtml } from "@/lib/markdown"
 import ProjectDetailsClient from "./ProjectDetailsClient"
 
@@ -20,25 +21,25 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
   const project = getProject(slug)
   if (!project) {
     return {
-      title: "Project Not Found",
+      title: "Project not found",
     }
   }
 
   return {
-    title: `${project.title} — Nelson Frank`,
+    title: `${project.title} · Case study`,
     description: project.description,
     alternates: {
-      canonical: "./",
+      canonical: `/projects/${slug}`,
     },
     openGraph: {
-      title: project.title,
+      title: `${project.title} · Case study · Nelson Frank`,
       description: project.description,
       type: "website",
       url: `https://nelsonfrank.dev/projects/${slug}`,
     },
     twitter: {
       card: "summary_large_image",
-      title: project.title,
+      title: `${project.title} · Case study · Nelson Frank`,
       description: project.description,
     },
   }
@@ -51,34 +52,64 @@ export default async function ProjectDetailsPage({ params }: RouteParams) {
 
   const htmlContent = project.content ? await markdownToHtml(project.content) : ""
 
-  // Find next project to display as a teaser at the bottom of the page
+  const allPosts = getAllPosts()
+  const relatedArticles = (project.relatedPosts ?? [])
+    .map((postSlug) => allPosts.find((p) => p.slug === postSlug))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p))
+
   const idx = projects.findIndex((p) => p.slug === slug)
-  const nextProject = projects[(idx + 1) % projects.length]
+  const explicitNext = project.nextProject
+    ? projects.find((p) => p.slug === project.nextProject)
+    : undefined
+  const nextProject = explicitNext ?? projects[(idx + 1) % projects.length]
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       {
         "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://nelsonfrank.dev"
+        position: 1,
+        name: "Home",
+        item: "https://nelsonfrank.dev",
       },
       {
         "@type": "ListItem",
-        "position": 2,
-        "name": "Projects",
-        "item": "https://nelsonfrank.dev/projects"
+        position: 2,
+        name: "Work",
+        item: "https://nelsonfrank.dev/projects",
       },
       {
         "@type": "ListItem",
-        "position": 3,
-        "name": project.title,
-        "item": `https://nelsonfrank.dev/projects/${slug}`
-      }
-    ]
+        position: 3,
+        name: project.title,
+        item: `https://nelsonfrank.dev/projects/${slug}`,
+      },
+    ],
   }
+
+  const repoUrls =
+    project.githubLinks && project.githubLinks.length > 0
+      ? project.githubLinks.map((r) => r.url)
+      : project.githubUrl && project.githubUrl !== "#"
+        ? [project.githubUrl]
+        : []
+  const softwareSourceCodeJsonLd =
+    repoUrls.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          name: project.title,
+          description: project.description,
+          codeRepository: repoUrls.length === 1 ? repoUrls[0] : repoUrls,
+          programmingLanguage: project.technologies,
+          author: {
+            "@type": "Person",
+            name: "Nelson Frank",
+            url: "https://nelsonfrank.dev",
+          },
+        }
+      : null
 
   return (
     <>
@@ -86,7 +117,20 @@ export default async function ProjectDetailsPage({ params }: RouteParams) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <ProjectDetailsClient project={project} htmlContent={htmlContent} nextProject={nextProject} />
+      {softwareSourceCodeJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(softwareSourceCodeJsonLd),
+          }}
+        />
+      )}
+      <ProjectDetailsClient
+        project={project}
+        htmlContent={htmlContent}
+        relatedArticles={relatedArticles}
+        nextProject={nextProject}
+      />
     </>
   )
 }
