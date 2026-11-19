@@ -1,10 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { Header } from "@/components/header"
 import { ProjectCard } from "@/components/project-card"
-import { Contact } from "@/components/contact"
-import { Footer } from "@/components/footer"
 import type { Project } from "@/lib/projects"
 
 interface ProjectsClientProps {
@@ -36,11 +33,7 @@ export default function ProjectsClient({
         const matched = categories.find(
           (c) => c.toLowerCase() === catParam.toLowerCase()
         )
-        if (matched) {
-          setActiveCategory(matched)
-        } else {
-          setActiveCategory(catParam)
-        }
+        setActiveCategory(matched ?? catParam)
       }
     } catch {
       // Ignore URL parse issues
@@ -75,81 +68,56 @@ export default function ProjectsClient({
 
   return (
     <>
-      <Header />
-
-      <main id="main-content">
-        <div className="wrap">
-          <header className="page-head">
-            <h1>
-              Work that <span className="hl-word">shipped.</span>
-            </h1>
-            <p>
-              Five engineering projects across web, mobile, developer tooling,
-              and cloud infrastructure. Each page starts with the result, then
-              shows the problem and how I built it.
-            </p>
-          </header>
-
-          {showFilterBar && (
-            <div className="filter-bar">
-              <div
-                className="chips"
-                role="group"
-                aria-label="Filter projects"
+      {showFilterBar && (
+        <div className="filter-bar">
+          <div className="chips" role="group" aria-label="Filter projects">
+            {categories.map((category) => (
+              <button
+                key={category}
+                type="button"
+                className="chip"
+                data-f={category.toLowerCase()}
+                aria-pressed={
+                  activeCategory.toLowerCase() === category.toLowerCase()
+                }
+                onClick={() => selectCategory(category)}
               >
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    className="chip"
-                    data-f={category.toLowerCase()}
-                    aria-pressed={
-                      activeCategory.toLowerCase() === category.toLowerCase()
-                    }
-                    onClick={() => selectCategory(category)}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-              <span className="count-line" id="count" aria-live="polite">
-                {visibleCount} {visibleCount === 1 ? "project" : "projects"}
-              </span>
-            </div>
-          )}
-
-          <div className="works-grid" id="works">
-            {initialProjects.map((project, index) => {
-              const isMatch =
-                activeCategory === "All" ||
-                project.categories.some(
-                  (c) => c.toLowerCase() === activeCategory.toLowerCase()
-                )
-              const isBig = activeCategory === "All" && index === 0
-
-              return (
-                <ProjectCard
-                  key={project.slug}
-                  project={project}
-                  featured={isBig}
-                  hidden={!isMatch}
-                  dataCategories={project.categories
-                    .map((c) => c.toLowerCase())
-                    .join(" ")}
-                />
-              )
-            })}
+                {category}
+              </button>
+            ))}
           </div>
-
-          <p className="empty-state" id="empty" hidden={visibleCount > 0}>
-            No projects in this category yet. Try choosing another category above.
-          </p>
+          <span className="count-line" id="count" aria-live="polite">
+            {visibleCount} {visibleCount === 1 ? "project" : "projects"}
+          </span>
         </div>
+      )}
 
-        <Contact />
-      </main>
+      <div className="works-grid" id="works">
+        {initialProjects.map((project, index) => {
+          const isMatch =
+            activeCategory === "All" ||
+            project.categories.some(
+              (c) => c.toLowerCase() === activeCategory.toLowerCase()
+            )
+          const isBig = activeCategory === "All" && index === 0
 
-      <Footer />
+          return (
+            <ProjectCard
+              key={project.slug}
+              project={project}
+              featured={isBig}
+              hidden={!isMatch}
+              dataCategories={project.categories
+                .map((c) => c.toLowerCase())
+                .join(" ")}
+            />
+          )
+        })}
+      </div>
+
+      <p className="empty-state" id="empty" hidden={visibleCount > 0}>
+        No projects in this category yet. Try choosing another category above.
+      </p>
     </>
   )
 }

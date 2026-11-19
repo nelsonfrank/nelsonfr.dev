@@ -1,5 +1,8 @@
 import type { Metadata } from "next"
 import { projects } from "@/lib/projects"
+import { Header } from "@/components/header"
+import { Contact } from "@/components/contact"
+import { Footer } from "@/components/footer"
 import ProjectsClient from "./ProjectsClient"
 
 export const metadata: Metadata = {
@@ -43,7 +46,29 @@ export default function ProjectsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
-      <ProjectsClient initialProjects={projects} />
+
+      <Header />
+
+      <main id="main-content">
+        <div className="wrap">
+          <header className="page-head">
+            <h1>
+              Work that <span className="hl-word">shipped.</span>
+            </h1>
+            <p>
+              Five engineering projects across web, mobile, developer tooling,
+              and cloud infrastructure. Each page starts with the result, then
+              shows the problem and how I built it.
+            </p>
+          </header>
+
+          <ProjectsClient initialProjects={projects} />
+        </div>
+
+        <Contact />
+      </main>
+
+      <Footer />
     </>
   )
 }

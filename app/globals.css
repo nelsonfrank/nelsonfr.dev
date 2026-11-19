@@ -1913,11 +1913,20 @@ a.tag:hover {
 .prose .mermaid-block {
   margin: 2rem 0;
   padding: 1.25rem;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow-x: auto;
   text-align: center;
+}
+
+.prose .mermaid-block svg {
+  max-width: 100%;
+  height: auto;
 }
 
 .prose .mermaid-block > script {

@@ -1,7 +1,5 @@
-"use client"
-
 import Image from "next/image"
-import { captureEvent } from "@/lib/analytics"
+import { TrackedAnchor } from "@/components/tracked-link"
 
 export const AVAILABILITY_TEXT = "Available for full-time & freelance roles"
 
@@ -28,21 +26,21 @@ export function Hero() {
           </p>
 
           <div className="cta-row">
-            <a
+            <TrackedAnchor
               className="btn p"
               href="#work"
-              onClick={() => captureEvent("cta_see_work_clicked")}
+              eventName="cta_see_work_clicked"
             >
               View my work
-            </a>
-            <a
+            </TrackedAnchor>
+            <TrackedAnchor
               className="btn s"
               href="/cv.pdf"
               download="Nelson-Frank-CV.pdf"
-              onClick={() => captureEvent("cta_download_cv_clicked")}
+              eventName="cta_download_cv_clicked"
             >
               Download CV
-            </a>
+            </TrackedAnchor>
           </div>
         </div>
 
