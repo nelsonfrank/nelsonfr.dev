@@ -360,10 +360,16 @@ export function ArticleMediaLightbox({
       }
     }
 
-    const markZoomable = (el: HTMLElement, label: string) => {
+    const markZoomable = (
+      el: HTMLElement,
+      label: string,
+      allowButtonRole = true
+    ) => {
       el.setAttribute("data-zoomable", "true")
       el.setAttribute("tabindex", "0")
-      el.setAttribute("role", "button")
+      if (allowButtonRole) {
+        el.setAttribute("role", "button")
+      }
       if (!el.getAttribute("aria-label")) {
         el.setAttribute("aria-label", label)
       }
@@ -381,7 +387,11 @@ export function ArticleMediaLightbox({
         .querySelectorAll<HTMLVideoElement>("video[data-theme-video]")
         .forEach((video) => {
           const label = video.getAttribute("aria-label")
-          markZoomable(video, label ? `Preview diagram: ${label}` : "Preview diagram")
+          markZoomable(
+            video,
+            label ? `Preview diagram: ${label}` : "Preview diagram",
+            false
+          )
         })
 
       const onArticleClick = (e: MouseEvent) => {

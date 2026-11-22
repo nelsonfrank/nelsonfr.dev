@@ -3,7 +3,7 @@ title: "Designing a Multi-Agency Transit Backend: Six Architecture Decisions and
 excerpt: "How I structured City Connector's backend around RAPTOR, agency-namespaced GTFS IDs, blue-green timetable swaps, and isolated realtime feeds—plus the trade-offs and gaps still left in the codebase."
 date: "November 22, 2026"
 readTime: "11 min read"
-tags: ["Architecture", "Go", "Python", "RAPTOR", "GTFS", "PostGIS", "Redis"]
+tags: ["Architecture", "Golang", "Python", "RAPTOR", "GTFS", "PostGIS", "Redis"]
 project: "city-connector-backend"
 highlightPhrase: "Six Architecture Decisions"
 image: "/images/blog/city-connector/poster.jpg"

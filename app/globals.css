@@ -1992,6 +1992,11 @@ a.tag:hover {
   color: inherit !important;
 }
 
+.prose pre code span[style*="color:#768390"],
+.prose pre code span[style*="color: #768390"] {
+  color: #9aa7b8 !important;
+}
+
 .prose figure:not([data-rehype-pretty-code-figure]) {
   margin: 2.25rem 0;
 }
@@ -2301,6 +2306,12 @@ a.tag:hover {
   color: var(--ink);
 }
 
+.author-box a {
+  color: var(--lagoon);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .related-sec {
   padding: 3rem 0 0;
   border-top: 1px solid var(--line);
@@ -2391,6 +2402,11 @@ a.tag:hover {
   font: 400 1.1rem/1.5 var(--serif);
   color: var(--paper);
   opacity: 0.9;
+}
+
+.news-panel a {
+  color: inherit;
+  font-weight: 600;
 }
 
 .news-panel form {

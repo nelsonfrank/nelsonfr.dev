@@ -242,7 +242,7 @@ export function ShareButtons({
         target="_blank"
         rel="noopener noreferrer"
       >
-        LinkedIn
+        Share on LinkedIn
       </a>
     </div>
   )

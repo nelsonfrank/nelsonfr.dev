@@ -97,7 +97,7 @@ export function Header() {
         <Link
           href="/"
           className="me"
-          aria-label="Nelson Frank — Home"
+          aria-label="NF — Nelson Frank Home"
           aria-current={pathname === "/" ? "page" : undefined}
           onClick={handleNavClick("/")}
         >

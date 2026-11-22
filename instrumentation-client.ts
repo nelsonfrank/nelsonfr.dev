@@ -16,25 +16,14 @@ if (typeof window !== "undefined") {
           dsn: "https://201c4fb0f0db4fcb4487d7d2b750db12@o4506044817014784.ingest.us.sentry.io/4506044821471232",
           sendDefaultPii: true,
           tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
-          replaysSessionSampleRate: 0.1,
-          replaysOnErrorSampleRate: 1.0,
           enableLogs: true,
           integrations: [
-            Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+            Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
           ],
         });
 
         routerTransitionHandler =
           Sentry.captureRouterTransitionStart as unknown as (...args: unknown[]) => void;
-
-        return Sentry.lazyLoadIntegration("replayIntegration").then((replayIntegration) => {
-          Sentry.addIntegration(
-            replayIntegration({
-              maskAllText: true,
-              blockAllMedia: true,
-            })
-          );
-        });
       })
       .catch(() => {});
 
@@ -46,7 +35,10 @@ if (typeof window !== "undefined") {
             api_host: "/ingest",
             ui_host: "https://us.posthog.com",
             defaults: "2026-01-30",
-            capture_exceptions: true,
+            capture_exceptions: false,
+            capture_dead_clicks: false,
+            disable_session_recording: true,
+            disable_surveys: true,
             debug: process.env.NODE_ENV === "development",
           }
         );
@@ -72,8 +64,8 @@ if (typeof window !== "undefined") {
   );
 
   if ("requestIdleCallback" in window) {
-    window.requestIdleCallback(() => initDeferredObservability(), { timeout: 4000 });
+    window.requestIdleCallback(() => initDeferredObservability(), { timeout: 8000 });
   } else {
-    globalThis.setTimeout(initDeferredObservability, 3000);
+    globalThis.setTimeout(initDeferredObservability, 6000);
   }
 }
