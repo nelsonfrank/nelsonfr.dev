@@ -2068,6 +2068,193 @@ a.tag:hover {
   display: none;
 }
 
+/* ─── Zoomable Media & Mermaid Lightbox ────────────────────────────────── */
+[data-zoomable="true"] {
+  cursor: zoom-in;
+}
+
+[data-zoomable="true"]:focus-visible {
+  outline: 2px solid var(--lagoon);
+  outline-offset: 3px;
+}
+
+.media-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 1rem 1.25rem;
+  gap: 0.75rem;
+}
+
+.media-lightbox-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  z-index: 2;
+}
+
+.media-lightbox-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.25rem 0.35rem;
+  box-shadow: 0 8px 24px -12px var(--frame-shadow);
+}
+
+.media-lightbox-btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  font: 600 0.95rem/1 var(--display);
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.media-lightbox-btn:hover:not(:disabled) {
+  background: var(--lagoon-soft);
+  color: var(--ink);
+}
+
+.media-lightbox-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.media-lightbox-btn.text {
+  font-size: 0.82rem;
+  padding: 0 0.7rem;
+}
+
+.media-lightbox-btn.close {
+  background: var(--surface);
+  border-color: var(--line);
+  padding: 0 0.95rem;
+  height: 2.35rem;
+  font-size: 0.88rem;
+  box-shadow: 0 8px 24px -12px var(--frame-shadow);
+}
+
+.media-lightbox-btn.close:hover {
+  border-color: var(--lagoon);
+  background: var(--surface);
+}
+
+.media-lightbox-zoom {
+  font: 600 0.82rem/1 var(--mono);
+  color: var(--slate);
+  min-width: 3.1rem;
+  text-align: center;
+  user-select: none;
+}
+
+.media-lightbox-stage {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+  cursor: zoom-in;
+}
+
+.media-lightbox-stage.is-zoomed {
+  cursor: grab;
+}
+
+.media-lightbox-stage.is-dragging {
+  cursor: grabbing;
+}
+
+.media-lightbox-transform {
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  transition: transform 0.16s ease-out;
+  will-change: transform;
+}
+
+.media-lightbox-media {
+  max-width: min(92vw, 76rem);
+  max-height: calc(100vh - 9.5rem);
+  width: auto;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 24px 56px -24px var(--frame-shadow);
+  display: block;
+}
+
+.media-lightbox-mermaid {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.5rem;
+  max-width: min(92vw, 72rem);
+  max-height: calc(100vh - 9.5rem);
+  box-shadow: 0 24px 56px -24px var(--frame-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-lightbox-mermaid svg {
+  max-width: 100%;
+  max-height: calc(100vh - 13rem);
+  width: auto;
+  height: auto;
+}
+
+.media-lightbox-caption {
+  display: flex;
+  justify-content: center;
+  z-index: 2;
+}
+
+.media-lightbox-caption p {
+  margin: 0;
+  max-width: 48rem;
+  text-align: center;
+  font: 400 0.88rem/1.45 var(--display);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.5rem 0.9rem;
+  box-shadow: 0 8px 24px -14px var(--frame-shadow);
+}
+
+@media (max-width: 640px) {
+  .media-lightbox {
+    padding: 0.75rem;
+  }
+  .media-lightbox-caption p {
+    font-size: 0.82rem;
+    padding: 0.45rem 0.75rem;
+  }
+}
+
 /* ─── Share Row, Author Box, Related Posts ─────────────────────────────── */
 .share-row {
   display: flex;

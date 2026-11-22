@@ -10,6 +10,7 @@ import { NewsletterPanel } from "@/components/newsletter-panel"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
 import { MermaidHydrator } from "@/components/mermaid-article"
+import { ArticleMediaLightbox } from "@/components/media-lightbox"
 import {
   ReadingProgressBar,
   PostToc,
@@ -108,6 +109,8 @@ export default async function PostPage({
   const headings = await extractHeadings(post.content)
   const hasMermaid = htmlContent.includes('class="mermaid-block"')
   const hasThemeVideos = htmlContent.includes("data-theme-video")
+  const hasZoomableMedia =
+    Boolean(post.image) || htmlContent.includes("<img") || hasThemeVideos
 
   const allPosts = getAllPosts()
   const relatedProject = post.project
@@ -285,6 +288,12 @@ export default async function PostPage({
               />
               {hasMermaid && <MermaidHydrator targetId="art" enableModal />}
               {hasThemeVideos && <ThemeVideoHydrator targetId="art" />}
+              {hasZoomableMedia && (
+                <ArticleMediaLightbox
+                  targetId="art"
+                  includeCover={Boolean(post.image)}
+                />
+              )}
 
               <ShareButtons title={post.title} slug={post.slug} />
 
