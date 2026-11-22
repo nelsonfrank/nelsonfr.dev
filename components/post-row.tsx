@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import type { PostMeta } from "@/lib/posts"
 
@@ -30,7 +31,7 @@ export function PostRow({
 }) {
   return (
     <article
-      className="post-row"
+      className={`post-row${post.image ? " has-thumb" : ""}`}
       hidden={hidden}
       data-y={dataYear}
       data-c={dataTopics}
@@ -45,6 +46,26 @@ export function PostRow({
         <p>{post.excerpt}</p>
       </div>
       <span className="rt">{post.readTime}</span>
+      {post.image && (
+        <div className="post-row-thumb">
+          {post.image.startsWith("/") ? (
+            <Image
+              src={post.image}
+              alt={post.imageAlt || post.title}
+              fill
+              sizes="(max-width: 820px) 100vw, 160px"
+              className="post-row-thumb-img"
+            />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={post.image}
+              alt={post.imageAlt || post.title}
+              className="post-row-thumb-img"
+            />
+          )}
+        </div>
+      )}
     </article>
   )
 }

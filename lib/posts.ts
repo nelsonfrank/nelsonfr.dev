@@ -13,6 +13,8 @@ export interface PostMeta {
   tags: string[]
   project?: string
   highlightPhrase?: string
+  image?: string
+  imageAlt?: string
 }
 
 export interface Post extends PostMeta {
@@ -27,7 +29,7 @@ function readMarkdownFile(slug: string): { data: Record<string, unknown>; conten
   return { data, content }
 }
 
-function parseProjectSlug(val: unknown): string | undefined {
+function parseOptionalString(val: unknown): string | undefined {
   if (typeof val !== "string") return undefined
   const trimmed = val.trim()
   return trimmed.length > 0 ? trimmed : undefined
@@ -57,13 +59,20 @@ export function getAllPosts(): PostMeta[] {
       if (!file) return null
 
       const { data, content } = file
-      const project = parseProjectSlug(data.project)
+      const project = parseOptionalString(data.project)
       const rawReadTime = typeof data.readTime === "string" ? data.readTime.trim() : ""
       const readTime = rawReadTime || calculateReadTime(content)
       const highlightPhrase =
         typeof data.highlightPhrase === "string" && data.highlightPhrase.trim()
           ? data.highlightPhrase.trim()
           : DEFAULT_HIGHLIGHTS[slug]
+      const image =
+        parseOptionalString(data.image) ??
+        parseOptionalString(data.cover) ??
+        parseOptionalString(data.coverImage)
+      const imageAlt =
+        parseOptionalString(data.imageAlt) ??
+        parseOptionalString(data.coverAlt)
 
       return {
         slug,
@@ -74,6 +83,8 @@ export function getAllPosts(): PostMeta[] {
         tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
         ...(project ? { project } : {}),
         ...(highlightPhrase ? { highlightPhrase } : {}),
+        ...(image ? { image } : {}),
+        ...(imageAlt ? { imageAlt } : {}),
       }
     })
     .filter((p): p is PostMeta => p !== null)
@@ -91,6 +102,13 @@ export function getPost(slug: string): Post | undefined {
     typeof data.highlightPhrase === "string" && data.highlightPhrase.trim()
       ? data.highlightPhrase.trim()
       : DEFAULT_HIGHLIGHTS[slug]
+  const image =
+    parseOptionalString(data.image) ??
+    parseOptionalString(data.cover) ??
+    parseOptionalString(data.coverImage)
+  const imageAlt =
+    parseOptionalString(data.imageAlt) ??
+    parseOptionalString(data.coverAlt)
 
   return {
     slug,
@@ -99,8 +117,10 @@ export function getPost(slug: string): Post | undefined {
     date: String(data.date ?? ""),
     readTime,
     tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
-    project: parseProjectSlug(data.project),
+    project: parseOptionalString(data.project),
     ...(highlightPhrase ? { highlightPhrase } : {}),
+    ...(image ? { image } : {}),
+    ...(imageAlt ? { imageAlt } : {}),
     content,
   }
 }
