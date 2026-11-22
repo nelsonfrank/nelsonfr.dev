@@ -15,7 +15,7 @@ year: "2026"
 problem: "Commuters in multi-operator cities get stuck with fragmented schedules, 'ghost' buses that vanished minutes ago, and blank screens the moment their phone loses signal underground. On the backend, classic shortest-path graph searches struggle to compute multi-transfer routes under 100ms."
 result: "Built an offline-first mobile client and decoupled routing backend that computes multi-criteria transit itineraries in single-digit milliseconds and evicts stale vehicle GPS feeds after 30 seconds."
 myPart: "I designed and built both repositories end to end—the Expo/MapLibre mobile app with MMKV offline caching, the Go RAPTOR routing and real-time services, the Python GTFS ingestion pipeline, and the Kubernetes/Kong setup."
-relatedPosts: []
+relatedPosts: ["city-connector-architecture-decisions"]
 nextProject: "necta-explorer"
 ---
 
