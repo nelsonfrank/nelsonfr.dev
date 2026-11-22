@@ -2,12 +2,24 @@
 
 import { useEffect } from "react"
 
-function getMermaidThemeVariables(isDark: boolean) {
+function resolveDisplayFont(): string {
+  if (typeof window === "undefined") {
+    return "'Bricolage Grotesque', system-ui, sans-serif"
+  }
+  const computed = getComputedStyle(document.documentElement)
+    .getPropertyValue("--font-display")
+    .trim()
+  return computed
+    ? `${computed}, system-ui, sans-serif`
+    : "'Bricolage Grotesque', system-ui, sans-serif"
+}
+
+function getMermaidThemeVariables(isDark: boolean, fontFamily: string) {
   if (isDark) {
     return {
       darkMode: true,
       background: "transparent",
-      fontFamily: "var(--display), system-ui, sans-serif",
+      fontFamily,
       fontSize: "13px",
       primaryColor: "#0F1426",
       primaryTextColor: "#EDF0F7",
@@ -49,7 +61,7 @@ function getMermaidThemeVariables(isDark: boolean) {
   return {
     darkMode: false,
     background: "transparent",
-    fontFamily: "var(--display), system-ui, sans-serif",
+    fontFamily,
     fontSize: "13px",
     primaryColor: "#F4F6F8",
     primaryTextColor: "#18203A",
@@ -98,11 +110,15 @@ function isDocumentDark(): boolean {
 
 export function useMermaid(
   containerRef: React.RefObject<HTMLElement | null>,
-  htmlContent: string,
+  htmlContentOrId: string,
   onDiagramClick?: (svgHtml: string) => void
 ) {
   useEffect(() => {
-    const container = containerRef.current
+    const container =
+      containerRef.current ??
+      (htmlContentOrId && !htmlContentOrId.includes("<")
+        ? document.getElementById(htmlContentOrId)
+        : null)
     if (!container) return
 
     const blocks = Array.from(
@@ -111,15 +127,19 @@ export function useMermaid(
     if (blocks.length === 0) return
 
     let cancelled = false
+    let renderSeq = 0
 
     async function render() {
+      const seq = ++renderSeq
       const isDark = isDocumentDark()
+      const fontFamily = resolveDisplayFont()
       const mermaid = (await import("mermaid")).default
+      if (cancelled || seq !== renderSeq) return
 
       mermaid.initialize({
         startOnLoad: false,
         theme: "base",
-        themeVariables: getMermaidThemeVariables(isDark),
+        themeVariables: getMermaidThemeVariables(isDark, fontFamily),
         flowchart: {
           htmlLabels: true,
           curve: "basis",
@@ -137,7 +157,7 @@ export function useMermaid(
       })
 
       for (let i = 0; i < blocks.length; i++) {
-        if (cancelled) break
+        if (cancelled || seq !== renderSeq) break
         const block = blocks[i]
 
         let definition = block.dataset.mermaidDef
@@ -153,14 +173,14 @@ export function useMermaid(
 
         if (!definition || !definition.trim()) continue
 
+        const id = `mermaid-svg-${isDark ? "dark" : "light"}-${seq}-${Date.now()}-${i}`
         try {
-          const id = `mermaid-svg-${isDark ? "dark" : "light"}-${Date.now()}-${i}`
           const { svg } = await mermaid.render(id, definition)
-          if (cancelled) break
+          if (cancelled || seq !== renderSeq) break
           block.innerHTML = svg
 
           if (onDiagramClick) {
-            block.style.cursor = "zoom-in"
+            block.setAttribute("data-zoomable", "true")
             block.setAttribute("role", "button")
             block.setAttribute("tabindex", "0")
             block.setAttribute("aria-label", "Enlarge architecture diagram")
@@ -175,6 +195,7 @@ export function useMermaid(
             }
           }
         } catch (err) {
+          document.getElementById(`d${id}`)?.remove()
           console.error("Mermaid render error:", err)
         }
       }
@@ -212,10 +233,20 @@ export function useMermaid(
       attributeFilter: ["data-theme"],
     })
 
+    const mq = window.matchMedia("(prefers-color-scheme: dark)")
+    const onSchemeChange = () => {
+      if (hasRenderedOnce && !document.documentElement.getAttribute("data-theme")) {
+        render()
+      }
+    }
+    mq.addEventListener("change", onSchemeChange)
+
     return () => {
       cancelled = true
+      renderSeq++
       io?.disconnect()
       observer.disconnect()
+      mq.removeEventListener("change", onSchemeChange)
     }
-  }, [containerRef, htmlContent, onDiagramClick])
+  }, [containerRef, htmlContentOrId, onDiagramClick])
 }

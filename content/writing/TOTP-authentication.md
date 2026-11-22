@@ -159,7 +159,7 @@ sequenceDiagram
         S->>S: jwtService.signAsync({ sub: userId, mfaPending: true }, { expiresIn: "5m" })
         S-->>C: { mfaPending: true, pendingToken }
         C->>C: Store pendingToken in component state (not localStorage)
-        C->>S: POST /auth/login/totp { code }<br/>Authorization: Bearer <pendingToken>
+        C->>S: POST /auth/login/totp { code }<br/>Authorization: Bearer &lt;pendingToken&gt;
         S->>S: PendingMfaGuard: verify token has mfaPending === true
         S->>DB: SELECT used_totp_codes WHERE userId = ? AND code = ?
         alt Code already used

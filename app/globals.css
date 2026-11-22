@@ -2051,17 +2051,27 @@ a.tag:hover {
   min-height: 180px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: safe center;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow-x: auto;
   text-align: center;
+  font: 400 13px/1.4 var(--display);
+}
+
+.prose .mermaid-block p,
+.media-lightbox-mermaid p {
+  margin: 0;
+  line-height: 1.35;
+  color: inherit;
+  font: inherit;
 }
 
 .prose .mermaid-block svg {
   max-width: 100%;
   height: auto;
+  flex-shrink: 0;
 }
 
 .prose .mermaid-block > script {
@@ -2211,18 +2221,20 @@ a.tag:hover {
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 1.5rem;
-  max-width: min(92vw, 72rem);
+  width: min(90vw, 68rem);
+  max-width: 92vw;
   max-height: calc(100vh - 9.5rem);
   box-shadow: 0 24px 56px -24px var(--frame-shadow);
   display: flex;
   align-items: center;
   justify-content: center;
+  font: 400 14px/1.4 var(--display);
 }
 
 .media-lightbox-mermaid svg {
-  max-width: 100%;
+  width: 100%;
+  max-width: 100% !important;
   max-height: calc(100vh - 13rem);
-  width: auto;
   height: auto;
 }
 

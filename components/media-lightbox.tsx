@@ -23,6 +23,13 @@ function isDocumentDark(): boolean {
   return window.matchMedia("(prefers-color-scheme: dark)").matches
 }
 
+function scopeMermaidSvgForModal(svgHtml: string): string {
+  const idMatch = svgHtml.match(/<svg[^>]*\bid="([^"]+)"/)
+  if (!idMatch?.[1]) return svgHtml
+  const origId = idMatch[1]
+  return svgHtml.replaceAll(origId, `${origId}-modal`)
+}
+
 export function MediaLightbox({
   item,
   onClose,
@@ -272,7 +279,9 @@ export function MediaLightbox({
             <div
               className="media-lightbox-mermaid"
               data-mermaid-modal
-              dangerouslySetInnerHTML={{ __html: item.svgHtml }}
+              dangerouslySetInnerHTML={{
+                __html: scopeMermaidSvgForModal(item.svgHtml),
+              }}
             />
           )}
         </div>
