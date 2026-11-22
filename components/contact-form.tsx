@@ -3,6 +3,7 @@
 import { useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
+import { Toaster } from "@/components/ui/sonner"
 import { Turnstile, type TurnstileRef } from "./turnstile"
 import {
   captureEvent,
@@ -104,15 +105,17 @@ export default function ContactForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      style={{
-        marginTop: "1.75rem",
-        maxWidth: "36rem",
-        display: "grid",
-        gap: "1rem",
-      }}
-    >
+    <>
+      <Toaster />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        style={{
+          marginTop: "1.75rem",
+          maxWidth: "36rem",
+          display: "grid",
+          gap: "1rem",
+        }}
+      >
       <div>
         <label
           htmlFor="name"
@@ -285,6 +288,7 @@ export default function ContactForm() {
           {statusMessage.text}
         </p>
       )}
-    </form>
+      </form>
+    </>
   )
 }

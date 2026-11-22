@@ -55,17 +55,25 @@ if (typeof window !== "undefined") {
   };
 
   const events: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "scroll"];
+  const scheduleInit = () => {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(() => initDeferredObservability(), { timeout: 2000 });
+    } else {
+      globalThis.setTimeout(initDeferredObservability, 1000);
+    }
+  };
   const onFirstInteraction = () => {
     events.forEach((evt) => window.removeEventListener(evt, onFirstInteraction));
-    initDeferredObservability();
+    // Defer past the current interaction frame so INP is unaffected
+    scheduleInit();
   };
   events.forEach((evt) =>
     window.addEventListener(evt, onFirstInteraction, { once: true, passive: true })
   );
 
   if ("requestIdleCallback" in window) {
-    window.requestIdleCallback(() => initDeferredObservability(), { timeout: 3000 });
+    window.requestIdleCallback(() => initDeferredObservability(), { timeout: 4000 });
   } else {
-    globalThis.setTimeout(initDeferredObservability, 2000);
+    globalThis.setTimeout(initDeferredObservability, 3000);
   }
 }

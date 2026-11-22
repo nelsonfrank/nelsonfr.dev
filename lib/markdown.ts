@@ -169,6 +169,24 @@ function rehypeMermaid() {
   }
 }
 
+function rehypeOptimizeImages() {
+  return (tree: any) => {
+    const visit = (node: any) => {
+      if (node.type === "element" && node.tagName === "img") {
+        node.properties = {
+          loading: "lazy",
+          decoding: "async",
+          ...node.properties,
+        }
+      }
+      if (node.children && Array.isArray(node.children)) {
+        node.children.forEach(visit)
+      }
+    }
+    visit(tree)
+  }
+}
+
 export async function markdownToHtml(markdown: string): Promise<string> {
   const result = await unified()
     .use(remarkParse)
@@ -179,6 +197,7 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     .use(rehypeMermaid)
     .use(rehypePrettyCode, prettyCodeOptions)
     .use(rehypeExternalLinks)
+    .use(rehypeOptimizeImages)
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdown)
 
