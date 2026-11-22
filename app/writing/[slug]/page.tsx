@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getPost, getAllPosts } from "@/lib/posts"
@@ -8,11 +9,12 @@ import { Header } from "@/components/header"
 import { NewsletterPanel } from "@/components/newsletter-panel"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
-import { MermaidArticle } from "@/components/mermaid-article"
+import { MermaidHydrator } from "@/components/mermaid-article"
 import {
   ReadingProgressBar,
   PostToc,
   ShareButtons,
+  ThemeVideoHydrator,
 } from "@/components/post-islands"
 
 function renderHighlightedTitle(title: string, highlightPhrase?: string) {
@@ -104,6 +106,8 @@ export default async function PostPage({
 
   const htmlContent = await markdownToHtml(post.content)
   const headings = await extractHeadings(post.content)
+  const hasMermaid = htmlContent.includes('class="mermaid-block"')
+  const hasThemeVideos = htmlContent.includes("data-theme-video")
 
   const allPosts = getAllPosts()
   const relatedProject = post.project
@@ -223,35 +227,64 @@ export default async function PostPage({
             )}
           </header>
 
-          <div
-            className="post-cover"
-            role="img"
-            aria-label={`Visual overview for ${post.title}`}
-          >
-            <div className="post-cover-inner" aria-hidden="true">
-              <div>
-                <span className="mock-bar hl" />
-                <span className="mock-bar" />
-                <span className="mock-bar" style={{ width: "68%" }} />
-              </div>
-              <div className="mock-nodes">
-                {post.tags.slice(0, 3).map((tag, idx) => (
-                  <span
-                    key={tag}
-                    className={`mock-node${idx === 1 ? " mid" : ""}`}
-                  >
-                    {tag}
-                  </span>
-                ))}
+          {post.image ? (
+            <figure className="post-cover has-img">
+              {post.image.startsWith("/") ? (
+                <Image
+                  src={post.image}
+                  alt={post.imageAlt || post.title}
+                  fill
+                  priority
+                  fetchPriority="high"
+                  sizes="(max-width: 1120px) 100vw, 1080px"
+                  className="post-cover-img"
+                />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={post.image}
+                  alt={post.imageAlt || post.title}
+                  className="post-cover-img"
+                />
+              )}
+            </figure>
+          ) : (
+            <div
+              className="post-cover"
+              role="img"
+              aria-label={`Visual overview for ${post.title}`}
+            >
+              <div className="post-cover-inner" aria-hidden="true">
+                <div>
+                  <span className="mock-bar hl" />
+                  <span className="mock-bar" />
+                  <span className="mock-bar" style={{ width: "68%" }} />
+                </div>
+                <div className="mock-nodes">
+                  {post.tags.slice(0, 3).map((tag, idx) => (
+                    <span
+                      key={tag}
+                      className={`mock-node${idx === 1 ? " mid" : ""}`}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="post-layout">
             <PostToc headings={headings} />
 
             <div>
-              <MermaidArticle htmlContent={htmlContent} id="art" enableModal />
+              <article
+                id="art"
+                className="prose"
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
+              />
+              {hasMermaid && <MermaidHydrator targetId="art" enableModal />}
+              {hasThemeVideos && <ThemeVideoHydrator targetId="art" />}
 
               <ShareButtons title={post.title} slug={post.slug} />
 

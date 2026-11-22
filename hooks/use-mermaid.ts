@@ -180,10 +180,32 @@ export function useMermaid(
       }
     }
 
-    render()
+    let hasRenderedOnce = false
+    let io: IntersectionObserver | null = null
+
+    const triggerRender = () => {
+      if (hasRenderedOnce) return
+      hasRenderedOnce = true
+      io?.disconnect()
+      render()
+    }
+
+    if (typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            triggerRender()
+          }
+        },
+        { rootMargin: "300px 0px" }
+      )
+      blocks.forEach((block) => io!.observe(block))
+    } else {
+      triggerRender()
+    }
 
     const observer = new MutationObserver(() => {
-      render()
+      if (hasRenderedOnce) render()
     })
     observer.observe(document.documentElement, {
       attributes: true,
@@ -192,6 +214,7 @@ export function useMermaid(
 
     return () => {
       cancelled = true
+      io?.disconnect()
       observer.disconnect()
     }
   }, [containerRef, htmlContent, onDiagramClick])

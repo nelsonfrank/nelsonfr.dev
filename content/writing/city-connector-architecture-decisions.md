@@ -6,6 +6,8 @@ readTime: "11 min read"
 tags: ["Architecture", "Go", "Python", "RAPTOR", "GTFS", "PostGIS", "Redis"]
 project: "city-connector-backend"
 highlightPhrase: "Six Architecture Decisions"
+image: "/images/blog/city-connector/poster.jpg"
+imageAlt: "Editorial transit-map schematic showing interlocking multi-agency corridors, dotted transfer footpaths, concentric RAPTOR search rings, and a live telemetry beacon."
 ---
 
 Multi-agency transit routing gets much simpler when I stop treating a timetable like a road graph, refuse to merge agency IDs at ingestion, and split static schedule compilation from live vehicle telemetry.
@@ -42,8 +44,20 @@ Architecture decisions look arbitrary until you state the constraints they were 
 The organizing principle across the backend is to **separate the write/ingestion path from the read/query path**, and precompute everything that can be precomputed before a rider sends a request.
 
 <figure class="my-8">
-  <img src="/images/blog/city-connector/city-connector-system-animated.gif" alt="Animated architecture diagram showing mobile and web clients calling Kong Gateway, which routes to Go Routing, Stop & Search, and Realtime services backed by PostgreSQL with PostGIS, Redis 7, Python static ingestion, and per-agency GTFS-RT pollers." class="block dark:hidden w-full rounded-lg border border-border" />
-  <img src="/images/blog/city-connector/city-connector-system-animated-dark.gif" alt="Animated architecture diagram (dark theme) showing mobile and web clients calling Kong Gateway, which routes to Go Routing, Stop & Search, and Realtime services backed by PostgreSQL with PostGIS, Redis 7, Python static ingestion, and per-agency GTFS-RT pollers." class="hidden dark:block w-full rounded-lg border border-border" />
+  <video
+    data-theme-video
+    data-light-src="/images/blog/city-connector/city-connector-system-animated.mp4"
+    data-dark-src="/images/blog/city-connector/city-connector-system-animated-dark.mp4"
+    width="1000"
+    height="738"
+    style="aspect-ratio: 1000 / 738"
+    loop
+    muted
+    playsinline
+    preload="none"
+    aria-label="Animated architecture diagram showing mobile and web clients calling Kong Gateway, which routes to Go Routing, Stop & Search, and Realtime services backed by PostgreSQL with PostGIS, Redis 7, Python static ingestion, and per-agency GTFS-RT pollers."
+    class="block w-full rounded-lg border border-border"
+  ></video>
   <figcaption class="mt-2 text-center text-sm text-muted-foreground">High-level data flow: static schedules compile through Postgres into memory; live telemetry expires in Redis.</figcaption>
 </figure>
 
@@ -135,8 +149,20 @@ Proximity-based auto-merging looks tidy until a heuristic merges two separate st
 Daily schedule updates cannot take the read path offline, and an in-flight `/journey` query must never see half of Monday's trips mixed with half of Tuesday's stops.
 
 <figure class="my-8">
-  <img src="/images/blog/city-connector/ingestion-architecture-animated.gif" alt="Animated architecture diagram of the Python GTFS static ingestion pipeline: fetching and unzipping agency feeds, validating schemas and referential integrity, applying agency ID namespacing, staging rows with PostgreSQL COPY, precomputing footpaths, promoting feed_versions, and hot-swapping the Go Routing Service timetable." class="block dark:hidden w-full rounded-lg border border-border" />
-  <img src="/images/blog/city-connector/ingestion-architecture-animated-dark.gif" alt="Animated architecture diagram (dark theme) of the Python GTFS static ingestion pipeline: fetching and unzipping agency feeds, validating schemas and referential integrity, applying agency ID namespacing, staging rows with PostgreSQL COPY, precomputing footpaths, promoting feed_versions, and hot-swapping the Go Routing Service timetable." class="hidden dark:block w-full rounded-lg border border-border" />
+  <video
+    data-theme-video
+    data-light-src="/images/blog/city-connector/ingestion-architecture-animated.mp4"
+    data-dark-src="/images/blog/city-connector/ingestion-architecture-animated-dark.mp4"
+    width="1000"
+    height="834"
+    style="aspect-ratio: 1000 / 834"
+    loop
+    muted
+    playsinline
+    preload="none"
+    aria-label="Animated architecture diagram of the Python GTFS static ingestion pipeline: fetching and unzipping agency feeds, validating schemas and referential integrity, applying agency ID namespacing, staging rows with PostgreSQL COPY, precomputing footpaths, promoting feed_versions, and hot-swapping the Go Routing Service timetable."
+    class="block w-full rounded-lg border border-border"
+  ></video>
   <figcaption class="mt-2 text-center text-sm text-muted-foreground">Static ingestion stages rows under an inactive feed_version_id, promotes it atomically, and triggers a lock-free pointer swap in Routing.</figcaption>
 </figure>
 
@@ -184,8 +210,20 @@ I chose **PostgreSQL + PostGIS** for static GTFS data, **Redis 7** for ephemeral
 To keep a Redis or Realtime Service outage from breaking journey search, Routing calls Realtime over HTTP with a hard 150 ms budget and falls back to static ETAs on any error or timeout.
 
 <figure class="my-8">
-  <img src="/images/blog/city-connector/journey-request-flow-animated.gif" alt="Animated request flow diagram for GET /journey: Rider Client to Kong Gateway to RAPTOR Engine and ETA Adjuster, querying Realtime API and Redis under a 150ms timeout with a dashed fallback path returning static ETAs and realtime: false on failure." class="block dark:hidden w-full rounded-lg border border-border" />
-  <img src="/images/blog/city-connector/journey-request-flow-animated-dark.gif" alt="Animated request flow diagram (dark theme) for GET /journey: Rider Client to Kong Gateway to RAPTOR Engine and ETA Adjuster, querying Realtime API and Redis under a 150ms timeout with a dashed fallback path returning static ETAs and realtime: false on failure." class="hidden dark:block w-full rounded-lg border border-border" />
+  <video
+    data-theme-video
+    data-light-src="/images/blog/city-connector/journey-request-flow-animated.mp4"
+    data-dark-src="/images/blog/city-connector/journey-request-flow-animated-dark.mp4"
+    width="1000"
+    height="692"
+    style="aspect-ratio: 1000 / 692"
+    loop
+    muted
+    playsinline
+    preload="none"
+    aria-label="Animated request flow diagram for GET /journey: Rider Client to Kong Gateway to RAPTOR Engine and ETA Adjuster, querying Realtime API and Redis under a 150ms timeout with a dashed fallback path returning static ETAs and realtime: false on failure."
+    class="block w-full rounded-lg border border-border"
+  ></video>
   <figcaption class="mt-2 text-center text-sm text-muted-foreground">GET /journey enforces a 150ms timeout on the Realtime hop so an upstream failure degrades to static ETAs instead of returning 500.</figcaption>
 </figure>
 

@@ -7,26 +7,36 @@ export function ReadingProgressBar({ targetId = "art" }: { targetId?: string }) 
   const barRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
+    const art = document.getElementById(targetId)
+    const bar = barRef.current
+    if (!art || !bar) return
+
+    let rafId: number | null = null
+
     function updateProgress() {
-      const art = document.getElementById(targetId)
-      const bar = barRef.current
-      if (!art || !bar) return
-      const rect = art.getBoundingClientRect()
+      rafId = null
+      const rect = art!.getBoundingClientRect()
       const h = Math.max(1, rect.height - window.innerHeight * 0.6)
       const p = Math.min(
         1,
         Math.max(0, (-rect.top + window.innerHeight * 0.2) / h)
       )
-      bar.style.transform = `scaleX(${p})`
+      bar!.style.transform = `scaleX(${p})`
     }
 
-    window.addEventListener("scroll", updateProgress, { passive: true })
-    window.addEventListener("resize", updateProgress)
-    updateProgress()
+    function scheduleUpdate() {
+      if (rafId !== null) return
+      rafId = window.requestAnimationFrame(updateProgress)
+    }
+
+    window.addEventListener("scroll", scheduleUpdate, { passive: true })
+    window.addEventListener("resize", scheduleUpdate, { passive: true })
+    scheduleUpdate()
 
     return () => {
-      window.removeEventListener("scroll", updateProgress)
-      window.removeEventListener("resize", updateProgress)
+      window.removeEventListener("scroll", scheduleUpdate)
+      window.removeEventListener("resize", scheduleUpdate)
+      if (rafId !== null) window.cancelAnimationFrame(rafId)
     }
   }, [targetId])
 
@@ -43,24 +53,31 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
   useEffect(() => {
     if (headings.length === 0) return
 
-    function updateSpy() {
-      let cur = headings[0].id
-      for (const h of headings) {
-        const el = document.getElementById(h.id)
-        if (el && el.getBoundingClientRect().top < window.innerHeight * 0.35) {
-          cur = h.id
+    const elements = headings
+      .map((h) => document.getElementById(h.id))
+      .filter((el): el is HTMLElement => el !== null)
+    if (elements.length === 0) return
+
+    if (typeof IntersectionObserver !== "undefined") {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort(
+              (a, b) => a.boundingClientRect.top - b.boundingClientRect.top
+            )
+          if (visible.length > 0 && visible[0].target.id) {
+            setActiveId(visible[0].target.id)
+          }
+        },
+        {
+          rootMargin: "-12% 0px -70% 0px",
+          threshold: 0,
         }
-      }
-      setActiveId(cur)
-    }
+      )
 
-    window.addEventListener("scroll", updateSpy, { passive: true })
-    window.addEventListener("resize", updateSpy)
-    updateSpy()
-
-    return () => {
-      window.removeEventListener("scroll", updateSpy)
-      window.removeEventListener("resize", updateSpy)
+      elements.forEach((el) => observer.observe(el))
+      return () => observer.disconnect()
     }
   }, [headings])
 
@@ -83,6 +100,90 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
       </ol>
     </aside>
   )
+}
+
+export function ThemeVideoHydrator({ targetId = "art" }: { targetId?: string }) {
+  useEffect(() => {
+    const container = document.getElementById(targetId)
+    if (!container) return
+
+    const videos = Array.from(
+      container.querySelectorAll<HTMLVideoElement>("video[data-theme-video]")
+    )
+    if (videos.length === 0) return
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches
+
+    const isDark = () => {
+      const attr = document.documentElement.getAttribute("data-theme")
+      if (attr === "dark") return true
+      if (attr === "light") return false
+      return window.matchMedia("(prefers-color-scheme: dark)").matches
+    }
+
+    const activeVideos = new Set<HTMLVideoElement>()
+
+    const syncVideoSource = (video: HTMLVideoElement) => {
+      const nextSrc = isDark() ? video.dataset.darkSrc : video.dataset.lightSrc
+      if (!nextSrc) return
+      if (video.getAttribute("src") !== nextSrc) {
+        video.setAttribute("src", nextSrc)
+        video.load()
+      }
+      if (!reducedMotion) {
+        video.play().catch(() => {})
+      } else {
+        video.controls = true
+      }
+    }
+
+    let io: IntersectionObserver | null = null
+    if (typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            const video = entry.target as HTMLVideoElement
+            if (entry.isIntersecting) {
+              activeVideos.add(video)
+              syncVideoSource(video)
+            } else if (!video.paused) {
+              video.pause()
+            }
+          }
+        },
+        { rootMargin: "250px 0px" }
+      )
+      videos.forEach((v) => io!.observe(v))
+    } else {
+      videos.forEach((v) => {
+        activeVideos.add(v)
+        syncVideoSource(v)
+      })
+    }
+
+    const syncAllActive = () => {
+      activeVideos.forEach(syncVideoSource)
+    }
+
+    const mo = new MutationObserver(syncAllActive)
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    })
+
+    const mq = window.matchMedia("(prefers-color-scheme: dark)")
+    mq.addEventListener("change", syncAllActive)
+
+    return () => {
+      io?.disconnect()
+      mo.disconnect()
+      mq.removeEventListener("change", syncAllActive)
+    }
+  }, [targetId])
+
+  return null
 }
 
 export function ShareButtons({
